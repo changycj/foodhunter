@@ -8,6 +8,10 @@
     
     <h1><%=title%></h1>
     
+    <%for (var i = 0; i < locs.length; i++) {%> 
+        <p><%=locs[i].name + ", (" + locs[i].gps.lat + ", " + locs[i].gps.lon + "), Building #" + locs[i].building%></p>
+    <%}%>
+    
 </body>
 
 </html>

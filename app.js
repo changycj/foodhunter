@@ -4,8 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongo = require("mongodb");
-var mongoose = require("mongoose");
 
 var app = express();
 
@@ -21,23 +19,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // set up routers
 var routes = require("./routes/index");
+var map = require("./routes/map");
 app.use('/', routes);
-
-// set up mongo database
-var connection_string = "localhost:27017/food_hunter";
-mongoose.connect(connection_string);
-var db = mongoose.connection;
-
-db.on("error", console.error.bind(console, "Mongoose connection error."));
-db.once("open", function() {
-    mongoose.connection.db.dropDatabase(function(err, result) {
-        if (err) {
-            console.error.bind(console, "Mongoose database error.");
-        } else {
-            console.log("Connected to Mongoose database.");
-        }
-    });
-});
+app.use('/map', map);
 
 // ERROR Handlers
 // catch 404 and forward to error handler
