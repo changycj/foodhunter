@@ -3,7 +3,10 @@ FoodHunter Design Doc
 Rebekah Cha
 
 Purpose:
-	-To provide information of where free food is to the MIT community
+	-Allows MIT affiliates to notify everyone about food events
+	-Lets MIT affiliates view where free food is on campus
+	-Filters the notifications that MIT affiliates receive about free food
+
 	
 Collections would include: 
 	- eventcollection. It would contain String fields such as food type, event name, date, time and location. 
