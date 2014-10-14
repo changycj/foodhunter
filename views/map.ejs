@@ -4,10 +4,10 @@
     <title>Welcome to <%=title%></title>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://polymaps.org/polymaps.min.js"></script>
-    
     <script type="text/javascript" src="/javascripts/map.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
     
+    <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
     <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/map.css">
 </head>
@@ -15,8 +15,7 @@
     
     <h1><%=title%></h1>
 
-    <div id="map_container"><svg id="map"></svg></div>
-    
+    <div id="map"></div>
     <%for (var i = 0; i < locs.length; i++) {%> 
         <p><%=locs[i].building + " - " + locs[i].name + ", (" + locs[i].gps.lat + ", " + locs[i].gps.lon + ")"%></p>
     <%}%>
