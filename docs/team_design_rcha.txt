@@ -1,0 +1,46 @@
+6.170 project 3
+FoodHunter Design Doc
+Rebekah Cha
+
+Purpose:
+	-Allows MIT affiliates to notify everyone about food events
+	-Lets MIT affiliates view where free food is on campus
+	-Filters the notifications that MIT affiliates receive about free food
+
+	
+Collections would include: 
+	- eventcollection. It would contain String fields such as food type, event name, date, time and location. 
+	- commentcollection. It would have a reference field to the event. And have a String field for the body of the comment.
+
+Views:
+	- New Event:
+		-To input information indicating that there is free food, a user would use an online form which would include: event, food, date, time and location. 
+	- Event listings:
+		-Shows a list of all the events. Has options that lists by day or week.
+		-Other users are allowed to comment indicating that there is no more food.
+	-Map:
+		-Shows a visualization of all the events by location. This is a layout of the MIT campus. And colored in would be where a free food event is occuring. 
+
+GET methods:
+	- GET newevent:
+		-Renders the New Event page
+	- GET eventlist:
+		-Gets eventcollection, and querying it using the current date and future dates. Then finds the corresponding comments in commentcolection.
+		-Renders the list of events with the list of events and collections
+	- GET map:
+		-Gets eventcollection, and queries it using the current date and future dates. Then sorts it by location.
+		-Renders the map with the list of events.
+
+POST methods:
+	- POST newevent:
+		-Takes the information from the New Event page and makes a new entry in eventcollection.
+	- POST comment:
+		-Takes information from the Event listings page (where users can input comments) and makes a new entry in the commentcollection.
+	- POST deletecomment:
+		-Removes a comment from the commentcollection.
+
+Potential challenges:
+	- Dynamic update for expiring food events
+
+Other:
+	-Unsure about storing users in database. Want to use MIT certificate to ensure that the user is part of the MIT community, however.

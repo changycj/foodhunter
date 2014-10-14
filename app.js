@@ -4,35 +4,48 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var mongo = require("mongodb");
+var mongoose = require("mongoose");
 
 var app = express();
 
-// view engine setup
+// set up modules
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+// app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// set up routers
+var routes = require("./routes/index");
 app.use('/', routes);
-app.use('/users', users);
 
+// set up mongo database
+var connection_string = "localhost:27017/food_hunter";
+mongoose.connect(connection_string);
+var db = mongoose.connection;
+
+db.on("error", console.error.bind(console, "Mongoose connection error."));
+db.once("open", function() {
+    mongoose.connection.db.dropDatabase(function(err, result) {
+        if (err) {
+            console.error.bind(console, "Mongoose database error.");
+        } else {
+            console.log("Connected to Mongoose database.");
+        }
+    });
+});
+
+// ERROR Handlers
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-
-// error handlers
 
 // development error handler
 // will print stacktrace
