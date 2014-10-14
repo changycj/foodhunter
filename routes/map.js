@@ -47,7 +47,6 @@ var insertLocation = function() {
                         console.log(params);
                     } else {
                         count++;
-                        
                         if (count == places.length) {
                             setupRoutes();
                         }
@@ -62,8 +61,8 @@ var setupRoutes = function() {
     
     router.get("/", function(req, res) {
         
-        location.Location.find({}, function(err, locs) {
-            res.render("index", {
+        location.Location.find({}).sort({building: "desc"}).exec(function(err, locs) {
+            res.render("map", {
                 title: "Food Hunter",
                 locs: locs
             });
