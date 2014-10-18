@@ -6,8 +6,8 @@ var user = require("../models/User.js");
 var subscription = require("../models/Subscription.js");
 
 
-/*GET subscriptions for the user */
-router.get("/:userID/subscriptions", function(req, res){
+/*GET method for user */
+router.get("/:userID/", function(req, res){
 	//find users by :userID
 	var userID = req.params.userID;
 	user.User.findOne({'_id': userID}, function(err, u){
@@ -21,13 +21,13 @@ router.get("/:userID/subscriptions", function(req, res){
 					res.send("Error populating subscriptions in user");
 				} else {
 					//UI url may change depending on where the view file is
-					res.render('/subscriptions', {subscriptions: u.subscriptions});
+					res.render('/users/profile', {user: u});
 				}
 			}
 		}
 	});
 }
 
-/*POST new subscription (if it does not exist in the database) */
+/*POST new user to database */ //<-- most likely will be nested inside POST method in subscriptions
 
 module.exports = router;
