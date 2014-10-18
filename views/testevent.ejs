@@ -9,14 +9,20 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/map.css">
 </head>
 <body>
-    <p><%=allEvents%></p>
+    <%var l = allEvents.length%>
+    <%for (var i=0; i< l; i++){%>
+    <p><%=allEvents[i]%></p>
+    <%}%>
     <form id = "testevent" method = "post" action = "/events/">
-        <label>StartTime</label>
-        <input id="testAdd" type="text" name="startTime">
-        <label>EndTime</label>
-        <input id="testAdd" type="text" name="endTime">
+        <label>Host</label>
+        <input id="testAdd" type="text" name="host">
+        <label>StartTimeHour</label>
+        <input id="testAdd" type="text" name="startTimeHour">
+        <label>StartTimeMin</label>
+        <input id="testAdd" type="text" name="startTimeMin">
         <label>Date</label>
         <input id="testAdd" type="text" name="date">
+        
         <button type = "submit"> Create event</button>
     </form>
 
