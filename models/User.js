@@ -12,6 +12,6 @@ var userSchema = mongoose.Schema({
 	subscriptions: [{type: mongoose.Schema.Types.ObjectID, ref: 'Subscription'}]
 });
 
-var Location = mongoose.model("Location", locationSchema);
+var User = mongoose.model("User", userSchema);
 
-exports.Location = Location;
+exports.User = User;
