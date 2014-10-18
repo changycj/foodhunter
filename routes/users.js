@@ -28,6 +28,6 @@ router.get("/:userID/", function(req, res){
 	});
 }
 
-/*POST new user to database */
+/*POST new user to database */ //<-- most likely will be nested inside POST method in subscriptions
 
 module.exports = router;
