@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var EventAPI =require('../API/Event.js');
 
 router.get('/', function(req, res) {
 	var allEvents  =  EventAPI.getAllEvents();

@@ -21,9 +21,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 var routes = require("./routes/index");
 var map = require("./routes/map");
 var ev = require("./routes/events");
+var locations = require("./routes/api/locations");
+
 app.use('/', routes);
 app.use('/map', map);
 app.use('/events', ev);
+
+// REST API routers
+app.use("/locations", locations);
 
 // ERROR Handlers
 // catch 404 and forward to error handler
