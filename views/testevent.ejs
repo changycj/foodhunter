@@ -9,12 +9,17 @@
     <link rel="stylesheet" type="text/css" href="/stylesheets/map.css">
 </head>
 <body>
-    <p> 
-        {"host":"test2"}
-    </p>
-    <form id = "testevent" method = "post" action = "/testevent">
-        <input id="testAdd" type="text" name="newEvent">
+    <p><%=allEvents%></p>
+    <form id = "testevent" method = "post" action = "/events/">
+        <label>StartTime</label>
+        <input id="testAdd" type="text" name="startTime">
+        <label>EndTime</label>
+        <input id="testAdd" type="text" name="endTime">
+        <label>Date</label>
+        <input id="testAdd" type="text" name="date">
+        <button type = "submit"> Create event</button>
     </form>
+
     
 </body>
 

@@ -20,8 +20,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 // set up routers
 var routes = require("./routes/index");
 var map = require("./routes/map");
+var ev = require("./routes/events");
 app.use('/', routes);
 app.use('/map', map);
+app.use('/events', ev);
 
 // ERROR Handlers
 // catch 404 and forward to error handler
