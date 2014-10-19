@@ -11,7 +11,7 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
     var time_block = req.params.time_block;
     
     subscription.Subscription.find({building: building, time_block: time_block})
-        .limit(1).populate("users", "kerberos").exec(function(err, sub) {
+        .limit(1).populate("users", "_id").exec(function(err, sub) {
         
         if (err) {
             res.send("Error retrieving subscription. " + err);
