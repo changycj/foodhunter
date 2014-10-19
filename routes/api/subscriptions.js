@@ -27,7 +27,12 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
 router.get("/", function(req, res) {
     var userKerberos = req.cookies.kerberos;
     User.findOne({_id:userKerberos}).populate("subscriptions").exec(function(err, user){
-        res.json(user.subscriptions);
+        if (!(user==undefined)){
+           res.json(user.subscriptions);
+        }
+        else{
+            res.json({message:0, details: "No such user yet"});
+        }
     });
 });
 
