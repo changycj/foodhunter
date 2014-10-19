@@ -16,7 +16,6 @@ router.get("/", function(req, res) {
     });
 });
 
-
 // GET specific location information
 router.get("/:id", function(req, res) {
     var locId = req.params.id;

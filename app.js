@@ -25,13 +25,15 @@ var routes = require("./routes/index");
 var map = require("./routes/map");
 var ev = require("./routes/api/events");
 var locations = require("./routes/api/locations");
+var subscriptions = require("./routes/api/subscriptions");
 
 app.use('/', routes);
 app.use('/map', map);
-app.use('/events', ev);
 
 // REST API routers
 app.use("/locations", locations);
+app.use('/events', ev);
+app.use("/subscriptions", subscriptions);
 
 // ERROR Handlers
 // catch 404 and forward to error handler
