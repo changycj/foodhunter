@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var subscription = require("../../models/Subscription");
-var user = require("../../models/User");
+var User = require("../../models/User").User;
 
 // REST API for subscription
 
@@ -10,13 +10,13 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
     var building = req.params.building;
     var time_block = req.params.time_block;
     
-    subscription.Subscription.find({building: building, time_block: time_block})
-        .limit(1).populate("users", "_id").exec(function(err, sub) {
+    subscription.Subscription.findOne({building: building, time_block: time_block})
+        .populate("users", "_id").exec(function(err, sub) {
         
         if (err) {
             res.send("Error retrieving subscription. " + err);
         } else {
-            res.json(sub[0]);
+            res.json(sub);
         }
     
     });
@@ -24,26 +24,66 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
 
 // add user to subscriptions
 router.post("/subscribe", function(req, res) {
-    var subscriptions = req.body.subscriptions;
-    
-    // find user
-    user.User.find({kerberos: req.cookies.kerberos}, {_id: 1}).limit(1).exec(function(err, user) {
-        if (err) {
-            res.send("Error retrieving user. " + err);
-        } else {
-            
-            // subscribe
-            subscription.Subscription.update({$in: subscriptions}, {$addToSet: { users: user[0]._id}})
-                .exec(function(err2, subs) {
-                if (err2) {
-                    res.send("There was a problem adding subscriptions. " + err2);
-                } else {
-                    console.log(subs);
+    //get data, bldg is an ObjectId, time_block is an int 0-3
+    var subscriptions = req.body.subscriptions; //list of subs
+    console.log("GOT SUBS: "+subscriptions);
+    var userKerberos = req.cookies.kerberos;
+    // first find out if subs already exist
+    var numSubs = subscriptions.length;
+    User.findOne({_id:userKerberos}, function(err, user){
+        if (err){
+            console.log("Error finding the user who wants to subscribe");
+            return
+        }
+
+        for (var i = 0; i < numSubs; i++){
+            var sub = subscriptions[i];
+            subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (err, s){
+                if (err){
+                    console.log("Error while fingding sub");
+                    return;
                 }
+                else{
+                    //no such sub yet, create one
+                    if (s==undefined){
+                        var newSub = new subscription.Subscription(
+                                                    {building:sub.building, time_block:sub.time_block, users:[userKerberos]});
+                        newSub.save(function(err){
+                            if (err){
+                                console.log("Error while creating sub1");
+                            }
+                            return;
+                        });
+                        user.subscriptions.push(newSub._id);
+                        user.save(function(err){
+                            if (err){
+                                console.log("Error adding a newly creating sub to user list");
+                            }
+                            return;
+                        });
+                    }
+                    //there is such sub, update it by pushing a new user
+                    else{
+                        s.users.push(userKerberos);
+                        s.save(function(err){
+                            console.log("Error while creating sub2");
+                            return;
+                        });
+                        user.subscriptions.push(s._id);
+                        user.save(function(err){
+                            if (err){
+                                console.log("Error adding an existing sub to user list");
+                            }
+                            return;
+                        });
+                    }
+                }
+
             });
         }
-    });
 });
+});
+
 //var location = require("../../models/Location");
 //
 //// REST API for location
