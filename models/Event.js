@@ -1,10 +1,7 @@
 var mongoose = require("mongoose");
 
 var eventSchema = mongoose.Schema({
-    when: {
-        time: {start: Number, end: Number},
-        date: Date 
-    },
+    when: {start: Number, end: Number},
     status: String,
     host: String,
     description: String,

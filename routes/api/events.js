@@ -4,6 +4,7 @@ var router = express.Router();
 
 var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
+var Location = require("../../models/Location").Location;
 
 /*DISPLAY ALL EVENTS*/
 router.get('/', function(req, res) {
@@ -25,44 +26,21 @@ router.get('/', function(req, res) {
 //TODO: add event to Users.events list - DONE, but need to be tested
 router.post('/', function(req, res) {
 	var status = "Food"; //default status
-    var host = req.body.host; //kerberos, string!!!!
-    var startTimeHour = req.body.startTimeHour; //number
-    var startTimeMin = req.body.startTimeMin;  //number
-    var startTime = startTimeHour+startTimeMin/60; 
-    var endTimeHour = startTimeHour+1; //by default the event is 1 hr long
-    if (req.body.endTimeHour){
-    	 endTimeHour= req.body.endTimeHour;//number
-    }
-    var endTimeMin = startTimeMin; 
-    if (req.body.endTimeMin){
-    	 endTimeMin= req.body.endTimeMin; //number
-    }
-    var endTime = endTimeHour+endTimeMin/60;
+    var host = req.cookies.kerberos; //kerberos, string!!!!
+    var data = req.body;
+    var start = data.when.start; //number
+    var end = data.when.end;
+    var location = data.location; //comes as objId
+	var description = req.body.description;
 
-    var date = new Date(req.body.date);
-    var location = req.body.location; //needs to be ObjectID
 
-    var description = req.body.description;
-
-    if (description){ //description was included
-    	var newEventJSON = {"host":host, 
-    					"when": 
-    							{"time":{"start":startTime, "end":endTime},
-    							"date":date},
-    					"location": location,
+	
+	var newEventJSON = {"host":host, 
+    					"when": {"start":start, "end":end},
+    					"location": location._id, //now it's ObjectId
     					"status":status,
     					"description":description
     					};
-    	}
-    else{ //no description
-    	var newEventJSON = {"host":host, 
-    					"when": 
-    							{"time":{"start":startTime, "end":endTime},
-    							"date":date},
-    					"location": location,
-    					"status":status
-    					};
-    	}
     var newEvent = new Event(newEventJSON);
     newEvent.save(function(err){
     	if (err){
@@ -71,7 +49,7 @@ router.post('/', function(req, res) {
     	else{
     		User.findOne({kerberos:host}, function(err, user){
     			if (err){
-    				console.log("Error adding an event to the User.events");
+    				console.log("Error adding an event to the User.events. "+err);
     			}
     			//IF SUCH USER EXISTS
     			else  if (user){
@@ -82,8 +60,8 @@ router.post('/', function(req, res) {
     					}
     					else{
     						//res.json(newEvent);
-    						//res.json({message:"event created"}); //smth...
-    						res.redirect('/events');
+    						res.json({message:"event created"}); //smth...
+    						//res.redirect('/events');
     					}
     				});
     			}
@@ -95,7 +73,8 @@ router.post('/', function(req, res) {
     						console.log("Error creating a new user instance");
     					}
     					else{
-    						res.redirect('/events');
+    						//res.redirect('/events');
+    						res.json({message:"event created, user created"});
     					}
     				});
     			}
@@ -112,7 +91,7 @@ router.get('/:eventId', function(req,res){
 			console.log("Error finding the event");
 			return;
 		}
-		res.send(doc); //just send a JSON object
+		res.json(doc); //just send a JSON object
 	});
 });
 
