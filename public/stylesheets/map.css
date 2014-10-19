@@ -1,4 +1,10 @@
 #map {
     width: 800px;
     height: 400px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#form_add_event input[type="text"] {
+    width: 80px;
 }

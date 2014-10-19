@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // set up routers
 var routes = require("./routes/index");
 var map = require("./routes/map");
-var ev = require("./routes/events");
+var ev = require("./routes/api/events");
 var locations = require("./routes/api/locations");
 
 app.use('/', routes);

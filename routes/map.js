@@ -10,9 +10,7 @@ mongoose.connect(connection_string);
 var db = mongoose.connection;
 
 db.on("error", console.error.bind(console, "Mongoose connection error."));
-db.once("open", function() {
-    insertLocation();
-    /*
+db.once("open", function() {    
     mongoose.connection.db.dropDatabase(function(err, result) {
         if (err) {
             console.error.bind(console, "Mongoose database error.");
@@ -20,7 +18,7 @@ db.once("open", function() {
             insertLocation();
         }
     });
-    */
+    
 });
 
 var insertLocation = function() {

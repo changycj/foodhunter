@@ -4,22 +4,49 @@
     <title>Welcome to <%=title%></title>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/javascripts/map.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
     
+    <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    
+    <link rel="stylesheet" href="/libs/timepicker/jquery.timepicker.css">
+    <script src="/libs/timepicker/jquery.timepicker.min.js"></script>
+    
+    <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
+    
+    <script type="text/javascript" src="/javascripts/map.js"></script>
     <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
     <link rel="stylesheet" type="text/css" href="/stylesheets/map.css">
 </head>
 <body>
     
     <h1><%=title%></h1>
+    <form id="form_login" method="post" action="/login">
+        <input type="text" name="kerberos" placeholder="Enter Kerberos ID">
+        <input type="submit" value="Login">
+    </form>
 
     <div id="map"></div>
+    
+    <div>
+        <h2>Add event</h2>
+        <form id="form_add_event">
+            <p>Date: <input type="text" name="date">
+            Start time: <input type="text" name="time_start">
+            End time: <input type="text" name="time_end"></p>
+            
+            <p>Description:</p>
+            <p><textarea name="description" rows=5 cols=50></textarea></p>
+            <input type="submit" value="Add Event">
+        </form>
+    </div>
+    
+    <br><br>
     <%for (var i = 0; i < locs.length; i++) {%> 
         <p><%=locs[i].building + " - " + locs[i].name + ", (" + locs[i].gps.lat + ", " + locs[i].gps.lon + ")"%></p>
     <%}%>
     
+
 </body>
 
 </html>
