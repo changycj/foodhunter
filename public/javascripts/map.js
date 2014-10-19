@@ -42,8 +42,10 @@ $(document).ready(function() {
     $.ajax({
         url: "/users/" + kerberos,
         method: "GET",
-        success: function(data) {
-            alert(data);
+        success: function(user) {
+            for (var i = 0; i < user.events.length; i++) {
+                addMyEvent(user.events[i]);
+            }
         }
     });
     
@@ -73,16 +75,21 @@ $(document).ready(function() {
         };
         
         $.ajax({
-//            url: "/test_post", // this should be the URL to add event method
             url: "/events",
             type: "POST",
             data: formData,
             cache: false,
             success: function(data) {
-                alert("Success! " + JSON.stringify(data)); // what to actually do here?
+                if (data.message == 1) {
+                    $("#form_add_event")[0].reset();
+                    addMyEvent(data.element);
+                    alert("Event created!");
+                } else {
+                    alert("Event create unsuccessful.");
+                }
             },
             error: function() {
-                alert("ERROR!");
+                alert("Error creating event!");
             }
         });
     });
@@ -94,6 +101,8 @@ $(document).ready(function() {
         $(".subscription:last").clone().insertAfter($(".subscription:last"));
     });
     
+    
+    // TODOOOOO
     // subscribe form
     $("#form_subscribe").submit(function(e) {
         e.preventDefault();
@@ -128,6 +137,36 @@ $(document).ready(function() {
         });
     });
     
+    function addMyEvent(ev) {
+        var item = $("<li/>").appendTo("#my_events_container ul");
+        $("<p/>").appendTo(item).text((new Date(ev.when.start)).toLocaleString());
+        $("<p/>").appendTo(item).text(ev.description);
+        
+        var control = $("<p/>").appendTo(item);
+        
+        $("<button/>").text("Edit").appendTo(control).click(function(e) {
+            console.log("EDIT!!!");
+        });
+        
+        $("<button/>").text("Delete").appendTo(control).click(function(e) {
+            $.ajax({
+                url: "/events/" + ev._id,
+                type: "DELETE",
+                success: function(data) {
+                    if (data.message == 1) {
+                        alert("Event deleted!");
+                    } else {
+                        alert("Event delete unsuccessful.");
+                    }
+                },
+                error: function(err) {
+                    alert("Error deleting event.");
+                }
+            });
+        });
+        
+    }
+    
     function addMarker(loc) {
         // and also add markers to map
         var marker = L.mapbox.featureLayer({
@@ -145,4 +184,6 @@ $(document).ready(function() {
             }
         }).addTo(map);
     }
+    
+    
 });

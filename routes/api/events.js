@@ -145,14 +145,16 @@ router.put('/:eventId', function(req,res){
 /*********DELETE an event*********/
 //TODO: delete event from Users.events list - DONE, but needs to be tested
 //
-router.delete('/events/:eventId', function(req,res){
+router.delete('/:eventId', function(req,res){
+    console.log("HI");
 	var eventId = req.params.eventId;
-	Events.remove({_id:eventId}, function(err){
+    console.log(eventId);
+	Event.remove({_id:eventId}, function(err){
 		if (err){
 			console.log("Error deleting event: "+ eventId);
 		}
 		else{
-			User.update({_id:host}, {$pull:{events:eventId}}, function(err, doc){
+			User.update({_id:req.cookies.kerberos}, {$pull:{events:eventId}}, function(err, doc){
 				if (err){
 					console.log("Error while deleting event from usr's list");
 				}
