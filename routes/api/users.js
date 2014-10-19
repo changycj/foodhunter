@@ -42,7 +42,9 @@ router.post("/login", function(req, res) {
 						if (err){
 							res.send("Error saving new user");
 						} else {
-							res.redirect("/users/login");
+							res.cookie("kerberos", req.body.kerberos);
+    						res.cookie("login", "true");
+    						res.json(req.body.kerberos);
 						}
 					});
 				});
