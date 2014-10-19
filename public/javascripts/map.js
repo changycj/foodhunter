@@ -110,7 +110,7 @@ $(document).ready(function() {
         };
         
         $.ajax({
-            url: "/test_post", // replace with corresponding method in API
+            url: "/subscriptions/subscribe", // replace with corresponding method in API
             type: "POST",
             data: formData,
             cache: false,

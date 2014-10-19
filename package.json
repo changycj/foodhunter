@@ -5,20 +5,20 @@
   "scripts": {
     "start": "node ./bin/www"
   },
-    
   "dependencies": {
-    "express": "~4.9.0",
     "body-parser": "~1.8.1",
     "cookie-parser": "~1.3.3",
-    "morgan": "~1.3.0",
-    "serve-favicon": "~2.1.3",
     "debug": "~2.0.0",
     "ejs": "~0.8.5",
-    "mongodb": "1.4.15",
-    "mongoose" : "*",
+    "express": "~4.9.0",
     "express-helpers": "1.3.1",
-    "request" : "*",
-    "express-partials" : "*",
-    "passport-kerberos" : "*"
+    "express-partials": "*",
+    "mongodb": "1.4.15",
+    "mongoose": "*",
+    "morgan": "~1.3.0",
+    "nodemailer": "^0.7.1",
+    "passport-kerberos": "*",
+    "request": "*",
+    "serve-favicon": "~2.1.3"
   }
 }
