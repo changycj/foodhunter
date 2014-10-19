@@ -4,7 +4,7 @@ var subscriptionSchema = mongoose.Schema({
     building: {type: mongoose.Schema.Types.ObjectId,
         ref: 'Location'},
     time_block: Number,
-    users: [{type: mongoose.Schema.Types.ObjectId, ref:'User'}]
+    users: [{type: String, ref:'User'}]
 });
 
 var Subscription = mongoose.model("Subscription", subscriptionSchema);

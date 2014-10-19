@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var eventSchema = mongoose.Schema({
     when: {start: Number, end: Number},
     status: String,
-    host: String,
+    host: {type: String, ref: 'User'},
     description: String,
     location: {type: mongoose.Schema.Types.ObjectId,
            ref : 'Location'
