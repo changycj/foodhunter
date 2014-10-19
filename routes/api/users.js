@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
 // var location = require("../models/Location");
-var user = require("../../models/User");
+var User = require("../../models/User").User;
 //realm used for kerberos authentication
 // var passport = require("passport-kerberos");
 
@@ -21,13 +21,15 @@ var user = require("../../models/User");
 router.post("/login", function(req, res) {
     // TODO: need to make sure user exists with certificates
     var kerberos = req.body.kerberos;
-    user.User.findOne({'_id': kerberos}).exec(function(err, u){
+    User.findOne({'_id': kerberos}).exec(function(err, u){
     	if(err){
     		res.send("Error finding user to login");
     	} else {
+    		console.log('querying for users');
     		if (u == undefined){
+    			console.log("undefined user");
     			/*POST new user*/
-				var newUser = new user.User({
+				var newUser = new User({
 					'_id': kerberos,
 					events : [],
 					subscriptions : []
@@ -39,6 +41,7 @@ router.post("/login", function(req, res) {
 						res.cookie("kerberos", req.body.kerberos);    				
 						res.cookie("login", "true");
     					res.json(req.body.kerberos);
+    					console.log("saving user");
 					}
 				});
     		} else {
@@ -56,7 +59,7 @@ router.post("/login", function(req, res) {
 router.get("/:userID/", function(req, res){
 	//find users by :userID
 	var userID = req.params.userID;
-	user.User.findOne({'_id': userID})
+	User.findOne({'_id': userID})
 	//Populate both subscriptions and events field
 	.populate('subscriptions events')
 	.exec(function(err, u){
