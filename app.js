@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var partials = require('express-partials');
 var passport = require('passport-kerberos');
 var nodemailer = require('nodemailer');
+var smtpPool = require('nodemailer-smtp-pool');
 
 var app = express();
 

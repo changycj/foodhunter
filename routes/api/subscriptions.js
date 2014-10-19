@@ -3,6 +3,7 @@ var router = express.Router();
 var subscription = require("../../models/Subscription");
 var user = require("../../models/User");
 var nodemailer = require('nodemailer');
+var smtpPool = require('nodemailer-smtp-pool');
 
 
 // REST API for subscription
@@ -56,13 +57,21 @@ router.post("/subscribe", function(req, res){
         //     }
         // });
         console.log("entered subscribe method");
-        var smtpTransport = nodemailer.createTransport('SMTP', {
-            service: 'Gmail',
-            auth: {
-                user: 'foodHunter',
-                pass: 'food'
-            }
-        });
+        var smtpTransport = nodemailer.createTransport(smtpPool({
+            // service: 'SendGrid',
+            // auth: {
+            //     user: 'foodHunter',
+            //     pass: '6170proj'
+            // }
+            host: 'localhost',
+            port: 3000,
+            // auth: {
+            //     user: 'username',
+            //     pass: 'password'
+            // },
+            maxConnections: 20,
+            maxMessages: Infinity
+        }));
         var mailOptions = {
             // to: user.kerberos + "@mit.edu",
             bcc: 'rcha@mit.edu',
