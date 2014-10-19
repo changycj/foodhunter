@@ -53,8 +53,8 @@ router.get("/:userID/new", function(req, res){
 	var userID = req.params.userID;
 	var newUser = new user.User({
 		'_id': userID,
-		events = [],
-		subscriptions = []
+		events: [],
+		subscriptions: []
 	});
 	user.User.save();
 })

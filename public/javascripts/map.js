@@ -38,7 +38,7 @@ $(document).ready(function() {
     
     // populate my events and my subscriptions
     $.ajax({
-        url: "/users/
+        url: "/users/"
         
     });
     
