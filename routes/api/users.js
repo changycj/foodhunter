@@ -3,8 +3,19 @@ var router = express.Router();
 var mongoose = require("mongoose");
 // var location = require("../models/Location");
 var user = require("../models/User.js");
+//realm used for kerberos authentication
+var passport = require("passport-kerberos");
 
+var REALM = "EXAMPLE.COM"
 
+passport.use(new KerberosStrategy(function(username, done){
+	user.User.findONe({username: username}, function(err, user){
+		if (err) {return done(err);}
+		if (!user){return done(null, false);}
+		return done(null, user, REALM);
+	});
+}));
+//!!!! need to work on authentication
 /*GET method for user */
 router.get("/:userID/", function(req, res){
 	//find users by :userID
