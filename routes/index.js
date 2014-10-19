@@ -3,7 +3,17 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {    
-    res.redirect("/users/login");
+    res.redirect("/login");
+});
+
+// GET login page
+router.get("/login", function(req, res) {
+    res.render("login", {});
+});
+
+// GET event details page
+router.get("/event_details/:eventId", function(req, res) {
+    res.render("event", {});
 });
 
 // dummy post functions for testing

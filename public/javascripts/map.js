@@ -20,7 +20,15 @@ $(document).ready(function() {
     $("#form_add_event input[name^='time']").timepicker({"scrollDefault" : "now"});
     $("#form_add_event input[name^='date']").datepicker();
     
+    // add more subscription fields
+    $("#add_subscription").click(function(e) {
+        e.preventDefault();
+        // add blank subscription
+        $(".subscription:last").clone().insertAfter($(".subscription:last"));
+    });
+    
     // populate location options
+    var location_options = 
     $.ajax({
         url: "/locations",
         method: "GET",
@@ -43,8 +51,17 @@ $(document).ready(function() {
         url: "/users/" + kerberos,
         method: "GET",
         success: function(user) {
+            console.log(user);
+            // populate my events
             for (var i = 0; i < user.events.length; i++) {
                 addMyEvent(user.events[i]);
+            }
+            
+            var blank = $(".subscription:last").clone();
+            
+            for (var i = 0; i < user.subscriptions.length; i++) {
+                var new_s = blank.prependTo("#form_subscribe");
+                new_s.find("select[name='location']").val()
             }
         }
     });
@@ -94,14 +111,6 @@ $(document).ready(function() {
         });
     });
     
-    
-    // add more subscription fields
-    $("#add_subscription").click(function(e) {
-        e.preventDefault();
-        $(".subscription:last").clone().insertAfter($(".subscription:last"));
-    });
-    
-    
     // TODOOOOO
     // subscribe form
     $("#form_subscribe").submit(function(e) {
@@ -145,7 +154,7 @@ $(document).ready(function() {
         var control = $("<p/>").appendTo(item);
         
         $("<button/>").text("Edit").appendTo(control).click(function(e) {
-            console.log("EDIT!!!");
+            console.log("EDIT");
         });
         
         $("<button/>").text("Delete").appendTo(control).click(function(e) {
@@ -154,6 +163,7 @@ $(document).ready(function() {
                 type: "DELETE",
                 success: function(data) {
                     if (data.message == 1) {
+                        item.remove();
                         alert("Event deleted!");
                     } else {
                         alert("Event delete unsuccessful.");
@@ -164,7 +174,6 @@ $(document).ready(function() {
                 }
             });
         });
-        
     }
     
     function addMarker(loc) {

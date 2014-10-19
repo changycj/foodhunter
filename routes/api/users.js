@@ -17,11 +17,6 @@ var user = require("../../models/User");
 // }));
 //!!!! need to work on authentication
 
-// GET login page
-router.get("/login", function(req, res) {
-    res.render("login", {});
-});
-
 // POST login user
 router.post("/login", function(req, res) {
     // TODO: need to make sure user exists with certificates
