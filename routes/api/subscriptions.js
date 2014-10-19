@@ -16,7 +16,7 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
         if (err) {
             res.send("Error retrieving subscription. " + err);
         } else {
-            res.json(sub);
+            res.json({message:1, element:sub});
         }
     
     });
@@ -49,7 +49,7 @@ router.post("/subscribe", function(req, res) {
         if (err){
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
-            return
+            return;
         }
 
         for (var i = 0; i < numSubs; i++){
@@ -57,7 +57,7 @@ router.post("/subscribe", function(req, res) {
             subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (err, s){
                 if (err){
                     console.log("Error while fingding sub");
-                    res.json({message:0, details:"Error while fingding sub"});
+                    //res.json({message:0, details:"Error while fingding sub"});
                     return;
                 }
                 else{
@@ -68,7 +68,7 @@ router.post("/subscribe", function(req, res) {
                         newSub.save(function(err){
                             if (err){
                                 console.log("Error while creating sub1");
-                                res.json({message:0, details:"Error while creating sub1"});
+                                //res.json({message:0, details:"Error while creating sub1"});
                             }
                             return;
                         });
@@ -76,7 +76,7 @@ router.post("/subscribe", function(req, res) {
                         user.save(function(err){
                             if (err){
                                 console.log("Error adding a newly creating sub to user list");
-                                res.json({message:0, details:"Error adding a newly creating sub to user list"});
+                                //res.json({message:0, details:"Error adding a newly creating sub to user list"});
                             }
                             return;
                         });
@@ -86,14 +86,14 @@ router.post("/subscribe", function(req, res) {
                         s.users.push(userKerberos);
                         s.save(function(err){
                             console.log("Error while creating sub2");
-                            res.json({message:0, details:"Error while creating sub2"});
+                            //res.json({message:0, details:"Error while creating sub2"});
                             return;
                         });
                         user.subscriptions.push(s._id);
                         user.save(function(err){
                             if (err){
                                 console.log("Error adding an existing sub to user list");
-                                res.json({message:0, details:"Error adding an existing sub to user list"});
+                                //res.json({message:0, details:"Error adding an existing sub to user list"});
                             }
                             return;
                         });
@@ -102,8 +102,9 @@ router.post("/subscribe", function(req, res) {
 
             });
         }
-    });
     res.json({message:1, details:"All subscriptions were added!"});
+    });
+    
 });
 
 /*Delete a single subscription from current user's list*/
