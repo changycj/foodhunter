@@ -41,6 +41,7 @@ router.post("/login", function(req, res) {
 					if (err){
 						res.send("Error saving new user");
 					} else {
+						console.log(newUser._id);
 						res.cookie("kerberos", req.body.kerberos);    				
 						res.cookie("login", "true");
     					res.json(req.body.kerberos);
@@ -73,18 +74,6 @@ router.get("/:userID/", function(req, res){
 		}
 	});
 });
-
-
-/*POST new user to database */
-router.get("/:userID/new", function(req, res){
-	var userID = req.params.userID;
-	var newUser = new user.User({
-		'_id': userID,
-		events: [],
-		subscriptions: []
-	});
-	user.User.save();
-})
 
 
 module.exports = router;
