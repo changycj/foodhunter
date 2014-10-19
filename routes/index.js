@@ -13,7 +13,7 @@ router.get("/login", function(req, res) {
 
 // GET event details page
 router.get("/event_details", function(req, res) {
-    res.render("event", {event_id: req.query.event_id});
+    res.render("details", {event_id: req.query.event_id});
 });
 
 // dummy post functions for testing
