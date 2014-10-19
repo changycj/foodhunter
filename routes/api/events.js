@@ -128,36 +128,39 @@ router.get('/:eventId', function(req,res){
 //TODO: need to be tested
 router.put('/:eventId', function(req,res){
 	var eventId = req.params.eventId;
-	var fieldToChange = req.body.fieldToChange; 
-	// Possible values: "location", "date", "start", "end", "status", "description"
-	var newValue = req.body.newValue;
+	// var fieldToChange = req.body.fieldToChange; 
+	// // Possible values: "location", "date", "start", "end", "status", "description"
+	// var newValue = req.body.newValue;
 	Event.findOne({_id:eventId}, function(err, doc){
 		if (err){
 			console.log("Error while updating the event");
 			return;
 		}
 		else{
-			if (fieldToChange==="date"){
-				doc.when.date = newValue;
-			}
-			else if(fieldToChange==="location"){
-				doc.location = newValue;
-			}
-			else if (fieldToChange==="start"){
-				doc.when.time.start = newValue;
-			}
-			else if (fieldToChange==="end"){
-				doc.when.time.end = newValue;
-			}
-			else if (fieldToChange==="status"){
-				doc.status = newValue;
-			}
-			else if (fieldToChange==="description"){
-				doc.description = newValue;
-			}
-			else{
-				console.log("Error updating the event instance");
-			}
+            doc.when.start = req.body.when.start;
+            doc.when.end = req.body.when.end;
+            doc.description = req.body.description;
+			// if (fieldToChange==="date"){
+			// 	doc.when.date = newValue;
+			// }
+			// else if(fieldToChange==="location"){
+			// 	doc.location = newValue;
+			// }
+			// else if (fieldToChange==="start"){
+			// 	doc.when.time.start = newValue;
+			// }
+			// else if (fieldToChange==="end"){
+			// 	doc.when.time.end = newValue;
+			// }
+			// else if (fieldToChange==="status"){
+			// 	doc.status = newValue;
+			// }
+			// else if (fieldToChange==="description"){
+			// 	doc.description = newValue;
+			// }
+			// else{
+			// 	console.log("Error updating the event instance");
+			// }
 		}
 		doc.save(function(err){
 			if (err){
