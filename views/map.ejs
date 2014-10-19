@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Welcome to <%=title%></title>
+    <title>Welcome to Food Hunter</title>
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     
@@ -20,7 +20,7 @@
 </head>
 <body>
     
-    <h1><%=title%></h1>
+    <h1>Food Hunter</h1>
     <form id="form_login" method="post" action="/login">
         <input type="text" name="kerberos" placeholder="Enter Kerberos ID">
         <input type="submit" value="Login">
@@ -34,17 +34,22 @@
             <p>Date: <input type="text" name="date">
             Start time: <input type="text" name="time_start">
             End time: <input type="text" name="time_end"></p>
-            
+            Location: <select class="location" name="location"></select>
             <p>Description:</p>
             <p><textarea name="description" rows=5 cols=50></textarea></p>
             <input type="submit" value="Add Event">
         </form>
     </div>
     
-    <br><br>
-    <%for (var i = 0; i < locs.length; i++) {%> 
-        <p><%=locs[i].building + " - " + locs[i].name + ", (" + locs[i].gps.lat + ", " + locs[i].gps.lon + ")"%></p>
-    <%}%>
+    <div>
+        <h2>Subscribe</h2>$
+        <form id="form_subscribe">
+            <p class="subscription">Location: <select class="location" name="loc_1"></select>
+                Time Block: <select class="time_block" name="time_1"></select></p>
+            <button id="add_subscription">Add More</button>
+            <input type="submit" value="Subscribe">
+        </form>
+    </div>
     
 
 </body>

@@ -61,13 +61,7 @@ var insertLocation = function() {
 var setupRoutes = function() {
     
     router.get("/", function(req, res) {
-        
-        location.Location.find({}).sort({building: "desc"}).exec(function(err, locs) {
-            res.render("map", {
-                title: "Food Hunter",
-                locs: locs
-            });
-        });
+        res.render("map", {});
     });
 }
 

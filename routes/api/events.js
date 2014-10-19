@@ -2,8 +2,8 @@ var express = require('express');
 var mongoose = require("mongoose");
 var router = express.Router();
 
-var Event = require('../models/Event').Event;
-var User = require("../models/User").User;
+var Event = require('../../models/Event').Event;
+var User = require("../../models/User").User;
 
 /*DISPLAY ALL EVENTS*/
 router.get('/', function(req, res) {

@@ -17,7 +17,7 @@ router.post("/login", function(req, res) {
 
 router.post("/test_post", function(req, res) {
     console.log(req.body);
-    console.log("HELLO!");
+    res.json(req.body);
 });
 
 module.exports = router;
