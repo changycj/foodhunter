@@ -5,6 +5,11 @@
     margin-bottom: 30px;
 }
 
+#my_events_container {
+    float: right;
+    width: 300px;
+}
+
 #form_add_event input[type="text"] {
     width: 80px;
 }
