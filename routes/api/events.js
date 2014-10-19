@@ -1,7 +1,9 @@
+// TODO: email sendout
+
 var express = require('express');
 var mongoose = require("mongoose");
 var router = express.Router();
-
+//get models
 var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
@@ -33,6 +35,7 @@ router.post('/', function(req, res) {
     var data = req.body;
     var start = data.when.start; //number
     var end = data.when.end;
+    console.log("START: "+start);
     var location = data.location; //comes as objectId already :)
 	var description = req.body.description;
 	
@@ -42,7 +45,7 @@ router.post('/', function(req, res) {
     					"status":status,
     					"description":description
     					};
-	//check if the event is valid    					
+	//check if the event is valid. If nonsense entered, it puts today's date    					
     if (!eventValidityCheck(newEventJSON)){
     	res.json({message:0, element:newEventJSON, details : "Event happens in the past"});
     	return;
@@ -170,7 +173,7 @@ router.delete('/events/:eventId', function(req,res){
 //OUTPUT: true if event happends in the past day
 function eventValidityCheck(event, today){
 	var start = event.when.start;
-	return start>today;
+	return start>=today;
 }
 
 module.exports = router;
