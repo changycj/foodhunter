@@ -26,6 +26,7 @@ var map = require("./routes/map");
 var ev = require("./routes/api/events");
 var locations = require("./routes/api/locations");
 var subscriptions = require("./routes/api/subscriptions");
+var users = require("./routes/api/users");
 
 app.use('/', routes);
 app.use('/map', map);
@@ -34,6 +35,8 @@ app.use('/map', map);
 app.use("/locations", locations);
 app.use('/events', ev);
 app.use("/subscriptions", subscriptions);
+app.use("/users", users);
+
 
 // ERROR Handlers
 // catch 404 and forward to error handler

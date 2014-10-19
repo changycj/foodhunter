@@ -34,14 +34,17 @@ $(document).ready(function() {
                 
             });
         }
-    })
-        
-    // add more subscription fields
-    $("#add_subscription").click(function(e) {
-        e.preventDefault();
-        $(".subscription:last").clone().insertAfter($(".subscription:last"));
     });
     
+    // populate my events and my subscriptions
+    $.ajax({
+        url: "/users/
+        
+    });
+    
+    
+    // FORMS
+            
     // add event form
     $("#form_add_event").submit(function(e) {        
         
@@ -77,6 +80,13 @@ $(document).ready(function() {
                 alert("ERROR!");
             }
         });
+    });
+    
+    
+    // add more subscription fields
+    $("#add_subscription").click(function(e) {
+        e.preventDefault();
+        $(".subscription:last").clone().insertAfter($(".subscription:last"));
     });
     
     // subscribe form

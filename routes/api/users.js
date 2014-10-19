@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
 // var location = require("../models/Location");
-var user = require("../models/User.js");
+var user = require("../../models/User");
 //realm used for kerberos authentication
 // var passport = require("passport-kerberos");
 
@@ -46,7 +46,7 @@ router.get("/:userID/", function(req, res){
 			res.json(u);
 		}
 	});
-}
+});
 
 /*POST new user to database */
 

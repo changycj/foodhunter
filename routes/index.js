@@ -3,10 +3,8 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {    
-    res.redirect("/login");
+    res.redirect("/users/login");
 });
-
-
 
 // dummy post functions for testing
 // simply sends what's received back
