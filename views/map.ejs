@@ -21,7 +21,12 @@
     <h2>Logged in as <%=kerberos%></h2>
     <div id="map"></div>
     
-    <div>
+    <div id="my_events_container">
+        <h2>My Events</h2>
+    
+    </div>
+    
+    <div id="add_event_container">
         <h2>Add event</h2>
         <form id="form_add_event">
             <p>Date: <input type="text" name="date">
@@ -34,7 +39,8 @@
         </form>
     </div>
     
-    <div>
+    
+    <div id="subscribe_container">
         <h2>Subscribe</h2>
         <form id="form_subscribe">
             <p class="subscription">Location: <select class="location" name="loc"></select>
