@@ -42,22 +42,6 @@ $(document).ready(function() {
         $(".subscription:last").clone().insertAfter($(".subscription:last"));
     });
     
-    // login form
-    $("#form_login").submit(function(e) {
-        e.preventDefault();
-        // authenticate!!!
-        var formData = { kerberos: $("input[name='kerberos']").val()};
-        
-        $.ajax({
-            url: "/login",
-            method: "POST",
-            data: formData,
-            success: function(user) {
-                $("#form_login").replaceWith("Logged in as " + user.kerberos);   
-            }
-        });
-    });
-    
     // add event form
     $("#form_add_event").submit(function(e) {        
         

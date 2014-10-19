@@ -1,5 +1,5 @@
-//var express = require("express");
-//var router = express.Router();
+var express = require("express");
+var router = express.Router();
 //var location = require("../../models/Location");
 //
 //// REST API for location
@@ -30,4 +30,4 @@
 //    });
 //});
 //
-//module.exports = router;
+module.exports = router;

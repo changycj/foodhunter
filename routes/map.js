@@ -61,7 +61,14 @@ var insertLocation = function() {
 var setupRoutes = function() {
     
     router.get("/", function(req, res) {
-        res.render("map", {});
+        
+        if (req.cookies.login == "true") {
+            res.render("map", {
+                kerberos: req.cookies.kerberos
+            });
+        } else {
+            res.redirect("/login");
+        }
     });
 }
 
