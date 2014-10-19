@@ -7,6 +7,7 @@ var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
 
 /*DISPLAY ALL EVENTS*/
+/*Currently in the test mode. Might not be needed in the deployed version*/
 router.get('/', function(req, res) {
 	Event.find({},{}, function(err, doc){
 	if (err){
@@ -23,17 +24,17 @@ router.get('/', function(req, res) {
 /*********CREATE A NEW EVENT*********/
 
 /*TODO: validate hours, date, status, error handling in general*/
-//TODO: add event to Users.events list - DONE, but need to be tested
+
 router.post('/', function(req, res) {
 	var status = "Food"; //default status
+	var today = new Date().valueOf(); // date when the event is created
+	//start getting info
     var host = req.cookies.kerberos; //kerberos, string!!!!
     var data = req.body;
     var start = data.when.start; //number
     var end = data.when.end;
-    var location = data.location; //comes as objId
+    var location = data.location; //comes as objectId already :)
 	var description = req.body.description;
-
-
 	
 	var newEventJSON = {"host":host, 
     					"when": {"start":start, "end":end},
@@ -41,40 +42,36 @@ router.post('/', function(req, res) {
     					"status":status,
     					"description":description
     					};
+	//check if the event is valid    					
+    if (!eventValidityCheck(newEventJSON)){
+    	res.json({message:0, element:newEventJSON, details : "Event happens in the past"});
+    	return;
+    }
+    //all good, go on
     var newEvent = new Event(newEventJSON);
     newEvent.save(function(err){
     	if (err){
     		console.log("Error creating a new event instance");
+    		res.json({message:0, details:"Error creating a new event instance"});
     	}
     	else{
     		User.findOne({kerberos:host}, function(err, user){
     			if (err){
     				console.log("Error adding an event to the User.events. "+err);
+    				res.json({message:0, details:"Error adding an event to user"});
     			}
-    			//IF SUCH USER EXISTS
-    			else  if (user){
+    			//SUCH USER EXISTS
+    			else {
     				user.events.push(newEvent._id);
     				user.save(function(err){
     					if (err){
     						console.log("Error adding an event to the User.events 2");
+    						res.json({message:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
     						//res.json(newEvent);
-    						res.json({message:"event created"}); //smth...
+    						res.json({message:1, element: newEvent}); //smth...
     						//res.redirect('/events');
-    					}
-    				});
-    			}
-    			//NO SUCH USER IN THE DATABASE YET
-    			else{
-    				var newUser = new User({"kerberos": host, "events": [newEvent._id]});
-    				newUser.save(function(err){
-    					if (err){
-    						console.log("Error creating a new user instance");
-    					}
-    					else{
-    						//res.redirect('/events');
-    						res.json({message:"event created, user created"});
     					}
     				});
     			}
@@ -135,9 +132,9 @@ router.put('/:eventId', function(req,res){
 				console.log("Error saving the updates");
 				return;
 			}
-			res.send(doc);
+			//res.send(doc);
 			//res.redirect('/event/'+eventId);
-			//res.json({message:"event updated"});
+			res.json({message:1, element: doc});
 		});
 	});
 });
@@ -157,8 +154,9 @@ router.delete('/events/:eventId', function(req,res){
 					console.log("Error while deleting event from usr's list");
 				}
 				else{
-					//res.json({message:"event deleted"});
-					res.redirect('/events');				}
+					res.json({message:1, element: doc});
+					//res.redirect('/events');
+				}
 			});
 			
 		}
@@ -166,5 +164,13 @@ router.delete('/events/:eventId', function(req,res){
 
 });
 
+//**************HELPERS***************
+//DESCRIPTION: check if a new event instance happens in the past;
+//INPUT: event JSON and today's time value in milliseconds
+//OUTPUT: true if event happends in the past day
+function eventValidityCheck(event, today){
+	var start = event.when.start;
+	return start>today;
+}
 
 module.exports = router;
