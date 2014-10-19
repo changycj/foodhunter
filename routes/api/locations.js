@@ -10,7 +10,6 @@ router.get("/", function(req, res) {
         if (err) {
             res.send("Error retrieving location info. " + err);
         } else {
-            console.log(locs);
             res.json(locs);
         }
     });

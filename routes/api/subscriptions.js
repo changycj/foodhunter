@@ -26,6 +26,7 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
 
 router.get("/", function(req, res) {
     var userKerberos = req.cookies.kerberos;
+    console.log("HI");
     User.findOne({_id:userKerberos}).populate("subscriptions").exec(function(err, user){
         if (!(user==undefined)){
            res.json(user.subscriptions);
@@ -41,7 +42,7 @@ router.get("/", function(req, res) {
 router.post("/subscribe", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
     var subscriptions = req.body.subscriptions; //list of subs
-    console.log("GOT SUBS: "+subscriptions);
+    console.log("GOT SUBS: "+JSON.stringify(subscriptions));
     var userKerberos = req.cookies.kerberos;
     // first find out if subs already exist
     var numSubs = subscriptions.length;

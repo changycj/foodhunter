@@ -41,7 +41,7 @@ router.post('/', function(req, res) {
 	
 	var newEventJSON = {"host":host, 
     					"when": {"start":start, "end":end},
-    					"location": location._id, //now it's ObjectId
+    					"location": location, //now it's ObjectId
     					"status":status,
     					"description":description
     					};
