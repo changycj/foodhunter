@@ -21,6 +21,15 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
     
     });
 });
+/******GET list of user related subs*******/
+//Sends a list of user related subscriptions (list of json)
+
+router.get("/", function(req, res) {
+    var userKerberos = req.cookies.kerberos;
+    User.findOne({_id:userKerberos}).populate("subscriptions").exec(function(err, user){
+        res.json(user.subscriptions);
+    });
+});
 
 /*ADD new subscriptions, update old subscriptions by pushin new users*/
 //assumes the user exists in DB
@@ -92,6 +101,32 @@ router.post("/subscribe", function(req, res) {
     res.json({message:1, details:"All subscriptions were added!"});
 });
 
+/*Delete a single subscription from current user's list*/
+router.delete("/:subId", function(req,res){
+    var subId = req.params.subId;
+    var userKerberos = req.cookies.kerberos;
+    //delete a user from subscription list
+    subscription.Subscriptions.update({_id:subId}, {$pull:{users:userKerberos}}, function(err){
+        if (err){
+            console.log("Error deleting user from subscription list: subId "+ subId);
+            res.json({message:0, details:"Error deleting user from subscription list: subId "+ subId});
+        }
+        else{
+            //delete subscription from a user list
+            User.update({_id:userKerberos}, {$pull:{subscriptions:subId}}, function(err, user){
+                if (err){
+                    console.log("Error while deleting sub from usr's list");
+                    res.json({message:0, details:"Error deleting sub from user's list: kerberos "+ userKerberos});
+                }
+                else{
+                    res.json({message:1, element: user});
+                    //res.redirect('/events');
+                }
+            });
+            
+        }
+    });
+});
 //var location = require("../../models/Location");
 //
 //// REST API for location
