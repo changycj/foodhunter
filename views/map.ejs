@@ -21,12 +21,17 @@
 <body>
     
     <h1>Food Hunter</h1>
-    <form id="form_login" method="post" action="/login">
-        <input type="text" name="kerberos" placeholder="Enter Kerberos ID">
-        <input type="submit" value="Login">
-    </form>
 
     <div id="map"></div>
+    
+    <div>
+        <h2>Login</h2>
+        <form id="form_login">
+            <input type="text" name="kerberos" placeholder="Enter Kerberos ID">
+            <input type="submit" value="Login">
+        </form>
+    </div>
+
     
     <div>
         <h2>Add event</h2>
@@ -42,10 +47,15 @@
     </div>
     
     <div>
-        <h2>Subscribe</h2>$
+        <h2>Subscribe</h2>
         <form id="form_subscribe">
-            <p class="subscription">Location: <select class="location" name="loc_1"></select>
-                Time Block: <select class="time_block" name="time_1"></select></p>
+            <p class="subscription">Location: <select class="location" name="loc"></select>
+                Time Block: <select name="time">
+                    <option value=0>12AM - 6AM</option>
+                    <option value=1>6AM - 12PM</option>
+                    <option value=2>12PM - 6PM</option>
+                    <option value=3>6PM - 12AM</option>
+                </select></p>
             <button id="add_subscription">Add More</button>
             <input type="submit" value="Subscribe">
         </form>

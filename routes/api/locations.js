@@ -6,7 +6,7 @@ var location = require("../../models/Location");
 
 // GET find list of locations
 router.get("/", function(req, res) {
-    location.Location.find(req.query).exec(function(err, locs) {
+    location.Location.find(req.query).sort({building: "asc"}).exec(function(err, locs) {
         if (err) {
             res.send("Error retrieving location info. " + err);
         } else {

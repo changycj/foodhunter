@@ -12,9 +12,11 @@ router.post("/login", function(req, res) {
     
     // TODO: need to make sure user exists with certificates
     res.cookie("kerberos", req.body.kerberos);
-    res.redirect("/");
+    res.json(req.body);
 });
 
+// dummy post functions for testing
+// simply sends what's received back
 router.post("/test_post", function(req, res) {
     console.log(req.body);
     res.json(req.body);
