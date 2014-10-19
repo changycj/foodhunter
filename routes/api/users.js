@@ -4,18 +4,33 @@ var mongoose = require("mongoose");
 // var location = require("../models/Location");
 var user = require("../models/User.js");
 //realm used for kerberos authentication
-var passport = require("passport-kerberos");
+// var passport = require("passport-kerberos");
 
-var REALM = "EXAMPLE.COM"
+// var REALM = "EXAMPLE.COM"
 
-passport.use(new KerberosStrategy(function(username, done){
-	user.User.findONe({username: username}, function(err, user){
-		if (err) {return done(err);}
-		if (!user){return done(null, false);}
-		return done(null, user, REALM);
-	});
-}));
+// passport.use(new KerberosStrategy(function(username, done){
+// 	user.User.findONe({username: username}, function(err, user){
+// 		if (err) {return done(err);}
+// 		if (!user){return done(null, false);}
+// 		return done(null, user, REALM);
+// 	});
+// }));
 //!!!! need to work on authentication
+
+// GET login page
+router.get("/login", function(req, res) {
+    res.render("login", {});
+});
+
+// POST login user
+router.post("/login", function(req, res) {
+    // TODO: need to make sure user exists with certificates
+    res.cookie("kerberos", req.body.kerberos);
+    res.cookie("login", "true");
+    res.json(req.body.kerberos);
+});
+
+
 /*GET method for user */
 router.get("/:userID/", function(req, res){
 	//find users by :userID
@@ -33,6 +48,6 @@ router.get("/:userID/", function(req, res){
 	});
 }
 
-/*POST new user to database */ //<-- most likely will be nested inside POST method in subscriptions
+/*POST new user to database */
 
 module.exports = router;
