@@ -23,6 +23,35 @@ router.get('/', function(req, res) {
 
 });
 
+var emailOut = function(){
+        console.log("entered subscribe method");
+        // var smtpTransport = nodemailer.createTransport(smtpPool({
+        var smtpTransport = nodemailer.createTransport('SMTP',{
+            service: 'SendGrid',
+            auth: {
+                user: 'foodHunter',
+                pass: '6170proj'
+            }
+            // maxConnections: 20,
+            // maxMessages: Infinity
+        });
+        // }));
+        var mailOptions = {
+            // to: user.kerberos + "@mit.edu",
+            bcc: 'rcha@mit.edu',
+            from: 'foodhunterproject@mit.edu',
+            subject: 'Free Food Event',
+            text: 'You are receiving this because you (or someone else) has subscribed to the free food mailing list for this building.\n'
+        };
+        smtpTransport.sendMail(mailOptions, function(err){
+            if(err){
+                console.log(err);
+            } else {
+                console.log("message sent");
+            }
+            // smtpTransport.close();
+        });
+};
 /*********CREATE A NEW EVENT*********/
 
 /*TODO: validate hours, date, status, error handling in general*/
