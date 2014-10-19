@@ -49,5 +49,14 @@ router.get("/:userID/", function(req, res){
 }
 
 /*POST new user to database */
+router.get("/:userID/new", function(req, res){
+	var userID = req.params.userID;
+	var newUser = new user.User({
+		'_id': userID,
+		events = [],
+		subscriptions = []
+	});
+	user.User.save();
+})
 
 module.exports = router;
