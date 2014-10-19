@@ -32,20 +32,18 @@ router.post("/login", function(req, res) {
     	} else {
     		if (u == undefined){
     			/*POST new user*/
-    			router.post("/new", function(req, res){
-					var newUser = new user.User({
-						'_id': kerberos,
-						events : [],
-						subscriptions : []
-					});
-					newUser.save(function(err, newUser){
-						if (err){
-							res.send("Error saving new user");
-						} else {
-							res.redirect("/users/login");
-						}
-					});
-				});
+                var newUser = new user.User({
+                    '_id': kerberos,
+                    events : [],
+                    subscriptions : []
+                });
+                newUser.save(function(err, newUser){
+                    if (err){
+                        res.send("Error saving new user");
+                    } else {
+                        res.redirect("/users/login");
+                    }
+                });                
     		} else {
     			res.cookie("kerberos", req.body.kerberos);
     			res.cookie("login", "true");

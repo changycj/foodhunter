@@ -6,6 +6,8 @@
 
 $(document).ready(function() {
 
+    var kerberos = window.location.search.split("kerberos=")[1];
+    
     // add map to UI
     L.mapbox.accessToken = "pk.eyJ1IjoiZm9vZGh1bnRlcnMiLCJhIjoiR0laWjlaUSJ9.CtACBQ0c6_gH9I25-Jpj-Q";
     var map = L.mapbox.map("map", "foodhunters.jp343j89", {
@@ -38,8 +40,11 @@ $(document).ready(function() {
     
     // populate my events and my subscriptions
     $.ajax({
-        url: "/users/
-        
+        url: "/users/" + kerberos,
+        method: "GET",
+        success: function(data) {
+            alert(data);
+        }
     });
     
     
