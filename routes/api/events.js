@@ -45,8 +45,8 @@ router.post('/', function(req, res) {
     					"status":status,
     					"description":description
     					};
-	//check if the event is valid. If nonsense entered, it puts today's date    					
-    if (!eventValidityCheck(newEventJSON)){
+	//check if the event is valid. If nonsense entered, it puts today's date  
+    if (!eventValidityCheck(newEventJSON, today)){
     	res.json({message:0, element:newEventJSON, details : "Event happens in the past"});
     	return;
     }
@@ -58,7 +58,7 @@ router.post('/', function(req, res) {
     		res.json({message:0, details:"Error creating a new event instance"});
     	}
     	else{
-    		User.findOne({kerberos:host}, function(err, user){
+    		User.findOne({_id:host}, function(err, user){
     			if (err){
     				console.log("Error adding an event to the User.events. "+err);
     				res.json({message:0, details:"Error adding an event to user"});
@@ -152,7 +152,7 @@ router.delete('/events/:eventId', function(req,res){
 			console.log("Error deleting event: "+ eventId);
 		}
 		else{
-			User.update({kerberos:host}, {$pull:{events:eventId}}, function(err, doc){
+			User.update({_id:host}, {$pull:{events:eventId}}, function(err, doc){
 				if (err){
 					console.log("Error while deleting event from usr's list");
 				}
@@ -173,7 +173,8 @@ router.delete('/events/:eventId', function(req,res){
 //OUTPUT: true if event happends in the past day
 function eventValidityCheck(event, today){
 	var start = event.when.start;
-	return start>=today;
+	var end = event.when.end;
+	return start>=today && end >=start;
 }
 
 module.exports = router;
