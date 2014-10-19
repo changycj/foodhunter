@@ -10,7 +10,6 @@ router.get("/", function(req, res) {
         if (err) {
             res.send("Error retrieving location info. " + err);
         } else {
-            console.log(locs);
             res.json(locs);
         }
     });
@@ -24,7 +23,6 @@ router.get("/:id", function(req, res) {
         if (err) {
             res.send("Error retrieving location info. " + err);
         } else {
-            console.log(loc);
             res.json(loc[0]);   
         }
     });
