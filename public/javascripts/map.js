@@ -98,13 +98,16 @@ $(document).ready(function() {
                             success: function(data) {
                                 if (data.success == 1) {
                                     var btn = $("<button/>").text("Delete").click(function(e) {
-                                        console.log("DELETE SUBSCIPRIONT!!!");
-                                        // $.ajax({
-                                        //     url: "/test_post",
-                                        //     type: "DELETE",
-                                        //     data: formData
+                                        //console.log("DELETE SUBSCIPRIONT!!!");
+                                        $.ajax({
+                                             url: "/api/subscriptions/subscribe",
+                                             type: "DELETE",
+                                             data: formData,
+                                             success: function(data){
+                                                //do smth
+                                             }
 
-                                        // });
+                                         });
                                     });
                                     $(that).before(
                                         $("<p/>").text(location.text() + " from " + time_block.text() + " ")

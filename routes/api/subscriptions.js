@@ -81,6 +81,7 @@ router.post("/subscribe", function(req, res) {
                                     console.log("Error while creating sub1");
                                     //res.json({message:0, details:"Error while creating sub1"});
                                 }
+
                                 return;
                             });
 
@@ -92,6 +93,7 @@ router.post("/subscribe", function(req, res) {
                                 }
                                 return;
                             });
+                            res.json({success:1, details:"A subscription was added!", subscription:newSub});
                         }
                     //there is such sub, update it by pushing a new user
                         else{
@@ -119,28 +121,40 @@ router.post("/subscribe", function(req, res) {
                                     }
                                     return;});
                             }
+                            res.json({success:1, details:"A subscription was added!", subscription:s});
                         }
                     }
                 });
             
-            res.json({success:1, details:"All subscriptions were added!"});
+            //res.json({success:1, details:"All subscriptions were added!", subscription:});
         }
     });
 });
 
 /*Delete a single subscription from current user's list*/
-router.delete("/:subId", function(req,res){
-    var subId = req.params.subId;
+router.delete("/subscribe", function(req,res){
+    var building = req.body.location;
+    var time_block = req.body.time_block;
     var userKerberos = req.cookies.kerberos;
     //delete a user from subscription list
-    subscription.Subscription.update({_id:subId}, {$pull:{users:userKerberos}}, function(err){
+    subscription.Subscription.findOne({building:builging, time_block:time_block}, function(err, sub){
         if (err){
-            console.log("Error deleting user from subscription list: subId "+ subId);
-            res.json({message:0, details:"Error deleting user from subscription list: subId "+ subId});
+            console.log("Error deleting user from subscription list:");
+            res.json({message:0, details:"Error deleting user from subscription list"});
         }
         else{
+            var index = sub.users.indexOf(userKerberos);
+            if (index!==-1){
+                sub.users.splice(index,1);
+            }
+            sub.save(function(err){
+                if (err){
+                    console.log("Error deleting user from subscription list:");
+                    res.json({message:0, details:"Error deleting user from subscription list"});
+                }
+            });
             //delete subscription from a user list
-            User.update({_id:userKerberos}, {$pull:{subscriptions:subId}}, function(err, user){
+            User.update({_id:userKerberos}, {$pull:{subscriptions:sub._id}}, function(err, user){
                 if (err){
                     console.log("Error while deleting sub from usr's list");
                     res.json({message:0, details:"Error deleting sub from user's list: kerberos "+ userKerberos});
