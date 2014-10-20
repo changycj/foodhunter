@@ -18,6 +18,10 @@ router.get("/event_details", function(req, res) {
 
 router.get("/tests/:api_name", function(req, res) {
     var api = req.params.api_name;
+
+    res.cookies("kerberos", "test");
+    res.cookies("login", "true");
+
     if (api == "locations") {
         res.render("tests/locations", {});
 
