@@ -1,3 +1,6 @@
+// Lead: Judy Chang
+// Locations API
+
 var express = require("express");
 var router = express.Router();
 var location = require("../../models/Location");

@@ -1,4 +1,5 @@
-// TODO: email sendout
+// Lead: Rebekah Cha
+// Events API
 
 var express = require('express');
 var mongoose = require("mongoose");

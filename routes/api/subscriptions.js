@@ -1,3 +1,5 @@
+// Lead: Dana Mukushev
+// Subscriptions API
 var express = require("express");
 var router = express.Router();
 var Subscription = require("../../models/Subscription").Subscription;

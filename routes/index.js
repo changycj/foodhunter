@@ -1,3 +1,6 @@
+// Lead: Judy Chang
+// Main page router
+
 var express = require('express');
 var router = express.Router();
 
@@ -27,21 +30,20 @@ router.get("/tests/:api_name", function(req, res) {
 
     res.cookie("kerberos", "test");
     res.cookie("login", "true");
-    res.render("tests/" + api, {});
-    // if (api == "locations") {
-    //     res.render("tests/locations", {});
+    if (api == "locations") {
+        res.render("tests/locations", {});
 
-    // } else if (api == "events") {
-    //     res.render("tests/events", {});
+    } else if (api == "events") {
+        res.render("tests/events", {});
 
-    // } else if (api == "users") {
-    //     res.render("tests/users", {});
+    } else if (api == "users") {
+        res.render("tests/users", {});
 
-    // } else if (api == "subscriptions") {
-    //     res.render("tests/subscriptions");
-
-    // }
-    res.redirect("/");
+    } else if (api == "subscriptions") {
+        res.render("tests/subscriptions");
+    } else {
+        res.redirect("/");
+    }
 });
 
 // dummy post functions for testing
