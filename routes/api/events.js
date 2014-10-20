@@ -17,48 +17,54 @@ Params: event
 Returns: list of users
 */
 var findSubscribers = function(newEvent){
+	var subscribers = [];
 	Location.findOne({"_id": newEvent.location}).exec(function(err, loc){
 		if (err){
 			console.log("Error finding location of event");
 		} else {
 			var times = [];
 			var building = loc;
-			console.log("newEvent", newEvent);
-			console.log("newEvent.when.start", newEvent.when.start);
-			for (var i = 0; i < 4; i ++){
-				if (newEvent.when.start < ((i+1)*6)){
-					if (times.indexOf(i) == -1){
-						times.append(i);
-					}
+			var dStart = new Date(newEvent.when.start).getHours();
+			var dEnd = new Date(newEvent.when.end).getHours();
+			var startEnd = [dStart, dEnd];
+			if (dStart == dEnd){
+				var timeBlock = Math.floor(dStart/6);
+				if (times.indexOf(timeBlock) == -1){
+					times.push(timeBlock);
 				}
-				if (newEvent.when.end < ((i+1)*6)) {
-					if (times.indexOf(i) == -1){
-						times.append(i);
-					}
+			} else{
+			for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
+				console.log("startend", startEnd[i]);
+				var timeBlock = Math.floor((startEnd[0]+i)/6);
+				console.log("timeblock", timeBlock);
+				if (times.indexOf(timeBlock) == -1){
+					times.push(timeBlock);
 				}
 			}
+		}
 			console.log("TIMES", times);
 			console.log("building", building);
 			Subscription.find({"building": building, "time_block": { $in: times}})
-			.populate('users', '_id')
+			.populate('users')
 			.exec(function(e, users){
 				if (e) {
 					console.log("Error finding subscriptions from new event");
 				} else {
 					console.log("users of subscriptions", users);
-					var subscribers = [];
 					for (var i = 0; i < users.length; i ++){
-						var email = users[i] + "@mit.edu";
+						console.log('CURRENT USER TO ADD', users[i]);
+						var email = users[i]._id + "@mit.edu";
 						if (subscribers.indexOf(email) == -1){
-							subscribers.append(email);
+							subscribers.push(email);
 						}
 					}
 					console.log("after. subscribers to return", subscribers);
-					return subscribers;
+					// return subscribers;
 				}
 			});
 		}
 	});
+	return subscribers;
 }
 
 /*
@@ -116,7 +122,6 @@ router.post('/', function(req, res) {
     var data = req.body;
     var start = data.when.start; //number
     var end = data.when.end;
-    console.log("STARTing: "+start);
     var location = data.location; //comes as objectId already :)
 	var description = req.body.description;
 	
@@ -159,7 +164,9 @@ router.post('/', function(req, res) {
     						//res.json(newEvent);
     						var subscribers =  findSubscribers(newEvent);
     						console.log(subscribers);
-    						// emailOut(subscribers);
+    						// if (subscribers.length > 0){
+    						// 	emailOut(subscribers);
+    						// }
     						res.json({success:1, event: newEvent}); //smth...
     						//res.redirect('/events');
     					}
