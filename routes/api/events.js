@@ -69,19 +69,17 @@ Called when a new event is added.
 params: subscribers is a list of users
 */
 var emailOut = function(subscribers, newEvent, loc){
-	 	console.log(loc);
+	 	// console.log("LOCATION", loc);
 	 	var eventStart = new Date(newEvent.when.start);
 	 	var eventEnd = new Date(newEvent.when.end);
         // var smtpTransport = nodemailer.createTransport(smtpPool({
         var smtpTransport = nodemailer.createTransport('SMTP',{
             service: 'SendGrid',
-            host:'smtp.sendgrid.net',
-            port:'587',
+            // host:'smtp.sendgrid.net',
             auth: {
-                user: process.env.SENDGRID_USERNAME,
-                pass: process.env.SENDGRID_PASSWORD
-            },
-            domain: 'heroku.com'
+                user: 'foodHunter',
+                pass: '6170proj'
+            }
             // maxConnections: 20,
             // maxMessages: Infinity
         });
@@ -97,7 +95,11 @@ var emailOut = function(subscribers, newEvent, loc){
             	+'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for ' + newEvent.location.name + '.\n'
         };
         smtpTransport.sendMail(mailOptions, function(err){
-            if(err) console.log(err);
+            if(err){
+            	console.log(err);
+            } else {
+            	console.log("Message sent");
+            }
         });
 };
 
@@ -146,13 +148,13 @@ router.post('/', function(req, res) {
     var newEvent = new Event(newEventJSON);
     newEvent.save(function(err){
     	if (err){
-    		console.log("Error creating a new event instance");
+    		// console.log("Error creating a new event instance");
     		res.json({success:0, details:"Error creating a new event instance"});
     	}
     	else{
     		User.findOne({_id:host}, function(err, user){
     			if (err){
-    				console.log("Error adding an event to the User.events. "+err);
+    				// console.log("Error adding an event to the User.events. "+err);
     				res.json({success:0, details:"Error adding an event to user"});
     			}
     			//SUCH USER EXISTS
@@ -161,7 +163,7 @@ router.post('/', function(req, res) {
     				user.events.push(newEvent._id);
     				user.save(function(err){
     					if (err){
-    						console.log("Error adding an event to the User.events 2");
+    						// console.log("Error adding an event to the User.events 2");
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
