@@ -12,13 +12,13 @@
 */
 
 $(document).ready(function() {
-	//post event first
-
+	//post event
 	//make some dummy data
+	var today = new Date().valueOf();
 	var formData = {
                     when: {
-                        start: 1000,
-                        end: 1000
+                        start: today+1000000000,
+                        end: today+1500000000
                     },
                     description: "TEST POSTING EVENT",
                     location: "544552d424a285661925bd91"
@@ -35,10 +35,10 @@ $(document).ready(function() {
         if (data.success== 1) {
         	var dataInfo = data.event;
             $(".post_result").append("<p>"+"POST RESULT: "+dataInfo+"</p>");
-            window.location.reload();
+            window.location = "/";
 
         } else {
-            alert("Can't post new event1"+data.success);
+            alert("Can't post new event1: ");
         	window.location = "/";
         }
     },

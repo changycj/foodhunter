@@ -192,7 +192,8 @@ router.post('/', function(req, res) {
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
-    						findSubscribers(req, res, newEvent); //success msg sent inside the function
+    						//findSubscribers(req, res, newEvent); //success msg sent inside the function
+    						res.json({success:1, event: newEvent});
     					}
     				});
     			}
