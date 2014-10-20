@@ -16,6 +16,24 @@ router.get("/event_details", function(req, res) {
     res.render("details", {event_id: req.query.event_id});
 });
 
+router.get("/tests/:api_name", function(req, res) {
+    var api = req.params.api_name;
+    if (api == "locations") {
+        res.render("tests/locations", {});
+
+    } else if (api == "events") {
+        // res.render("tests/events", {});
+
+    } else if (api == "users") {
+        // res.render("tests/users", {});
+
+    } else if (api == "subscriptions") {
+        // res.render("tests/subscriptions");
+
+    }
+    res.redirect("/");
+});
+
 // dummy post functions for testing
 // simply sends what's received back
 router.post("/test_post", function(req, res) {
