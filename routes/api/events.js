@@ -3,18 +3,20 @@
 var express = require('express');
 var mongoose = require("mongoose");
 var router = express.Router();
-//get models
+var nodemailer = require("nodemailer");
+
 var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
 var Subscription = require("../../models/Subscription").Subscription;
-var nodemailer = require("nodemailer");
 
+
+/**********HELPERS FOR EMAILING*********/
 /*
-findSubscribers finds the subscriptions related to the event
-and returns a list of users signed up for that subscription.
-Params: event
-Returns: list of users
+DESCRIPTION: finds the subscriptions related to the event
+			 and returns a list of users signed up for that subscription.
+PARAMS: event
+RETURNS: list of users
 */
 var findSubscribers = function(req, res, newEvent){
 	var subscribers = [];
@@ -44,7 +46,8 @@ var findSubscribers = function(req, res, newEvent){
 			.populate('users')
 			.exec(function(e, subs){
 				if (e) {
-					console.log("Error finding subscriptions from new event");
+					//console.log("Error finding subscriptions from new event");
+					res.json({success:0, details: "Error finding subscriptions from new event"});
 				} else {
 					for (var i = 0; i < subs.length; i ++){
 						for (var subscribedUser = 0; subscribedUser < subs[i].users.length; subscribedUser ++){
@@ -64,9 +67,10 @@ var findSubscribers = function(req, res, newEvent){
 }
 
 /*
-emailOut emails out to the list of subscribed users.
-Called when a new event is added.
-params: subscribers is a list of users
+DESCRIPTION: emails out to the list of subscribed users.
+			 Called when a new event is added.
+PARAMS: subscribers is a list of users
+RETURNS: nothing
 */
 var emailOut = function(subscribers, newEvent, loc){
 	 	// console.log("LOCATION", loc);
@@ -103,8 +107,33 @@ var emailOut = function(subscribers, newEvent, loc){
         });
 };
 
-// GET ALL EVENTS
-/*Currently in the test mode. Might not be needed in the deployed version*/
+/********** REST API for event **********/
+
+/* 
+URL: /events
+1. method: GET, description: retrieves the list of all available evnets
+   response: report success/failure, send list of all events
+
+2. method: POST, description: creates new event instance
+   response: report success/failure, send a new event
+
+URL: /events/:eventId
+1. method: GET, description: retrieves individual event info
+   response: report success/failure, send an existing event
+
+2. method: PUT, description: updates existing event
+   response: report success/failure, send an updated event
+
+3. method: DELETE, description: deletes existing event
+   response: report success/failure
+*/
+
+
+/**********GET ALL EVENTS**********/
+/* Note:
+Currently in the test mode. 
+Might not be needed in the deployed version
+*/
 router.get('/', function(req, res) {
     Event.find({}).populate("location").exec(function(err, events){
         if (err){
@@ -116,21 +145,18 @@ router.get('/', function(req, res) {
     });
 });
 
-/*********CREATE A NEW EVENT*********/
-
-/*TODO: validate hours, date, status, error handling in general*/
-
+/**********CREATE A NEW EVENT**********/
 router.post('/', function(req, res) {
 	var status = "Food"; //default status
 	var today = new Date().valueOf(); // date when the event is created
 	//start getting info
-    var host = req.cookies.kerberos; //kerberos, string!!!!
+    var host = req.cookies.kerberos; //note: cookies never cleared
     var data = req.body;
-    var start = data.when.start; //number
-    var end = data.when.end;
-    var location = data.location; //comes as objectId already :)
+    var start = data.when.start; //in milliseconds
+    var end = data.when.end; //in milliseconds
+    var location = data.location; //comes as objectId
 	var description = req.body.description;
-	
+	//form data
 	var newEventJSON = {
     					"when": {"start":start, "end":end},
     					"status":status,
@@ -148,18 +174,17 @@ router.post('/', function(req, res) {
     var newEvent = new Event(newEventJSON);
     newEvent.save(function(err){
     	if (err){
-    		// console.log("Error creating a new event instance");
+    		//console.log("Error creating a new event instance");
     		res.json({success:0, details:"Error creating a new event instance"});
     	}
     	else{
     		User.findOne({_id:host}, function(err, user){
     			if (err){
-    				// console.log("Error adding an event to the User.events. "+err);
+    				//console.log("Error adding an event to the User.events. "+err);
     				res.json({success:0, details:"Error adding an event to user"});
     			}
     			//SUCH USER EXISTS
     			else {
-    				console.log('user!!', user);
     				user.events.push(newEvent._id);
     				user.save(function(err){
     					if (err){
@@ -167,7 +192,7 @@ router.post('/', function(req, res) {
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
-    						findSubscribers(req, res, newEvent);
+    						findSubscribers(req, res, newEvent); //success msg sent inside the function
     					}
     				});
     			}
@@ -177,90 +202,60 @@ router.post('/', function(req, res) {
 }
 });
 
-/*********GET individual event info*********/
+/**********GET EVENT**********/
 router.get('/:eventId', function(req,res){
 	var eventId = req.params.eventId;
 	Event.findById(eventId, function(err, doc){
 		if (err){
-            res.json({success: 0})
+            res.json({success: 0, details:"Error finding an event"});
 			return;
 		}
-		res.json({success: 1, event: doc}); //just send a JSON object
+		res.json({success: 1, event: doc});
 	});
 });
 
-/*********UPDATE current event*********/
-//TODO: need to be tested
+
+/**********UPDATE EVENT**********/
 router.put('/:eventId', function(req,res){
 	var eventId = req.params.eventId;
-	// var fieldToChange = req.body.fieldToChange; 
-	// // Possible values: "location", "date", "start", "end", "status", "description"
-	// var newValue = req.body.newValue;
 	Event.findOne({_id:eventId}, function(err, doc){
 		if (err){
-			console.log("Error while updating the event");
+			//console.log("Error while updating the event");
+			res.json({success: 0, details:"Error while updating the event: "+eventId});
 			return;
 		}
-		else{
-            doc.when.start = req.body.when.start;
-            doc.when.end = req.body.when.end;
-            doc.description = req.body.description;
-			// if (fieldToChange==="date"){
-			// 	doc.when.date = newValue;
-			// }
-			// else if(fieldToChange==="location"){
-			// 	doc.location = newValue;
-			// }
-			// else if (fieldToChange==="start"){
-			// 	doc.when.time.start = newValue;
-			// }
-			// else if (fieldToChange==="end"){
-			// 	doc.when.time.end = newValue;
-			// }
-			// else if (fieldToChange==="status"){
-			// 	doc.status = newValue;
-			// }
-			// else if (fieldToChange==="description"){
-			// 	doc.description = newValue;
-			// }
-			// else{
-			// 	console.log("Error updating the event instance");
-			// }
-		}
+		//update entries
+        doc.when.start = req.body.when.start;
+        doc.when.end = req.body.when.end;
+        doc.description = req.body.description;
 		doc.save(function(err){
-			if (err){
-                res.json({success: 0})
-				return;
-			}
-			//res.send(doc);
-			//res.redirect('/event/'+eventId);
-			res.json({success:1, event: doc});
+		if (err){
+            res.json({success: 0, details:"Error while updating the event: "+eventId});
+			return;
+		}
+		res.json({success:1, event: doc});
 		});
 	});
 });
 
-/*********DELETE an event*********/
-//TODO: delete event from Users.events list - DONE, but needs to be tested
-//
+/**********DELETE EVENT**********/
 router.delete('/:eventId', function(req,res){
 	var eventId = req.params.eventId;
 	Event.remove({_id:eventId}, function(err){
 		if (err){
-			res.json({success:0});
+			res.json({success:0, details:"Error while deleting the event: "+eventId});
 		}
 		else{
 			User.update({_id:req.cookies.kerberos}, {$pull:{events:eventId}}, function(err, doc){
 				if (err){
-                    res.json({success:0});
+                    res.json({success:0, details:"Error while deleting the event: "+eventId});
 				}
 				else{
-					res.json({success:1});
+					res.json({success:1, user: doc});
 				}
-			});
-			
+			});	
 		}
 	});
-
 });
 
 //**************HELPERS***************
