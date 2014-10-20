@@ -1,3 +1,7 @@
+// Lead: Judy Chang
+
+// Main UI page with map
+
 // TODO:
 // - user authentication
 // - drawing markers (add all then filter) -> also add time/date slider on marker filter

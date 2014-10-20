@@ -1,3 +1,10 @@
+// Lead: Rebekah Cha
+// testing Subscription API
+
+// 1. POST new subscription
+// 2. DELETE subscription
+// 3. GET subscription
+
 $(document).ready(function() {
 
 		var formData = {

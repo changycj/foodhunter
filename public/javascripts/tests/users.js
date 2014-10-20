@@ -1,3 +1,9 @@
+// Lead: Judy Chang
+//
+// testing Users API
+// 1. POST login user
+// 2. GET specific user info
+
 $(document).ready(function() {
 
     $.ajax({

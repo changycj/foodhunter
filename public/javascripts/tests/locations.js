@@ -1,3 +1,4 @@
+// Lead: Judy Chang
 // testing Location API
 
 // 1. test GET "/api/locations" to get ALL locations

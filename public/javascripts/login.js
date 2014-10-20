@@ -1,11 +1,14 @@
+// Lead: Judy Chang
+// login page
 $(document).ready(function() {
 
     // login form
     $("#form_login").submit(function(e) {
         e.preventDefault();
-        // authenticate!!!
+        // TODO: authenticate!!!
         var formData = { kerberos: $("input[name='kerberos']").val()};
-                
+
+        // POST to login        
         $.ajax({
             url: "/api/users/login",
             method: "POST",
@@ -21,6 +24,8 @@ $(document).ready(function() {
         });
     });
 
+    // link to testing scripts
+    // automatically login dummy user with id "test" before loading link
     $("#tests_list a").click(function(e) {
         e.preventDefault();
         var link = $(this).attr("href");
