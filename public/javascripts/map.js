@@ -82,16 +82,13 @@ $(document).ready(function() {
                     // subscribe form
                     $(".form_subscribe").submit(function(e) {
                         e.preventDefault();
-
-                        var location = $(this).find("select[name='location']").val();
-                        var time_block = $(this).find("select[name='time']").val();
-
-                        console.log(location);
-                        console.log(time_block);
+                        var that = this;
+                        var location = $(this).find("select[name='location'] option:selected");
+                        var time_block = $(this).find("select[name='time'] option:selected");
 
                         var formData = {
-                            location: location,
-                            time_block: time_block
+                            location: location.val(),
+                            time_block: time_block.val()
                         };
 
                         $.ajax({
@@ -100,42 +97,26 @@ $(document).ready(function() {
                             data: formData,
                             success: function(data) {
                                 if (data.success == 1) {
+                                    console.log(location.text());
+                                    console.log(time_block.val());
+                                    var btn = $("<button/>").text("Delete").click(function(e) {
+                                        console.log("DELETE SUBSCIPRIONT!!!");
+                                        // $.ajax({
+                                        //     url: "/test_post",
+                                        //     type: "DELETE",
+                                        //     data: formData
+
+                                        // });
+                                    });
+                                    $(that).before(
+                                        $("<p/>").text(location.text() + " from " + time_block.text() + " ")
+                                            .append(btn));
 
                                 } else {
                                     alert("ERROR!");
                                 }
-
                             }
                         });
-
-                        // var subscriptions = [];
-
-                        // $(".subscription").each(function(i) {
-                        //     var building = $(this).find("select[name='location'] option:selected").val();
-                        //     var time_block = $(this).find("select[name='time'] option:selected").val();
-                        //     subscriptions.push({
-                        //         building: building,
-                        //         time_block: time_block
-                        //     });
-                        // });
-
-                        // var formData = {
-                        //     // username: "changycj" // this should be from cookies
-                        //     subscriptions: subscriptions
-                        // };
-
-                        // $.ajax({
-                        //     url: "/api/subscriptions/subscribe", // replace with corresponding method in API
-                        //     type: "POST",
-                        //     data: formData,
-                        //     cache: false,
-                        //     success: function(data) {
-                        //         alert("Success! " + JSON.stringify(data)); // what to actually do here?
-                        //     },
-                        //     error: function() {
-                        //         alert("ERROR! Can't subscribe");
-                        //     }
-                        // });
                     });
                 }
             
@@ -196,13 +177,6 @@ $(document).ready(function() {
                     // should switch to for every event
                     // addMarker(loc);
                     
-                    // enable adding more subscriptions (needs location)
-                });
-
-                // neabling adding a bunch of subscriptions
-                $("#add_subscription").click(function(e) {
-                    // add blank subscription
-                    $(".subscription:last").clone(true, true).insertAfter($(".subscription:last")).reset();
                 });
 
             } else {

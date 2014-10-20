@@ -56,9 +56,9 @@ router.post("/subscribe", function(req, res) {
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
-        else if (user===undefined){
+        }else if (user===undefined){
             res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
-        }
+        
         } else {
             for (var i = 0; i < numSubs; i++){
                 var sub = subscriptions[i];
