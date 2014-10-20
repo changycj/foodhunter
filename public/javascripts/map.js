@@ -172,11 +172,11 @@ $(document).ready(function() {
                     // addMarker(loc);
                     
                     // enable adding more subscriptions (needs location)
-                    $("#add_subscription").click(function(e) {
-                        e.preventDefault();
-                        // add blank subscription
-                        $(".subscription:last").clone().insertAfter($(".subscription:last"));
-                    });
+                });
+                $("#add_subscription").click(function(e) {
+                    e.preventDefault();
+                    // add blank subscription
+                    $(".subscription:last").clone().insertAfter($(".subscription:last"));
                 });
 
             } else {
