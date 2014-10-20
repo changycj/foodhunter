@@ -29,13 +29,13 @@ $(document).ready(function() {
 
     function testOneLocationGet(data, dummy_loc) {
         // test getting one
-        test("testing getting one specific location", function() {
+        test("testing getting one specific location - {building: " + dummy_loc.building + ", name: " + dummy_loc.name+ "}", function() {
             equal(data.success, 1, "Data successfully returned");
             equal(data.location._id, dummy_loc._id, "_id's (" + dummy_loc._id + ") are equal.")
             equal(data.location.building, dummy_loc.building, "building's (" + dummy_loc.building + ") are equal.");
             equal(data.location.name, dummy_loc.name, "name's (" + dummy_loc.name + ") are equal.");
             equal((data.location.gps.lat == dummy_loc.gps.lat) && (data.location.gps.lon == dummy_loc.gps.lon), true, 
-                "[lat, lon]'s [" + dummy_loc.gps.lat + ", " + dummy_loc.gps.lon + "] are equal.");
+                "GPS [lat, lon]'s [" + dummy_loc.gps.lat + ", " + dummy_loc.gps.lon + "] are equal.");
         });
     }
     function testAllLocationsGet(data) {

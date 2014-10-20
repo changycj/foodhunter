@@ -9,12 +9,12 @@ $(document).ready(function() {
             testLogin(data);
 
             var dummy_user = data.user;
+            console.log(dummy_user);
 
             $.ajax({
                 url: "/api/users/" + data.user._id,
                 method: "GET",
                 success: function(data) {
-                    console.log("HI");
                     testUserGet(data, dummy_user);
                 }
             });
@@ -38,7 +38,7 @@ $(document).ready(function() {
     }
 
     function testUserGet(data, dummy_user) {
-        test("testing user get", function() {
+        test("testing getting dummy user with kerberos '"+ dummy_user._id +"'", function() {
             equal(data.success, 1, "Data successfully returned.");
             equal(data.user._id, dummy_user._id, "Username's are equal (" + dummy_user._id+ ").");
             equal(compareArrays(data.user.subscriptions, dummy_user.subscriptions), true, 
@@ -49,7 +49,7 @@ $(document).ready(function() {
     }
 
     function testLogin(data) {
-        test("testing user login", function() {
+        test("testing logging in dummy user with kerberos 'test'", function() {
             equal(data.success, 1, "Data successfully returned.");
             equal(data.user._id, "test", "Username is correct (test).");
             equal(data.user.subscriptions instanceof Array, true, 
