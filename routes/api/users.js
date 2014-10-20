@@ -23,30 +23,30 @@ router.post("/login", function(req, res) {
     var kerberos = req.body.kerberos;
     User.findOne({'_id': kerberos}).exec(function(err, u){
     	if(err){
-    		res.send("Error finding user to login");
+            res.json({success: 0})
     	} else {
-    		console.log('querying for users');
     		if (u == undefined){
-    			console.log("undefined user");
     			/*POST new user*/
-				var newUser = new User({
-					'_id': kerberos,
-					events : [],
-					subscriptions : []
-				});
+                var params = {
+                    '_id': kerberos,
+                    events : [],
+                    subscriptions : []
+                };
+				var newUser = new User(params);
 				newUser.save(function(err, newUser){
 					if (err){
 						res.send("Error saving new user");
 					} else {
 						res.cookie("kerberos", req.body.kerberos);    				
 						res.cookie("login", "true");
-    					res.json(req.body.kerberos);
+    					res.json({success: 1, user: params});
 					}
 				});
     		} else {
     			res.cookie("kerberos", req.body.kerberos);
     			res.cookie("login", "true");
-    			res.json(req.body.kerberos);
+                console.log(u);
+    			res.json({success: 1, user: u});
     		}
     	}
     });
@@ -58,15 +58,17 @@ router.post("/login", function(req, res) {
 router.get("/:userID/", function(req, res){
 	//find users by :userID
 	var userID = req.params.userID;
+    console.log(userID);
 	User.findOne({'_id': userID})
 	//Populate both subscriptions and events field
 	.populate('subscriptions events')
 	.exec(function(err, u){
 		if(err){
-			res.send('Error populating user subscriptions');
+            res.json({success: 0});
 		} else {
 			//returning JSON object
-			res.json(u);
+            console.log(u);
+			res.json({success: 1, user: u});
 		}
 	});
 });

@@ -11,7 +11,11 @@ $(document).ready(function() {
             method: "POST",
             data: formData,
             success: function(data) {
-                window.location = "/map?kerberos=" + data;
+                if (data.success == 1) {
+                    window.location = "/map?kerberos=" + data.user._id;
+                } else {
+                    alert("ERROR!");
+                }
             }
         });
     });
