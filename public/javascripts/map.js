@@ -121,13 +121,13 @@ $(document).ready(function() {
                     function addMyEvent(ev) {
                         var item = $("<li/>").appendTo("#my_events_container ul");
                         $("<p/>").appendTo(item).text((new Date(ev.when.start)).toLocaleString());
-                        $("<p/>").appendTo(item).text();
+                        $("<p/>").appendTo(item).text("Location ID: ");
                         $("<p/>").appendTo(item).text(ev.description);
                         
                         var control = $("<p/>").appendTo(item);
                         
-                        $("<button/>").text("Edit").appendTo(control).click(function(e) {
-                            console.log("EDIT");
+                        $("<button/>").text("View/Edit").appendTo(control).click(function(e) {
+                            window.open("/event_details?id=" + ev._id, "popup", "width=500px; height = 800px;")
                         });
                         
                         $("<button/>").text("Delete").appendTo(control).click(function(e) {
