@@ -14,12 +14,12 @@ var location = require("../../models/Location");
 router.get("/", function(req, res) {
 
     var fields = (req.query.fields != undefined) ? req.query.fields.replace(",", " ") : {};
-    
+
     location.Location.find({}, fields).sort({building: "asc"}).exec(function(err, locs) {
         if (err) {
-            res.send("Error retrieving location info. " + err);
+            res.json({ success: 0 });
         } else {
-            res.json(locs);
+            res.json({ success: 1, locations: locs });
         }
     });
 });
@@ -30,9 +30,9 @@ router.get("/:id", function(req, res) {
 
     location.Location.find( {"_id" : locId} ).limit(1).exec(function(err, loc) {     
         if (err) {
-            res.send("Error retrieving location info. " + err);
+            res.json({ success: 0 });
         } else {
-            res.json(loc[0]);   
+            res.json({ success: 1, location: loc[0] });   
         }
     });
 });
