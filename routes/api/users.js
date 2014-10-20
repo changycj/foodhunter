@@ -3,8 +3,21 @@ var router = express.Router();
 var mongoose = require("mongoose");
 var User = require("../../models/User").User;
 
+/********** REST API for user **********/
 
-// POST login user
+/* 
+URL: users/login
+
+1. method: POST, description: authentificates 
+   or creates new user if never visited before
+   response: report success/failure, send a user data
+
+URL: /users/:userID
+1. method: GET, description: retrieves individual user info
+   response: report success/failure, send a user data
+*/
+
+
 router.post("/login", function(req, res) {
     // TODO: need to make sure user exists with certificates
     var kerberos = req.body.kerberos;
@@ -22,7 +35,7 @@ router.post("/login", function(req, res) {
 				var newUser = new User(params);
 				newUser.save(function(err, newUser){
 					if (err){
-						res.send("Error saving new user");
+						res.json({success: 0, details: "Error creating a new user"});
 					} else {
 						res.cookie("kerberos", req.body.kerberos);    				
 						res.cookie("login", "true");
@@ -32,7 +45,7 @@ router.post("/login", function(req, res) {
     		} else {
     			res.cookie("kerberos", req.body.kerberos);
     			res.cookie("login", "true");
-                console.log(u);
+                //console.log(u);
     			res.json({success: 1, user: u});
     		}
     	}
@@ -45,7 +58,7 @@ router.post("/login", function(req, res) {
 router.get("/:userID/", function(req, res){
 	//find users by :userID
 	var userID = req.params.userID;
-    console.log(userID);
+    //console.log(userID);
 	User.findOne({'_id': userID})
 	//Populate both subscriptions and events field
 	.populate('subscriptions events')
