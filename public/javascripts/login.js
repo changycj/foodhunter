@@ -7,7 +7,7 @@ $(document).ready(function() {
         var formData = { kerberos: $("input[name='kerberos']").val()};
                 
         $.ajax({
-            url: "/users/login",
+            url: "/api/users/login",
             method: "POST",
             data: formData,
             success: function(data) {

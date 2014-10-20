@@ -3,7 +3,7 @@ $(document).ready(function() {
     var event_id = window.location.search.split("id=")[1];
 
     $.ajax({
-        url: "/events/" + event_id,
+        url: "/api/events/" + event_id,
         method: "GET",
         success: function(event) {
             $("input[name='date']").datepicker();
@@ -18,7 +18,7 @@ $(document).ready(function() {
             $("textarea[name='description']").text(event.description);
 
             $.ajax({
-                url: "/locations/" + event.location,
+                url: "/api/locations/" + event.location,
                 method: "GET",
                 success: function(loc) {
                     $("span[name='location']").text(loc.building + " - " + loc.name);
@@ -41,11 +41,13 @@ $(document).ready(function() {
                         };
 
                         $.ajax({
-                            url: "/events/" + event._id,
+                            url: "/api/events/" + event._id,
                             type: "PUT",
                             data: formData,
                             cache: false,
                             success: function(data) {
+
+                                // there is probably a better than refresh
                                 window.opener.location.reload();
                                 window.close();
                             }

@@ -20,137 +20,138 @@ $(document).ready(function() {
     $("#form_add_event input[name^='time']").timepicker({"scrollDefault" : "now"});
     $("#form_add_event input[name^='date']").datepicker();
     
+
+    // load user data
+    $.ajax({
+        url: "/api/users/" + kerberos,
+        method: "GET",
+        success: function(user) {
+            console.log(user);
+
+            // enable forms                    
+            enableForms();
+
+            // populate user event data
+            for (var i = 0; i < user.events.length; i++) {
+                addMyEvent(user.events[i]);
+            }
+
+            function enableForms() {
+                // add event form
+                $("#form_add_event").submit(function(e) {        
+
+                    e.preventDefault();
+
+                    // should check for empty
+
+                    var date  = $("input[name='date']").datepicker("getDate");
+                    var time_start = $("input[name='time_start']").timepicker("getTime", date);
+                    var time_end = $("input[name='time_end']").timepicker("getTime", date);
+
+                    var formData = {
+                        when: {
+                            start: time_start.valueOf(),
+                            end: time_end.valueOf()
+                        },
+                        description: $("textarea[name='description']").val(),
+                        location: $("select[name='location'] option:selected").val() // should be objectID instead
+                    };
+
+                    $.ajax({
+                        url: "/api/events",
+                        type: "POST",
+                        data: formData,
+                        cache: false,
+                        success: function(data) {
+                            if (data.message == 1) {
+                                $("#form_add_event")[0].reset();
+                                addMyEvent(data.element);
+                                alert("Event created!");
+                            } else {
+                                alert("Event create unsuccessful.");
+                            }
+                        },
+                        error: function() {
+                            alert("Error creating event!");
+                        }
+                    });
+                });
+
+                // TODOOOOO
+                // subscribe form
+                $("#form_subscribe").submit(function(e) {
+                    e.preventDefault();
+
+                    var subscriptions = [];
+
+                    $(".subscription").each(function(i) {
+                        var building = $(this).find("select[name='location'] option:selected").val();
+                        var time_block = $(this).find("select[name='time'] option:selected").val();
+                        subscriptions.push({
+                            building: building,
+                            time_block: time_block
+                        });
+                    });
+
+                    var formData = {
+                        // username: "changycj" // this should be from cookies
+                        subscriptions: subscriptions
+                    };
+
+                    $.ajax({
+                        url: "/api/subscriptions/subscribe", // replace with corresponding method in API
+                        type: "POST",
+                        data: formData,
+                        cache: false,
+                        success: function(data) {
+                            alert("Success! " + JSON.stringify(data)); // what to actually do here?
+                        },
+                        error: function() {
+                            alert("ERROR! Can't subscribe");
+                        }
+                    });
+                });
+            }
+        
+            function addMyEvent(ev) {
+                var item = $("<li/>").appendTo("#my_events_container ul");
+                $("<p/>").appendTo(item).text((new Date(ev.when.start)).toLocaleString());
+                $("<p/>").appendTo(item).text(ev.description);
+                
+                var control = $("<p/>").appendTo(item);
+                
+                $("<button/>").text("View/Edit").appendTo(control).click(function(e) {
+                    window.open("/event_details?id=" + ev._id, "popup", "width=500px; height = 800px;")
+                });
+                
+                $("<button/>").text("Delete").appendTo(control).click(function(e) {
+                    $.ajax({
+                        url: "/api/events/" + ev._id,
+                        type: "DELETE",
+                        success: function(data) {
+                            if (data.message == 1) {
+                                item.remove();
+                                alert("Event deleted!");
+                            } else {
+                                alert("Event delete unsuccessful.");
+                            }
+                        },
+                        error: function(err) {
+                            alert("Error deleting event.");
+                        }
+                    });
+                });
+            }
+        }
+    });
+
     // load locations data
     $.ajax({
-        url: "/locations",
+        // url: "/api/locations/?fields=name,building",
+        url: "/api/locations"
         method: "GET",
         success: function(locs) {
-            
-            // load user data
-            $.ajax({
-                url: "/users/" + kerberos,
-                method: "GET",
-                success: function(user) {
-                    console.log(user);
-
-                    // enable forms                    
-                    enableForms();
-
-                    // populate user event data
-                    for (var i = 0; i < user.events.length; i++) {
-                        addMyEvent(user.events[i]);
-                    }
-
-                    function enableForms() {
-                        // add event form
-                        $("#form_add_event").submit(function(e) {        
-
-                            e.preventDefault();
-
-                            // should check for empty
-
-                            var date  = $("input[name='date']").datepicker("getDate");
-                            var time_start = $("input[name='time_start']").timepicker("getTime", date);
-                            var time_end = $("input[name='time_end']").timepicker("getTime", date);
-
-                            var formData = {
-                                when: {
-                                    start: time_start.valueOf(),
-                                    end: time_end.valueOf()
-                                },
-                                description: $("textarea[name='description']").val(),
-                                location: $("select[name='location'] option:selected").val() // should be objectID instead
-                            };
-
-                            $.ajax({
-                                url: "/events",
-                                type: "POST",
-                                data: formData,
-                                cache: false,
-                                success: function(data) {
-                                    if (data.message == 1) {
-                                        $("#form_add_event")[0].reset();
-                                        addMyEvent(data.element);
-                                        alert("Event created!");
-                                    } else {
-                                        alert("Event create unsuccessful.");
-                                    }
-                                },
-                                error: function() {
-                                    alert("Error creating event!");
-                                }
-                            });
-                        });
-
-                        // TODOOOOO
-                        // subscribe form
-                        $("#form_subscribe").submit(function(e) {
-                            e.preventDefault();
-
-                            var subscriptions = [];
-
-                            $(".subscription").each(function(i) {
-                                var building = $(this).find("select[name='location'] option:selected").val();
-                                var time_block = $(this).find("select[name='time'] option:selected").val();
-                                subscriptions.push({
-                                    building: building,
-                                    time_block: time_block
-                                });
-                            });
-
-                            var formData = {
-                                // username: "changycj" // this should be from cookies
-                                subscriptions: subscriptions
-                            };
-
-                            $.ajax({
-                                url: "/subscriptions/subscribe", // replace with corresponding method in API
-                                type: "POST",
-                                data: formData,
-                                cache: false,
-                                success: function(data) {
-                                    alert("Success! " + JSON.stringify(data)); // what to actually do here?
-                                },
-                                error: function() {
-                                    alert("ERROR! Can't subscribe");
-                                }
-                            });
-                        });
-                    }
-                
-                    function addMyEvent(ev) {
-                        var item = $("<li/>").appendTo("#my_events_container ul");
-                        $("<p/>").appendTo(item).text((new Date(ev.when.start)).toLocaleString());
-                        $("<p/>").appendTo(item).text("Location ID: ");
-                        $("<p/>").appendTo(item).text(ev.description);
-                        
-                        var control = $("<p/>").appendTo(item);
-                        
-                        $("<button/>").text("View/Edit").appendTo(control).click(function(e) {
-                            window.open("/event_details?id=" + ev._id, "popup", "width=500px; height = 800px;")
-                        });
-                        
-                        $("<button/>").text("Delete").appendTo(control).click(function(e) {
-                            $.ajax({
-                                url: "/events/" + ev._id,
-                                type: "DELETE",
-                                success: function(data) {
-                                    if (data.message == 1) {
-                                        item.remove();
-                                        alert("Event deleted!");
-                                    } else {
-                                        alert("Event delete unsuccessful.");
-                                    }
-                                },
-                                error: function(err) {
-                                    alert("Error deleting event.");
-                                }
-                            });
-                        });
-                    }
-                }
-            });
-            
+  
             // enable adding more blank subscription fields
             var select = $("select[class='location']");
 
@@ -192,4 +193,13 @@ $(document).ready(function() {
         }
     });    
     
+    // // load all events data
+    // $.ajax({
+    //     url: "/events",
+    //     method: "GET",
+    //     success: function(events) {
+
+
+    //     }
+    // });
 });
