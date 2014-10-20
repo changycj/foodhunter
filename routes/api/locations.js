@@ -14,6 +14,7 @@ var location = require("../../models/Location");
 router.get("/", function(req, res) {
 
     var fields = (req.query.fields != undefined) ? req.query.fields.replace(",", " ") : {};
+    console.log(fields);
 
     location.Location.find({}, fields).sort({building: "asc"}).exec(function(err, locs) {
         if (err) {
