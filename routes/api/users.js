@@ -41,7 +41,6 @@ router.post("/login", function(req, res) {
 						res.cookie("kerberos", req.body.kerberos);    				
 						res.cookie("login", "true");
     					res.json(req.body.kerberos);
-    					console.log("saving user");
 					}
 				});
     		} else {

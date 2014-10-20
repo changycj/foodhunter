@@ -149,7 +149,7 @@ router.post('/', function(req, res) {
     					else{
     						//res.json(newEvent);
     						var subscribers =  findSubscribers(newEvent);
-    						// console.log(subscribers);
+    						console.log(subscribers);
     						emailOut(subscribers);
     						res.json({success:1, event: newEvent}); //smth...
     						//res.redirect('/events');
