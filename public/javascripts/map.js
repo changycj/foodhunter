@@ -97,7 +97,6 @@ $(document).ready(function() {
                             data: formData,
                             success: function(data) {
                                 if (data.success == 1) {
-<<<<<<< HEAD
                                     console.log(location.text());
                                     console.log(time_block.val());
                                     var btn = $("<button/>").text("Delete").click(function(e) {
@@ -112,10 +111,6 @@ $(document).ready(function() {
                                     $(that).before(
                                         $("<p/>").text(location.text() + " from " + time_block.text() + " ")
                                             .append(btn));
-
-=======
-                                    alert(data.details);
->>>>>>> 71494fc230a1e04d9321ef32a5177381d67a7fcc
                                 } else {
                                     alert("ERROR!");
                                 }

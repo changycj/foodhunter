@@ -56,15 +56,9 @@ router.post("/subscribe", function(req, res) {
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
-<<<<<<< HEAD
-        }else if (user===undefined){
-            res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
-        
-=======
         }
         else if (user==undefined){
             res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
->>>>>>> 71494fc230a1e04d9321ef32a5177381d67a7fcc
         } else {
                 var sub = {building:building, time_block:time_block};
                 subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (e, s){
