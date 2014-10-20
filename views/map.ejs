@@ -43,18 +43,18 @@
     <div id="subscribe_container">
         <h2>Subscribe</h2>
         <!-- <form id="form_subscribe" method = "post" action="/subscriptions/subscribe"> -->
-        <form id="form_subscribe">
-            <p class="subscription">Location: <select class="location" name="location"></select>
-                Time Block: <select name="time">
-                    <option value=0>12AM - 6AM</option>
-                    <option value=1>6AM - 12PM</option>
-                    <option value=2>12PM - 6PM</option>
-                    <option value=3>6PM - 12AM</option>
-                </select></p>
-            <button id="add_subscription">Add More</button>
+        <span class="subscription">
+            <form class="form_subscribe">
+            Location: <select class="location" name="location"></select>
+            Time Block: <select name="time">
+                <option value=0>12AM - 6AM</option>
+                <option value=1>6AM - 12PM</option>
+                <option value=2>12PM - 6PM</option>
+                <option value=3>6PM - 12AM</option></select>
             <input type="submit" value="Subscribe">
-            <!-- <a href="/subscriptions/subscribe">Subscribe</a> -->
-        </form>
+            </form>
+        </span>
+        <button id="add_subscription">Add More</button>
     </div>
     
 

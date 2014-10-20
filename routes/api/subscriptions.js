@@ -56,6 +56,9 @@ router.post("/subscribe", function(req, res) {
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
+        else if (user===undefined){
+            res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
+        }
         } else {
             for (var i = 0; i < numSubs; i++){
                 var sub = subscriptions[i];
@@ -80,6 +83,7 @@ router.post("/subscribe", function(req, res) {
                                 }
                                 return;
                             });
+
                             user.subscriptions.push(newSub._id);
                             user.save(function(err){
                                 if (err){
@@ -91,20 +95,30 @@ router.post("/subscribe", function(req, res) {
                         }
                     //there is such sub, update it by pushing a new user
                         else{
-                            s.users.push(userKerberos);
-                            s.save(function(err){
-                                console.log("Error while creating sub2");
-                                //res.json({message:0, details:"Error while creating sub2"});
-                                return;
-                            });
-                            user.subscriptions.push(s._id);
-                            user.save(function(err){
-                                if (err){
-                                    console.log("Error adding an existing sub to user list");
-                                    //res.json({message:0, details:"Error adding an existing sub to user list"});
-                                }
-                                return;
-                            });
+                            if (memberCheck(s.users, userKerberos)){
+                                //do nothing
+                            }
+                            else{
+                                s.users.push(userKerberos);
+                                s.save(function(err){
+                                    console.log("Error while creating sub2");
+                                    //res.json({message:0, details:"Error while creating sub2"});
+                                    return;
+                                });
+                            }
+
+                            if (memberCheckObjectId(user.subscriptions, s._id)){
+                                //do nothing
+                            }
+                            else{
+                                user.subscriptions.push(s._id);
+                                user.save(function(err){
+                                    if (err){
+                                        console.log("Error adding an existing sub to user list");
+                                        //res.json({message:0, details:"Error adding an existing sub to user list"});
+                                    }
+                                    return;});
+                            }
                         }
                     }
                 });
@@ -141,4 +155,23 @@ router.delete("/:subId", function(req,res){
     });
 });
 
+//*******HELPER****
+function memberCheck(list, el){
+    var l = list.length;
+    for (var i = 0; i< l; i++){
+        if (el===list[i]){
+            return true;
+        }
+    }
+    return false;
+}
+function memberCheckObjectId(list, el){
+    var l = list.length;
+    for (var i = 0; i< l; i++){
+        if (el.toString()===list[i].toString()){
+            return true;
+        }
+    }
+    return false;
+}
 module.exports = router;
