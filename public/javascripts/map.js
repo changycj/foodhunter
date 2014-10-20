@@ -37,6 +37,11 @@ $(document).ready(function() {
                     addMyEvent(user.events[i]);
                 }
 
+                // populate subscription data
+                for (var i = 0; i < user.subscriptions.length; i++) {
+                    addMySubscription(user.subscriptions[i].building, user.subscriptions[i].time_block);
+                }
+
                 function enableForms() {
                     // add event form
                     $("#form_add_event").submit(function(e) {        
@@ -80,7 +85,7 @@ $(document).ready(function() {
 
                     // TODOOOOO
                     // subscribe form
-                    $(".form_subscribe").submit(function(e) {
+                    $("#form_subscribe").submit(function(e) {
                         e.preventDefault();
                         var that = this;
                         var location = $(this).find("select[name='location'] option:selected");
@@ -98,23 +103,45 @@ $(document).ready(function() {
                             success: function(data) {
                                 if (data.success == 1) {
                                     var btn = $("<button/>").text("Delete").click(function(e) {
-                                        console.log("DELETE SUBSCIPRIONT!!!");
-                                        // $.ajax({
-                                        //     url: "/test_post",
-                                        //     type: "DELETE",
-                                        //     data: formData
+                                        //console.log("DELETE SUBSCIPRIONT!!!");
+                                        $.ajax({
+                                             url: "/api/subscriptions/subscribe",
+                                             type: "DELETE",
+                                             data: formData,
+                                             success: function(data){
+                                                //do smth
+                                             }
 
-                                        // });
+                                         });
                                     });
                                     $(that).before(
                                         $("<p/>").text(location.text() + " from " + time_block.text() + " ")
                                             .append(btn));
+
+                                    console.log(data);
+                                    addMySubscription(location.text(), time_block.text());
                                 } else {
                                     alert("ERROR!");
                                 }
                             }
                         });
                     });
+                }
+
+                function addMySubscription(loc, time_block) {
+                    var btn = $("<button/>").text("Delete").click(function(e) {
+                        console.log("DELETE SUBSCIPRIONT!!!");
+                        // $.ajax({
+                        //     url: "/test_post",
+                        //     type: "DELETE",
+                        //     data: formData
+
+                        // });
+                    });
+                    $("#form_subscribe").before(
+                        $("<p/>").text(loc + " from " + time_block + " ")
+                            .append(btn));
+
                 }
             
                 function addMyEvent(ev) {
