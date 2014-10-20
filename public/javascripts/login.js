@@ -23,7 +23,21 @@ $(document).ready(function() {
 
     $("#tests_list a").click(function(e) {
         e.preventDefault();
-        console.log("HI!");
+        var link = $(this).attr("href");
+        $.ajax({
+            url: "api/users/login",
+            method: "POST",
+            data: {kerberos: "test"},
+            success: function(data) {
+
+                if (data.success == 1) {                
+                    window.location = link;
+                } else {
+                    errorRedirect();
+                }       
+            },
+            error: errorRedirect
+        })
 
     });
 
