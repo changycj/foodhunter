@@ -1,30 +1,26 @@
 $(document).ready(function() {
 
-	console.log("Testing Subscription API");
-	test("testing Subscription post new", function(){
-
 		var formData = {
 	    	location: "54455c6e6959910b0056c131", //Alpha Epsilon Pi (AEPi)
 	        time_block: 2
 	    };
-	    var newSubTest = new Subscription({
-	                            "building":location,
-	                            "time_block":time_block, 
-	                            "users":["test"]
-	                        });
-	    var testjson = {success:1, details:"A subscription was added!", subscription:newSubTest};
 	    $.ajax({
 	        url: "/api/subscriptions/subscribe",
 	        type: "POST",
 	        data: formData,
 	        success: function(data) {
-	        	equal(data, testjson);
-	        },
-	        error: errorRedirect
+	        	test("testing Subscription post new", function(){
+	        		equal(data.success,1);
+	        		equal(data.details, "A subscription was added!");
+	        		equal(data.subscription.building, formData.location);
+	        		equal(data.subscription.time_block, formData.time_block);
+	        		console.log("users", data.subscription.users[0]);
+	        		equal(data.subscription.users, "test");
+	        	});	
+	        }
 	    });
-	});
 
-	test("testing delete Subscription", function(){
+	
 		var formData = {
 	    	location: "54455c6e6959910b0056c131", //Alpha Epsilon Pi (AEPi)
 	        time_block: 2
@@ -34,24 +30,26 @@ $(document).ready(function() {
 			type: "DELETE",
 			data: formData,
 			success: function(data){
-				console.log("TEST#2 RETURNED JSON", data);
+				test("testing delete Subscription", function(){
 				equal(data.success, 1);
-			},
-			error: errorRedirect
+			});
+			}
 		});
-	});
-
-	test("testing GET Subscriptions", function(){
-		var testjson = {success: 1, subscriptions: []};
+	
 		$.ajax({
 			url: "/api/subscriptions",
 			type: "GET", 
 			success: function(data){
-				console.log("Test#3 returned json get subscriptions", data);
-				equal(data, testjson);
+				test("testing GET Subscriptions", function(){
+					console.log("data returned", data);
+					equal(data.success, 1);
+					equal(data.subscriptions.length, 0);
+				});
+			},
+			error: function(err){
+				console.log(err);
 			}
 		});
-	});
 
 
 });

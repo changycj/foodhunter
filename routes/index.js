@@ -21,20 +21,20 @@ router.get("/tests/:api_name", function(req, res) {
 
     res.cookie("kerberos", "test");
     res.cookie("login", "true");
+    res.render("tests/" + api, {});
+    // if (api == "locations") {
+    //     res.render("tests/locations", {});
 
-    if (api == "locations") {
-        res.render("tests/locations", {});
+    // } else if (api == "events") {
+    //     res.render("tests/events", {});
 
-    } else if (api == "events") {
-        res.render("tests/events", {});
+    // } else if (api == "users") {
+    //     res.render("tests/users", {});
 
-    } else if (api == "users") {
-        res.render("tests/users", {});
+    // } else if (api == "subscriptions") {
+    //     res.render("tests/subscriptions");
 
-    } else if (api == "subscriptions") {
-        // res.render("tests/subscriptions");
-
-    }
+    // }
     res.redirect("/");
 });
 
