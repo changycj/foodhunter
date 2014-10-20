@@ -45,6 +45,7 @@ router.post("/subscribe", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
     var time_block = req.body.time_block;
     var building = req.body.location;
+    console.log(building);
      //list of subs
     var userKerberos = req.cookies.kerberos;
     console.log("KERBEROS", userKerberos);

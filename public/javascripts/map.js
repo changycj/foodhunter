@@ -97,8 +97,6 @@ $(document).ready(function() {
                             data: formData,
                             success: function(data) {
                                 if (data.success == 1) {
-                                    console.log(location.text());
-                                    console.log(time_block.val());
                                     var btn = $("<button/>").text("Delete").click(function(e) {
                                         console.log("DELETE SUBSCIPRIONT!!!");
                                         // $.ajax({
