@@ -43,25 +43,24 @@ router.get("/", function(req, res) {
 //assumes the user exists in DB
 router.post("/subscribe", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
-    var subscriptions = req.body.subscriptions; //list of subs
-    console.log("GOT SUBS: "+JSON.stringify(subscriptions));
+    var time_block = req.body.time_block;
+    var building = req.body.location;
+     //list of subs
     var userKerberos = req.cookies.kerberos;
     console.log("KERBEROS", userKerberos);
-    // subscription.Subscription.findOne({''})
-    // // first find out if subs already exist
-    var numSubs = subscriptions.length;
+
+    // first find out if subs already exist
     User.findOne({_id:userKerberos}, function(err, user){
         console.log(user);
         if (err){
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
-        else if (user===undefined){
-            res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
         }
+        else if (user==undefined){
+            res.send("PLEASE LOGIN");//HANDLE THIS CASE!!!!! the app will be more robust
         } else {
-            for (var i = 0; i < numSubs; i++){
-                var sub = subscriptions[i];
+                var sub = {building:building, time_block:time_block};
                 subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (e, s){
                     if (e){
                         console.log("Error while fingding sub");
@@ -122,8 +121,8 @@ router.post("/subscribe", function(req, res) {
                         }
                     }
                 });
-            }
-            res.json({message:1, details:"All subscriptions were added!"});
+            
+            res.json({success:1, details:"All subscriptions were added!"});
         }
     });
 });

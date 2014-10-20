@@ -95,12 +95,12 @@ $(document).ready(function() {
                         };
 
                         $.ajax({
-                            url: "/test_post",
+                            url: "/api/subscriptions/subscribe",
                             type: "POST",
                             data: formData,
                             success: function(data) {
                                 if (data.success == 1) {
-
+                                    alert(data.details);
                                 } else {
                                     alert("ERROR!");
                                 }
