@@ -45,66 +45,72 @@ router.post("/subscribe", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
     var subscriptions = req.body.subscriptions; //list of subs
     console.log("GOT SUBS: "+JSON.stringify(subscriptions));
-    var userKerberos = req.cookies.kerberos;
-    // first find out if subs already exist
+    var userKerberos = res.cookies.kerberos;
+    console.log("KERBEROS", userKerberos);
+    // subscription.Subscription.findOne({''})
+    // // first find out if subs already exist
     var numSubs = subscriptions.length;
     User.findOne({_id:userKerberos}, function(err, user){
+        console.log(user);
         if (err){
             console.log("Error finding the user who wants to subscribe");
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
-        }
-        for (var i = 0; i < numSubs; i++){
-            var sub = subscriptions[i];
-            subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (err, s){
-                if (err){
-                    console.log("Error while fingding sub");
-                    //res.json({message:0, details:"Error while fingding sub"});
-                    return;
-                }
-                else{
-                    //no such sub yet, create one
-                    if (s==undefined){
-                        var newSub = new subscription.Subscription(
-                                                    {building:sub.building, time_block:sub.time_block, users:[userKerberos]});
-                        newSub.save(function(err){
-                            if (err){
-                                console.log("Error while creating sub1");
-                                //res.json({message:0, details:"Error while creating sub1"});
-                            }
-                            return;
-                        });
-                        user.subscriptions.push(newSub._id);
-                        user.save(function(err){
-                            if (err){
-                                console.log("Error adding a newly creating sub to user list");
-                                //res.json({message:0, details:"Error adding a newly creating sub to user list"});
-                            }
-                            return;
-                        });
+        } else {
+            for (var i = 0; i < numSubs; i++){
+                var sub = subscriptions[i];
+                subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (e, s){
+                    if (e){
+                        console.log("Error while fingding sub");
+                        //res.json({message:0, details:"Error while fingding sub"});
+                        return;
                     }
-                    //there is such sub, update it by pushing a new user
                     else{
-                        s.users.push(userKerberos);
-                        s.save(function(err){
-                            console.log("Error while creating sub2");
-                            //res.json({message:0, details:"Error while creating sub2"});
-                            return;
-                        });
-                        user.subscriptions.push(s._id);
-                        user.save(function(err){
-                            if (err){
-                                console.log("Error adding an existing sub to user list");
-                                //res.json({message:0, details:"Error adding an existing sub to user list"});
-                            }
-                            return;
-                        });
+                        //no such sub yet, create one
+                        if (s==undefined){
+                            var newSub = new subscription.Subscription({
+                                building:sub.building,
+                                time_block:sub.time_block, 
+                                users:[userKerberos]
+                            });
+                            newSub.save(function(err){
+                                if (err){
+                                    console.log("Error while creating sub1");
+                                    //res.json({message:0, details:"Error while creating sub1"});
+                                }
+                                return;
+                            });
+                            user.subscriptions.push(newSub._id);
+                            user.save(function(err){
+                                if (err){
+                                    console.log("Error adding a newly creating sub to user list");
+                                    //res.json({message:0, details:"Error adding a newly creating sub to user list"});
+                                }
+                                return;
+                            });
+                        }
+                    //there is such sub, update it by pushing a new user
+                        else{
+                            s.users.push(userKerberos);
+                            s.save(function(err){
+                                console.log("Error while creating sub2");
+                                //res.json({message:0, details:"Error while creating sub2"});
+                                return;
+                            });
+                            user.subscriptions.push(s._id);
+                            user.save(function(err){
+                                if (err){
+                                    console.log("Error adding an existing sub to user list");
+                                    //res.json({message:0, details:"Error adding an existing sub to user list"});
+                                }
+                                return;
+                            });
+                        }
                     }
-                }
-
-            });
+                });
+            }
+            res.json({message:1, details:"All subscriptions were added!"});
         }
-        res.json({message:1, details:"All subscriptions were added!"});
     });
 });
 
