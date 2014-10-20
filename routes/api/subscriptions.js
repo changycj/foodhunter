@@ -54,7 +54,6 @@ router.post("/subscribe", function(req, res) {
             res.json({message:0, details:"Error finding the user who wants to subscribe"});
             return;
         }
-
         for (var i = 0; i < numSubs; i++){
             var sub = subscriptions[i];
             subscription.Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (err, s){
@@ -105,9 +104,8 @@ router.post("/subscribe", function(req, res) {
 
             });
         }
-    res.json({message:1, details:"All subscriptions were added!"});
+        res.json({message:1, details:"All subscriptions were added!"});
     });
-    
 });
 
 /*Delete a single subscription from current user's list*/
@@ -115,7 +113,7 @@ router.delete("/:subId", function(req,res){
     var subId = req.params.subId;
     var userKerberos = req.cookies.kerberos;
     //delete a user from subscription list
-    subscription.Subscriptions.update({_id:subId}, {$pull:{users:userKerberos}}, function(err){
+    subscription.Subscription.update({_id:subId}, {$pull:{users:userKerberos}}, function(err){
         if (err){
             console.log("Error deleting user from subscription list: subId "+ subId);
             res.json({message:0, details:"Error deleting user from subscription list: subId "+ subId});
