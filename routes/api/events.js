@@ -96,9 +96,6 @@ var emailOut = function(subscribers, newEvent, loc){
         smtpTransport.sendMail(mailOptions, function(err){
             if(err) console.log(err);
         });
-	
-
-
 };
 
 // GET ALL EVENTS
