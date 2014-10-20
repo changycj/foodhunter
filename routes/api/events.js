@@ -75,10 +75,13 @@ var emailOut = function(subscribers, newEvent, loc){
         // var smtpTransport = nodemailer.createTransport(smtpPool({
         var smtpTransport = nodemailer.createTransport('SMTP',{
             service: 'SendGrid',
+            host:'smtp.sendgrid.net',
+            port:'587',
             auth: {
-                user: 'foodHunter',
-                pass: '6170proj'
-            }
+                user: process.env.SENDGRID_USERNAME,
+                pass: process.env.SENDGRID_PASSWORD
+            },
+            domain: 'heroku.com'
             // maxConnections: 20,
             // maxMessages: Infinity
         });
