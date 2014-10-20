@@ -22,7 +22,7 @@ router.get("/tests/:api_name", function(req, res) {
         res.render("tests/locations", {});
 
     } else if (api == "events") {
-        // res.render("tests/events", {});
+        res.render("tests/events", {});
 
     } else if (api == "users") {
         // res.render("tests/users", {});
