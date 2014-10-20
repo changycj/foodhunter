@@ -25,7 +25,7 @@ router.get("/tests/:api_name", function(req, res) {
         res.render("tests/events", {});
 
     } else if (api == "users") {
-        // res.render("tests/users", {});
+        res.render("tests/users", {});
 
     } else if (api == "subscriptions") {
         // res.render("tests/subscriptions");
