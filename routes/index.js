@@ -2,12 +2,18 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res) {    
+router.get('/', function(req, res) {
+    res.clearCookie("kerberos");
+    res.cookie("login", "false");    
+
     res.redirect("/login");
 });
 
 // GET login page
 router.get("/login", function(req, res) {
+    res.clearCookie("kerberos");
+    res.cookie("login", "false");  
+    
     res.render("login", {});
 });
 
