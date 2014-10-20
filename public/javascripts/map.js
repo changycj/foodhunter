@@ -148,7 +148,7 @@ $(document).ready(function() {
     // load locations data
     $.ajax({
         // url: "/api/locations/?fields=name,building",
-        url: "/api/locations"
+        url: "/api/locations",
         method: "GET",
         success: function(locs) {
   

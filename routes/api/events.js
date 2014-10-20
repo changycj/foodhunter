@@ -148,7 +148,7 @@ router.post('/', function(req, res) {
     					else{
     						//res.json(newEvent);
     						var subscribers =  findSubscribers(newEvent);
-    						// console.log(subscribers);
+    						console.log(subscribers);
     						emailOut(subscribers);
     						res.json({message:1, element: newEvent}); //smth...
     						//res.redirect('/events');

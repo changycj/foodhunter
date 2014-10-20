@@ -45,7 +45,7 @@ router.post("/subscribe", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
     var subscriptions = req.body.subscriptions; //list of subs
     console.log("GOT SUBS: "+JSON.stringify(subscriptions));
-    var userKerberos = res.cookies.kerberos;
+    var userKerberos = req.cookies.kerberos;
     console.log("KERBEROS", userKerberos);
     // subscription.Subscription.findOne({''})
     // // first find out if subs already exist
