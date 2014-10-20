@@ -36,10 +36,10 @@ app.use('/', routes);
 app.use('/map', map);
 
 // REST API routers
-app.use("/locations", locations);
-app.use('/events', ev);
-app.use("/subscriptions", subscriptions);
-app.use("/users", users);
+app.use("/api/locations", locations);
+app.use('/api/events', ev);
+app.use("/api/subscriptions", subscriptions);
+app.use("/api/users", users);
 
 
 // ERROR Handlers

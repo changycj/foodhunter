@@ -9,22 +9,6 @@ var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
 var Subscription = require("../../models/Subscription").Subscription;
 
-/*DISPLAY ALL EVENTS*/
-/*Currently in the test mode. Might not be needed in the deployed version*/
-router.get('/', function(req, res) {
-	Event.find({},{}, function(err, doc){
-	if (err){
-		console.log("Error listing all the events");
-	}
-	else{
-		//res.json(doc); //return all docs
-		res.render('testevent', {title: "Test Mode", allEvents:doc});
-	}
-	});
-
-});
-
-
 /*
 findSubscribers finds the subscriptions related to the event
 and returns a list of users signed up for that subscription.
@@ -100,6 +84,18 @@ var emailOut = function(subscribers){
         });
 };
 
+// GET ALL EVENTS
+/*Currently in the test mode. Might not be needed in the deployed version*/
+router.get('/', function(req, res) {
+    Event.find({}, function(err, events){
+        if (err){
+            console.log("Error listing all the events");
+        }
+        else{
+            res.json(events); //return all docs
+        }
+    });
+});
 
 /*********CREATE A NEW EVENT*********/
 
