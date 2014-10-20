@@ -21,6 +21,12 @@ $(document).ready(function() {
         });
     });
 
+    $("#tests_list a").click(function(e) {
+        e.preventDefault();
+        console.log("HI!");
+
+    });
+
     function errorRedirect() {
         alert("ERROR!");
         window.location = "/";
