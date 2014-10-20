@@ -10,7 +10,7 @@ Deployment URL: ?????
 Authors:
 
 - public/javascripts/tests: (test scripts and also corresponding ejs files in views/tests)
-  - events.js: Dana Mukushev
+  - events.js: Dana Mukusheva
   - locations.js: Judy Chang
   - subscriptions.js: Rebekah Cha
   - users.js: Judy Chang
@@ -21,9 +21,9 @@ Authors:
   - map.js: Judy Chang
 
 - routes/api:
-  - events.js: Rebekah Cha
+  - events.js: Dana Mukusheva
   - locations.js: Judy Chang
-  - subscriptions.js: Dana Mukushev
+  - subscriptions.js: Dana Mukusheva
   - users.js: Rebekah Cha
 
 - routes:
