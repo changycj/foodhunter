@@ -10,12 +10,12 @@
 	"__v" : 0
 }
 */
-
-$(document).ready(function() {
-	//post event
-	//make some dummy data
-	var today = new Date().valueOf();
-	var formData = {
+QUnit.test("POST to /events", function(assert){
+    $(document).ready(function() {
+    //post event
+    //make some dummy data
+    var today = new Date().valueOf();
+    var formData = {
                     when: {
                         start: today+1000000000,
                         end: today+1500000000
@@ -24,7 +24,6 @@ $(document).ready(function() {
                     location: "544552d424a285661925bd91"
                 };
 
-    $(".data_to_post").append("<p>"+"POST INPUT: "+formData+"</p>");
     //post smth            
     $.ajax({
     url: "/api/events",
@@ -33,19 +32,24 @@ $(document).ready(function() {
     cache: false,
     success: function(data) {
         if (data.success== 1) {
-        	var dataInfo = data.event;
-            $(".post_result").append("<p>"+"POST RESULT: "+dataInfo+"</p>");
-            window.location = "/";
+            var dataInfo = data.event;
+            assert.strictEqual(1,1,"check");
 
         } else {
             alert("Can't post new event1: ");
-        	window.location = "/";
+            window.location = "/";
         }
     },
     error: function(){
-    		alert("Can't post new event2");
-        	window.location = "/";	
+            alert("Can't post new event2");
+            window.location = "/";  
     }
     
 });            
 });
+    
+});
+/*
+
+
+*/
