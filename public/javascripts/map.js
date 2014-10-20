@@ -37,10 +37,46 @@ $(document).ready(function() {
                     addMyEvent(user.events[i]);
                 }
 
-                // populate subscription data
-                for (var i = 0; i < user.subscriptions.length; i++) {
-                    addMySubscription(user.subscriptions[i].building, user.subscriptions[i].time_block);
-                }
+
+                // load locations data
+                $.ajax({
+                    url: "/api/locations/?fields=name,building",
+                    method: "GET",
+                    success: function(data) {
+
+                        if (data.success == 1) {
+                            var locs = data.locations;
+                            // enable adding more blank subscription fields
+                            var select = $("select[class='location']");
+
+                            $.each(locs, function(key, loc) {
+
+                                // populate all locations options
+                                $("<option/>").val(loc._id).text((loc.building == undefined ? "" : loc.building + ", ") + loc.name)
+                                    .appendTo(select);
+                                
+                                // TODO: currently adds marker for every location
+                                // should switch to for every event
+                                // addMarker(loc);
+                                
+                            });
+
+                            // populate subscription data
+                            for (var i = 0; i < user.subscriptions.length; i++) {
+                                // need to find actual building name and time_block representation
+                                var time = user.subscriptions[i].time_block;
+                                var time_string = $("#form_subscribe select[name='time'] option[value='" + time + "']").text();
+                                var building = user.subscriptions[i].building;
+                                var building_string = $("#form_subscribe select[name='location'] option[value='" + building + "']").text();
+                                addMySubscription(building_string, time_string);
+                            }
+
+                        } else {
+                            alert("ERROR!");
+                            window.location = "/";
+                        }
+                    }
+                }); 
 
                 function enableForms() {
                     // add event form
@@ -163,36 +199,7 @@ $(document).ready(function() {
 
         }
     });
-
-    // load locations data
-    $.ajax({
-        url: "/api/locations/?fields=name,building",
-        method: "GET",
-        success: function(data) {
-
-            if (data.success == 1) {
-                var locs = data.locations;
-                // enable adding more blank subscription fields
-                var select = $("select[class='location']");
-
-                $.each(locs, function(key, loc) {
-
-                    // populate all locations options
-                    $("<option/>").val(loc._id).text((loc.building == undefined ? "" : loc.building + ", ") + loc.name)
-                        .appendTo(select);
-                    
-                    // TODO: currently adds marker for every location
-                    // should switch to for every event
-                    // addMarker(loc);
-                    
-                });
-
-            } else {
-                alert("ERROR!");
-                window.location = "/";
-            }
-        }
-    });    
+   
     
     function addMarker(loc) {
         // and also add markers to map
