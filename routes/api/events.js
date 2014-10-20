@@ -90,10 +90,10 @@ var emailOut = function(subscribers){
 router.get('/', function(req, res) {
     Event.find({}, function(err, events){
         if (err){
-            console.log("Error listing all the events");
+            res.json({success:0});
         }
         else{
-            res.json(events); //return all docs
+            res.json({success:1, events: events}); //return all docs
         }
     });
 });
@@ -122,7 +122,7 @@ router.post('/', function(req, res) {
     					};
 	//check if the event is valid. If nonsense entered, it puts today's date  
     if (!eventValidityCheck(newEventJSON, today)){
-    	res.json({message:0, element:newEventJSON, details : "Event happens in the past"});
+    	res.json({success: 0, details : "Event happens in the past"});
     	return;
     }
     //all good, go on
@@ -130,13 +130,13 @@ router.post('/', function(req, res) {
     newEvent.save(function(err){
     	if (err){
     		console.log("Error creating a new event instance");
-    		res.json({message:0, details:"Error creating a new event instance"});
+    		res.json({success:0, details:"Error creating a new event instance"});
     	}
     	else{
     		User.findOne({_id:host}, function(err, user){
     			if (err){
     				console.log("Error adding an event to the User.events. "+err);
-    				res.json({message:0, details:"Error adding an event to user"});
+    				res.json({success:0, details:"Error adding an event to user"});
     			}
     			//SUCH USER EXISTS
     			else {
@@ -144,14 +144,14 @@ router.post('/', function(req, res) {
     				user.save(function(err){
     					if (err){
     						console.log("Error adding an event to the User.events 2");
-    						res.json({message:0, details:"Error adding an event to the User.events 2"});
+    						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
     						//res.json(newEvent);
     						var subscribers =  findSubscribers(newEvent);
     						// console.log(subscribers);
     						emailOut(subscribers);
-    						res.json({message:1, element: newEvent}); //smth...
+    						res.json({success:1, event: newEvent}); //smth...
     						//res.redirect('/events');
     					}
     				});
@@ -166,10 +166,10 @@ router.get('/:eventId', function(req,res){
 	var eventId = req.params.eventId;
 	Event.findById(eventId, function(err, doc){
 		if (err){
-			console.log("Error finding the event");
+            res.json({success: 0})
 			return;
 		}
-		res.json(doc); //just send a JSON object
+		res.json({success: 1, event: doc}); //just send a JSON object
 	});
 });
 
@@ -213,12 +213,12 @@ router.put('/:eventId', function(req,res){
 		}
 		doc.save(function(err){
 			if (err){
-				console.log("Error saving the updates");
+                res.json({success: 0})
 				return;
 			}
 			//res.send(doc);
 			//res.redirect('/event/'+eventId);
-			res.json({message:1, element: doc});
+			res.json({success:1, event: doc});
 		});
 	});
 });
@@ -227,21 +227,18 @@ router.put('/:eventId', function(req,res){
 //TODO: delete event from Users.events list - DONE, but needs to be tested
 //
 router.delete('/:eventId', function(req,res){
-    console.log("HI");
 	var eventId = req.params.eventId;
-    console.log(eventId);
 	Event.remove({_id:eventId}, function(err){
 		if (err){
-			console.log("Error deleting event: "+ eventId);
+			res.json({success:0});
 		}
 		else{
 			User.update({_id:req.cookies.kerberos}, {$pull:{events:eventId}}, function(err, doc){
 				if (err){
-					console.log("Error while deleting event from usr's list");
+                    res.json({success:0});
 				}
 				else{
-					res.json({message:1, element: doc});
-					//res.redirect('/events');
+					res.json({success:1});
 				}
 			});
 			
