@@ -150,56 +150,52 @@ $(document).ready(function() {
         // url: "/api/locations/?fields=name,building",
         url: "/api/locations",
         method: "GET",
-        success: function(locs) {
-  
-            // enable adding more blank subscription fields
-            var select = $("select[class='location']");
+        success: function(data) {
 
-            $.each(locs, function(key, loc) {
+            if (data.success == 1) {
+                var locs = data.locations;
+                // enable adding more blank subscription fields
+                var select = $("select[class='location']");
 
-                // populate all locations options
-                $("<option/>").val(loc._id).text((loc.building == undefined ? "" : loc.building + ", ") + loc.name)
-                    .appendTo(select);
-                
-                // TODO: currently adds marker for every location
-                // should switch to for every event
-                addMarker(loc);
-                
-                // enable adding more subscriptions (needs location)
-                $("#add_subscription").click(function(e) {
-                    e.preventDefault();
-                    // add blank subscription
-                    $(".subscription:last").clone().insertAfter($(".subscription:last"));
+                $.each(locs, function(key, loc) {
+
+                    // populate all locations options
+                    $("<option/>").val(loc._id).text((loc.building == undefined ? "" : loc.building + ", ") + loc.name)
+                        .appendTo(select);
+                    
+                    // TODO: currently adds marker for every location
+                    // should switch to for every event
+                    addMarker(loc);
+                    
+                    // enable adding more subscriptions (needs location)
+                    $("#add_subscription").click(function(e) {
+                        e.preventDefault();
+                        // add blank subscription
+                        $(".subscription:last").clone().insertAfter($(".subscription:last"));
+                    });
                 });
-            });
 
-            function addMarker(loc) {
-                // and also add markers to map
-                var marker = L.mapbox.featureLayer({
-                    type: "Feature",
-                    geometry: {
-                        type: "Point",
-                        coordinates: [loc.gps.lon, loc.gps.lat]
-                    },
-                    properties: {
-                        title: loc.building,
-                        description: loc.name,
-                        "marker-size" : "small",
-                        "marker-color" : "#BE9A6B",
-                        "marker-symbol" : "ice-cream"
-                    }
-                }).addTo(map);
+                function addMarker(loc) {
+                    // and also add markers to map
+                    var marker = L.mapbox.featureLayer({
+                        type: "Feature",
+                        geometry: {
+                            type: "Point",
+                            coordinates: [loc.gps.lon, loc.gps.lat]
+                        },
+                        properties: {
+                            title: loc.building,
+                            description: loc.name,
+                            "marker-size" : "small",
+                            "marker-color" : "#BE9A6B",
+                            "marker-symbol" : "ice-cream"
+                        }
+                    }).addTo(map);
+                }
+            } else {
+                alert("ERROR!");
+                window.location = "/";
             }
         }
     });    
-    
-    // // load all events data
-    // $.ajax({
-    //     url: "/events",
-    //     method: "GET",
-    //     success: function(events) {
-
-
-    //     }
-    // });
 });

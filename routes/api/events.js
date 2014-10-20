@@ -8,6 +8,7 @@ var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
 var Subscription = require("../../models/Subscription").Subscription;
+var nodemailer = require("nodemailer");
 
 /*
 findSubscribers finds the subscriptions related to the event

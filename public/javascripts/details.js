@@ -20,40 +20,45 @@ $(document).ready(function() {
             $.ajax({
                 url: "/api/locations/" + event.location,
                 method: "GET",
-                success: function(loc) {
-                    $("span[name='location']").text(loc.building + " - " + loc.name);
+                success: function(data) {
 
-                    // form submit
-                    $("input[name='submit']").click(function(e) {
-                        e.preventDefault();
+                    if (data.success == 1) {
+                        var loc = data.location;
+                        
+                        $("span[name='location']").text(loc.building + " - " + loc.name);
 
-                        var date  = $("input[name='date']").datepicker("getDate");
-                        var time_start = $("input[name='time_start']").timepicker("getTime", date);
-                        var time_end = $("input[name='time_end']").timepicker("getTime", date);
+                        // form submit
+                        $("input[name='submit']").click(function(e) {
+                            e.preventDefault();
 
-                        var formData = {
-                            when: {
-                                start: time_start.valueOf(),
-                                end: time_end.valueOf()
-                            },
-                            description: $("textarea[name='description']").val(),
-                            location: $("select[name='location'] option:selected").val()
-                        };
+                            var date  = $("input[name='date']").datepicker("getDate");
+                            var time_start = $("input[name='time_start']").timepicker("getTime", date);
+                            var time_end = $("input[name='time_end']").timepicker("getTime", date);
 
-                        $.ajax({
-                            url: "/api/events/" + event._id,
-                            type: "PUT",
-                            data: formData,
-                            cache: false,
-                            success: function(data) {
+                            var formData = {
+                                when: {
+                                    start: time_start.valueOf(),
+                                    end: time_end.valueOf()
+                                },
+                                description: $("textarea[name='description']").val(),
+                                location: $("select[name='location'] option:selected").val()
+                            };
 
-                                // there is probably a better than refresh
-                                window.opener.location.reload();
-                                window.close();
-                            }
+                            $.ajax({
+                                url: "/api/events/" + event._id,
+                                type: "PUT",
+                                data: formData,
+                                cache: false,
+                                success: function(data) {
 
-                        });                 
-                    });
+                                    // there is probably a better than refresh
+                                    window.opener.location.reload();
+                                    window.close();
+                                }
+
+                            });                 
+                        });
+                    }
 
                     // close form
                     $("input[name='close']").click(function(e) {
