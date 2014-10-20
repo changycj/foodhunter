@@ -23,6 +23,8 @@ var findSubscribers = function(newEvent){
 		} else {
 			var times = [];
 			var building = loc;
+			console.log("newEvent", newEvent);
+			console.log("newEvent.when.start", newEvent.when.start);
 			for (var i = 0; i < 4; i ++){
 				if (newEvent.when.start < ((i+1)*6)){
 					if (times.indexOf(i) == -1){
@@ -35,12 +37,15 @@ var findSubscribers = function(newEvent){
 					}
 				}
 			}
+			console.log("TIMES", times);
+			console.log("building", building);
 			Subscription.find({"building": building, "time_block": { $in: times}})
 			.populate('users', '_id')
 			.exec(function(e, users){
 				if (e) {
 					console.log("Error finding subscriptions from new event");
 				} else {
+					console.log("users of subscriptions", users);
 					var subscribers = [];
 					for (var i = 0; i < users.length; i ++){
 						var email = users[i] + "@mit.edu";
@@ -48,6 +53,7 @@ var findSubscribers = function(newEvent){
 							subscribers.append(email);
 						}
 					}
+					console.log("after. subscribers to return", subscribers);
 					return subscribers;
 				}
 			});
@@ -110,15 +116,16 @@ router.post('/', function(req, res) {
     var data = req.body;
     var start = data.when.start; //number
     var end = data.when.end;
-    console.log("START: "+start);
+    console.log("STARTing: "+start);
     var location = data.location; //comes as objectId already :)
 	var description = req.body.description;
 	
-	var newEventJSON = {"host":host, 
+	var newEventJSON = {
     					"when": {"start":start, "end":end},
-    					"location": location, //now it's ObjectId
     					"status":status,
-    					"description":description
+    					"host":host, 
+    					"description":description,
+    					"location": location //now it's ObjectId
     					};
 	//check if the event is valid. If nonsense entered, it puts today's date  
     if (!eventValidityCheck(newEventJSON, today)){
@@ -126,6 +133,7 @@ router.post('/', function(req, res) {
     	return;
     }
     //all good, go on
+    else {
     var newEvent = new Event(newEventJSON);
     newEvent.save(function(err){
     	if (err){
@@ -140,6 +148,7 @@ router.post('/', function(req, res) {
     			}
     			//SUCH USER EXISTS
     			else {
+    				console.log('user!!', user);
     				user.events.push(newEvent._id);
     				user.save(function(err){
     					if (err){
@@ -150,7 +159,7 @@ router.post('/', function(req, res) {
     						//res.json(newEvent);
     						var subscribers =  findSubscribers(newEvent);
     						console.log(subscribers);
-    						emailOut(subscribers);
+    						// emailOut(subscribers);
     						res.json({success:1, event: newEvent}); //smth...
     						//res.redirect('/events');
     					}
@@ -159,6 +168,7 @@ router.post('/', function(req, res) {
     		});
     	}
     });
+}
 });
 
 /*********GET individual event info*********/
