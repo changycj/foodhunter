@@ -55,7 +55,7 @@ var findSubscribers = function(req, res, newEvent){
 							}
 						}
 					}
-					emailOut(subscribers);
+					emailOut(subscribers, newEvent, loc);
 					res.json({success:1, event: newEvent});
 				}
 			});
@@ -68,7 +68,10 @@ emailOut emails out to the list of subscribed users.
 Called when a new event is added.
 params: subscribers is a list of users
 */
-var emailOut = function(subscribers){
+var emailOut = function(subscribers, newEvent, loc){
+	 	console.log(loc);
+	 	var eventStart = new Date(newEvent.when.start);
+	 	var eventEnd = new Date(newEvent.when.end);
         // var smtpTransport = nodemailer.createTransport(smtpPool({
         var smtpTransport = nodemailer.createTransport('SMTP',{
             service: 'SendGrid',
@@ -81,16 +84,21 @@ var emailOut = function(subscribers){
         });
         // }));
         var mailOptions = {
-            // to: user.kerberos + "@mit.edu",
-            // bcc: subscribers,
             bcc: subscribers,
             from: 'foodhunterproject@mit.edu',
-            subject: 'Free Food Event',
-            text: 'You are receiving this because you (or someone else) has subscribed to the free food mailing list for this building.\n'
+            subject: 'Free Food ' + eventStart.getMonth() + "/" + eventStart.getDate() + ' in ' + loc.name,
+            text: 'Time: ' + eventStart.getHours() + ":" + eventStart.getMinutes() + ' - ' 
+           		+ eventEnd.getHours() + ":" + eventEnd.getMinutes() + '\n'
+           		+ 'Description: ' + newEvent.description + '\n'
+           		+ 'Hosted by: '+ newEvent.host
+            	+'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for ' + newEvent.location.name + '.\n'
         };
         smtpTransport.sendMail(mailOptions, function(err){
             if(err) console.log(err);
         });
+	
+
+
 };
 
 // GET ALL EVENTS
