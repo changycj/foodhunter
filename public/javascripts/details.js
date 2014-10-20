@@ -54,7 +54,7 @@ $(document).ready(function() {
                                     cache: false,
                                     success: function(data) {
                                         if (data.success == 1) {
-                                        // there is probably a better than refresh
+                                            // there is probably a better way than refresh
                                             window.opener.location.reload();
                                             window.close();
                                         } else {

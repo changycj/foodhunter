@@ -68,6 +68,7 @@ $(document).ready(function() {
                                 var time_string = $("#form_subscribe select[name='time'] option[value='" + time + "']");
                                 var building = user.subscriptions[i].building;
                                 var building_string = $("#form_subscribe select[name='location'] option[value='" + building + "']");
+
                                 addMySubscription(building_string, time_string);
                             }
 
@@ -108,7 +109,10 @@ $(document).ready(function() {
                                 if (data.success== 1) {
                                     $("#form_add_event")[0].reset();
                                     addMyEvent(data.event);
-                                    alert("Event created!");
+
+                                    // must reload to show map marker (FOR NOWWWW)
+                                    window.location.reload();
+
                                 } else {
                                     alert("Event create unsuccessful.");
                                 }
@@ -191,7 +195,9 @@ $(document).ready(function() {
                             success: function(data) {
                                 if (data.success == 1) {
                                     item.remove();
-                                    alert("Event deleted!");
+
+                                    // must reload for map to correspond (FOR NOWWW)
+                                    window.location.reload();
                                 } else {
                                     alert("Event delete unsuccessful.");
                                 }
@@ -202,6 +208,7 @@ $(document).ready(function() {
                         });
                     });
                 }
+
             } else {
                 alert("ERROR!");
             }
@@ -209,18 +216,31 @@ $(document).ready(function() {
         }
     });
    
+    $.ajax({
+        url: "/api/events",
+        method: "GET",
+        success: function(data) {
+            if (data.success == 1) {
+                for (var i = 0; i < data.events.length; i++) {
+                    var ev = data.events[i];
+                    addMarker(ev);
+                }
+            }
+        }
+
+    })
     
-    function addMarker(loc) {
+    function addMarker(ev) {
         // and also add markers to map
         var marker = L.mapbox.featureLayer({
             type: "Feature",
             geometry: {
                 type: "Point",
-                coordinates: [loc.gps.lon, loc.gps.lat]
+                coordinates: [ev.location.gps.lon, ev.location.gps.lat]
             },
             properties: {
-                title: loc.building,
-                description: loc.name,
+                title: (ev.location.building == undefined ? "" : ev.location.building + " - ") + ev.location.name,
+                description: (new Date(ev.when.start)).toLocaleString() + "<br>" + ev.description,
                 "marker-size" : "small",
                 "marker-color" : "#BE9A6B",
                 "marker-symbol" : "ice-cream"

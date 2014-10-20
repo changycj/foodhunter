@@ -101,7 +101,7 @@ var emailOut = function(subscribers, newEvent, loc){
 // GET ALL EVENTS
 /*Currently in the test mode. Might not be needed in the deployed version*/
 router.get('/', function(req, res) {
-    Event.find({}, function(err, events){
+    Event.find({}).populate("location").exec(function(err, events){
         if (err){
             res.json({success:0});
         }
