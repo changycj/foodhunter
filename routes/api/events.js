@@ -16,7 +16,7 @@ and returns a list of users signed up for that subscription.
 Params: event
 Returns: list of users
 */
-var findSubscribers = function(newEvent){
+var findSubscribers = function(req, res, newEvent){
 	var subscribers = [];
 	Location.findOne({"_id": newEvent.location}).exec(function(err, loc){
 		if (err){
@@ -33,38 +33,34 @@ var findSubscribers = function(newEvent){
 					times.push(timeBlock);
 				}
 			} else{
-			for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
-				console.log("startend", startEnd[i]);
-				var timeBlock = Math.floor((startEnd[0]+i)/6);
-				console.log("timeblock", timeBlock);
-				if (times.indexOf(timeBlock) == -1){
-					times.push(timeBlock);
+				for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
+					var timeBlock = Math.floor((startEnd[0]+i)/6);
+					if (times.indexOf(timeBlock) == -1){
+						times.push(timeBlock);
+					}
 				}
 			}
-		}
-			console.log("TIMES", times);
-			console.log("building", building);
 			Subscription.find({"building": building, "time_block": { $in: times}})
 			.populate('users')
-			.exec(function(e, users){
+			.exec(function(e, subs){
 				if (e) {
 					console.log("Error finding subscriptions from new event");
 				} else {
-					console.log("users of subscriptions", users);
-					for (var i = 0; i < users.length; i ++){
-						console.log('CURRENT USER TO ADD', users[i]);
-						var email = users[i]._id + "@mit.edu";
-						if (subscribers.indexOf(email) == -1){
-							subscribers.push(email);
+					for (var i = 0; i < subs.length; i ++){
+						for (var subscribedUser = 0; subscribedUser < subs[i].users.length; subscribedUser ++){
+							var email = subs[i].users[subscribedUser]._id + "@mit.edu";
+							if (subscribers.indexOf(email) == -1){
+								subscribers.push(email);
+								// console.log("for now subscribers", subscribers);
+							}
 						}
 					}
-					console.log("after. subscribers to return", subscribers);
-					// return subscribers;
+					emailOut(subscribers);
+					res.json({success:1, event: newEvent});
 				}
 			});
 		}
 	});
-	return subscribers;
 }
 
 /*
@@ -161,14 +157,7 @@ router.post('/', function(req, res) {
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
-    						//res.json(newEvent);
-    						var subscribers =  findSubscribers(newEvent);
-    						console.log(subscribers);
-    						// if (subscribers.length > 0){
-    						// 	emailOut(subscribers);
-    						// }
-    						res.json({success:1, event: newEvent}); //smth...
-    						//res.redirect('/events');
+    						findSubscribers(req, res, newEvent);
     					}
     				});
     			}
