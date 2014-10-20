@@ -22,7 +22,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(partials());
-// app.use(nodemailer)
 
 // set up routers
 var routes = require("./routes/index");
