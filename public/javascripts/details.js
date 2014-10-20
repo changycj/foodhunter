@@ -54,18 +54,19 @@ $(document).ready(function() {
                                     cache: false,
                                     success: function(data) {
                                         if (data.success == 1) {
-                                        // there is probably a better than refresh
+                                            // there is probably a better way than refresh
                                             window.opener.location.reload();
                                             window.close();
                                         } else {
-                                            alert("ERROR!");
+                                            errorRedirect();
                                         }
-                                    }
+                                    },
+                                    error: errorRedirect
 
                                 });                 
                             });
                         } else {
-                            alert("ERROR!");
+                            errorRedirect();
                         }
 
                         // close form
@@ -73,15 +74,21 @@ $(document).ready(function() {
                             e.preventDefault();
                             window.close();
                         });
-                    }
+                    },
+                    error: errorRedirect
                 });
             } else {
-                alert("ERROR!");
+                errorRedirect();
             }
 
-        }
+        },
+        error: errorRedirect
     });
 
+    function errorRedirect() {
+        alert("ERROR!");
+        window.location = "/";
+    }
 
 
 });

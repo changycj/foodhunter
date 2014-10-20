@@ -135,16 +135,20 @@ router.post("/subscribe", function(req, res) {
 router.delete("/subscribe", function(req,res){
     var building = req.body.location;
     var time_block = req.body.time_block;
+
     var userKerberos = req.cookies.kerberos;
     //delete a user from subscription list
-    subscription.Subscription.findOne({building:builging, time_block:time_block}, function(err, sub){
+    subscription.Subscription.findOne({building:building, time_block:time_block}, function(err, sub){
+        console.log("DELETING THIS STUFF: "+sub);
         if (err){
             console.log("Error deleting user from subscription list:");
             res.json({success:0, details:"Error deleting user from subscription list"});
         }
         else{
+
             var index = sub.users.indexOf(userKerberos);
             if (index!==-1){
+
                 sub.users.splice(index,1);
             }
             sub.save(function(err){
