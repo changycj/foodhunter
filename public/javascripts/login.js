@@ -14,10 +14,16 @@ $(document).ready(function() {
                 if (data.success == 1) {
                     window.location = "/map?kerberos=" + data.user._id;
                 } else {
-                    alert("ERROR!");
+                    errorRedirect();
                 }
-            }
+            },
+            error: errorRedirect
         });
     });
+
+    function errorRedirect() {
+        alert("ERROR!");
+        window.location = "/";
+    }
 
 });
