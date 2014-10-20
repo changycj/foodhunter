@@ -7,6 +7,7 @@ var router = express.Router();
 var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
+var Subscription = require("../../models/Subscription").Subscription;
 
 /*DISPLAY ALL EVENTS*/
 /*Currently in the test mode. Might not be needed in the deployed version*/
@@ -23,8 +24,58 @@ router.get('/', function(req, res) {
 
 });
 
-var emailOut = function(){
-        console.log("entered subscribe method");
+
+/*
+findSubscribers finds the subscriptions related to the event
+and returns a list of users signed up for that subscription.
+Params: event
+Returns: list of users
+*/
+var findSubscribers = function(newEvent){
+	Location.findOne({"_id": newEvent.location}).exec(function(err, loc){
+		if (err){
+			console.log("Error finding location of event");
+		} else {
+			var times = [];
+			var building = loc;
+			for (var i = 0; i < 4; i ++){
+				if (newEvent.when.start < ((i+1)*6)){
+					if (times.indexOf(i) == -1){
+						times.append(i);
+					}
+				}
+				if (newEvent.when.end < ((i+1)*6)) {
+					if (times.indexOf(i) == -1){
+						times.append(i);
+					}
+				}
+			}
+			Subscription.find({"building": building, "time_block": { $in: times}})
+			.populate('users', '_id')
+			.exec(function(e, users){
+				if (e) {
+					console.log("Error finding subscriptions from new event");
+				} else {
+					var subscribers = [];
+					for (var i = 0; i < users.length; i ++){
+						var email = users[i] + "@mit.edu";
+						if (subscribers.indexOf(email) == -1){
+							subscribers.append(email);
+						}
+					}
+					return subscribers;
+				}
+			});
+		}
+	});
+}
+
+/*
+emailOut emails out to the list of subscribed users.
+Called when a new event is added.
+params: subscribers is a list of users
+*/
+var emailOut = function(subscribers){
         // var smtpTransport = nodemailer.createTransport(smtpPool({
         var smtpTransport = nodemailer.createTransport('SMTP',{
             service: 'SendGrid',
@@ -38,20 +89,18 @@ var emailOut = function(){
         // }));
         var mailOptions = {
             // to: user.kerberos + "@mit.edu",
-            bcc: 'rcha@mit.edu',
+            // bcc: subscribers,
+            bcc: subscribers,
             from: 'foodhunterproject@mit.edu',
             subject: 'Free Food Event',
             text: 'You are receiving this because you (or someone else) has subscribed to the free food mailing list for this building.\n'
         };
         smtpTransport.sendMail(mailOptions, function(err){
-            if(err){
-                console.log(err);
-            } else {
-                console.log("message sent");
-            }
-            // smtpTransport.close();
+            if(err) console.log(err);
         });
 };
+
+
 /*********CREATE A NEW EVENT*********/
 
 /*TODO: validate hours, date, status, error handling in general*/
@@ -102,6 +151,9 @@ router.post('/', function(req, res) {
     					}
     					else{
     						//res.json(newEvent);
+    						var subscribers =  findSubscribers(newEvent);
+    						// console.log(subscribers);
+    						emailOut(subscribers);
     						res.json({message:1, element: newEvent}); //smth...
     						//res.redirect('/events');
     					}
