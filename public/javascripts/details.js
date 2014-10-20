@@ -1,7 +1,12 @@
+// Lead: Judy Chang
+// 
+// Specific event popup
 $(document).ready(function() {
 
+    // event ID
     var event_id = window.location.search.split("id=")[1];
 
+    // get event info
     $.ajax({
         url: "/api/events/" + event_id,
         method: "GET",
@@ -9,6 +14,7 @@ $(document).ready(function() {
             if (data.success == 1) {
                 var event = data.event;
 
+                // add UI widgets and populate with data
                 $("input[name='date']").datepicker();
                 $("input[name='date']").datepicker("setDate", new Date(event.when.start));
 
@@ -20,6 +26,7 @@ $(document).ready(function() {
 
                 $("textarea[name='description']").text(event.description);
 
+                //get location data
                 $.ajax({
                     url: "/api/locations/" + event.location,
                     method: "GET",
@@ -30,6 +37,7 @@ $(document).ready(function() {
                             
                             $("span[name='location']").text(loc.building + " - " + loc.name);
 
+
                             // form submit
                             $("input[name='submit']").click(function(e) {
                                 e.preventDefault();
@@ -38,6 +46,7 @@ $(document).ready(function() {
                                 var time_start = $("input[name='time_start']").timepicker("getTime", date);
                                 var time_end = $("input[name='time_end']").timepicker("getTime", date);
 
+                                // event data
                                 var formData = {
                                     when: {
                                         start: time_start.valueOf(),
@@ -47,6 +56,7 @@ $(document).ready(function() {
                                     location: $("select[name='location'] option:selected").val()
                                 };
 
+                                // PUT to update event
                                 $.ajax({
                                     url: "/api/events/" + event._id,
                                     type: "PUT",
@@ -54,8 +64,11 @@ $(document).ready(function() {
                                     cache: false,
                                     success: function(data) {
                                         if (data.success == 1) {
+
                                             // there is probably a better way than refresh
+                                            // currently refresh to reflect on main page
                                             window.opener.location.reload();
+                                            // close popup
                                             window.close();
                                         } else {
                                             errorRedirect();
@@ -69,7 +82,7 @@ $(document).ready(function() {
                             errorRedirect();
                         }
 
-                        // close form
+                        // close popup
                         $("input[name='close']").click(function(e) {
                             e.preventDefault();
                             window.close();

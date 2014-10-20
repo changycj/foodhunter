@@ -1,3 +1,5 @@
+// Lead: Dana Mukushev
+// Subscriptions API
 var express = require("express");
 var router = express.Router();
 var Subscription = require("../../models/Subscription").Subscription;
@@ -87,7 +89,7 @@ router.post("/subscribe", function(req, res) {
                 }
                 else{
                     //no such sub yet, create one
-                    if (s==undefined){
+                    if (s==undefined || s==null){
                         var newSub = new Subscription({
                             building:sub.building,
                             time_block:sub.time_block, 
@@ -165,6 +167,9 @@ router.delete("/subscribe", function(req,res){
             res.json({success:0, details:"Error deleting user from subscription list"});
         }
         else{
+            if (sub == null || sub == undefined){
+                res.json({success:1, details:"Subscription does not exist anyways"});
+            } else {
             var index = sub.users.indexOf(userKerberos);
             if (index!==-1){
                 sub.users.splice(index,1);
@@ -186,7 +191,7 @@ router.delete("/subscribe", function(req,res){
                     //res.redirect('/events');
                 }
             });
-            
+            }
         }
     });
 });
