@@ -65,9 +65,9 @@ $(document).ready(function() {
                             for (var i = 0; i < user.subscriptions.length; i++) {
                                 // need to find actual building name and time_block representation
                                 var time = user.subscriptions[i].time_block;
-                                var time_string = $("#form_subscribe select[name='time'] option[value='" + time + "']").text();
+                                var time_string = $("#form_subscribe select[name='time'] option[value='" + time + "']");
                                 var building = user.subscriptions[i].building;
-                                var building_string = $("#form_subscribe select[name='location'] option[value='" + building + "']").text();
+                                var building_string = $("#form_subscribe select[name='location'] option[value='" + building + "']");
                                 addMySubscription(building_string, time_string);
                             }
 
@@ -140,7 +140,7 @@ $(document).ready(function() {
                                 if (data.success == 1) {
                                     
                                     console.log(data);
-                                    addMySubscription(location.text(), time_block.text());
+                                    addMySubscription(location, time_block);
                                 } else {
                                     alert("ERROR!");
                                 }
@@ -152,15 +152,23 @@ $(document).ready(function() {
                 function addMySubscription(loc, time_block) {
                     var btn = $("<button/>").text("Delete").click(function(e) {
                         console.log("DELETE SUBSCIPRIONT!!!");
-                        // $.ajax({
-                        //     url: "/test_post",
-                        //     type: "DELETE",
-                        //     data: formData
-
-                        // });
+                        var formData = {
+                            location: loc.val(),
+                            time_block: time_block.val()
+                        };
+                        $.ajax({
+                            url: "/api/subscriptions/subscribe",
+                            type: "DELETE",
+                            data: formData,
+                            success: function(data) {
+                                if (data.success == 1) {
+                                    window.location.reload();
+                                }
+                            }
+                        });
                     });
                     $("#form_subscribe").before(
-                        $("<p/>").text(loc + " from " + time_block + " ")
+                        $("<p/>").text(loc.text() + " from " + time_block.text() + " ")
                             .append(btn));
 
                 }
