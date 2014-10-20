@@ -20,7 +20,7 @@ router.get("/event_details", function(req, res) {
 // simply sends what's received back
 router.post("/test_post", function(req, res) {
     console.log(req.body);
-    res.json(req.body);
+    res.json({success: 1, content: req.body});
 });
 
 module.exports = router;
