@@ -111,7 +111,7 @@ var emailOut = function(subscribers, newEvent, loc){
 
 /* 
 URL: /events
-1. method: GET, description: retrieves the list of all available evnets
+1. method: GET, description: retrieves the list of all available events
    response: report success/failure, send list of all events
 
 2. method: POST, description: creates new event instance
