@@ -63,9 +63,9 @@ $(document).ready(function() {
                         data: formData,
                         cache: false,
                         success: function(data) {
-                            if (data.message == 1) {
+                            if (data.success== 1) {
                                 $("#form_add_event")[0].reset();
-                                addMyEvent(data.element);
+                                addMyEvent(data.event);
                                 alert("Event created!");
                             } else {
                                 alert("Event create unsuccessful.");
@@ -129,7 +129,7 @@ $(document).ready(function() {
                         url: "/api/events/" + ev._id,
                         type: "DELETE",
                         success: function(data) {
-                            if (data.message == 1) {
+                            if (data.success == 1) {
                                 item.remove();
                                 alert("Event deleted!");
                             } else {
@@ -147,8 +147,7 @@ $(document).ready(function() {
 
     // load locations data
     $.ajax({
-        // url: "/api/locations/?fields=name,building",
-        url: "/api/locations",
+        url: "/api/locations/?fields=name,building",
         method: "GET",
         success: function(data) {
 
@@ -165,7 +164,7 @@ $(document).ready(function() {
                     
                     // TODO: currently adds marker for every location
                     // should switch to for every event
-                    addMarker(loc);
+                    // addMarker(loc);
                     
                     // enable adding more subscriptions (needs location)
                     $("#add_subscription").click(function(e) {
@@ -175,27 +174,28 @@ $(document).ready(function() {
                     });
                 });
 
-                function addMarker(loc) {
-                    // and also add markers to map
-                    var marker = L.mapbox.featureLayer({
-                        type: "Feature",
-                        geometry: {
-                            type: "Point",
-                            coordinates: [loc.gps.lon, loc.gps.lat]
-                        },
-                        properties: {
-                            title: loc.building,
-                            description: loc.name,
-                            "marker-size" : "small",
-                            "marker-color" : "#BE9A6B",
-                            "marker-symbol" : "ice-cream"
-                        }
-                    }).addTo(map);
-                }
             } else {
                 alert("ERROR!");
                 window.location = "/";
             }
         }
     });    
+    
+    function addMarker(loc) {
+        // and also add markers to map
+        var marker = L.mapbox.featureLayer({
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [loc.gps.lon, loc.gps.lat]
+            },
+            properties: {
+                title: loc.building,
+                description: loc.name,
+                "marker-size" : "small",
+                "marker-color" : "#BE9A6B",
+                "marker-symbol" : "ice-cream"
+            }
+        }).addTo(map);
+    }
 });
