@@ -20,32 +20,15 @@ RETURNS: list of users
 var findSubscribers = function(req, res, newEvent){
 	var subscribers = [];
 
-    console.log("finding subscribers");
 	Location.findOne({"_id": newEvent.location}).exec(function(err, loc){
 		if (err){
 			console.log("Error finding location of event");
 		} else {
 			var times = [];
 			var building = loc;
-			// var dStart = new Date(newEvent.when.start).getHours();
-			// var dEnd = new Date(newEvent.when.end).getHours();
-			// var startEnd = [dStart, dEnd];
-			// if (dStart == dEnd){
-			// 	var timeBlock = Math.floor(dStart/6);
-			// 	if (times.indexOf(timeBlock) == -1){
-			// 		times.push(timeBlock);
-			// 	}
-			// } else{
-			// 	for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
-			// 		var timeBlock = Math.floor((startEnd[0]+i)/6);
-			// 		if (times.indexOf(timeBlock) == -1){
-			// 			times.push(timeBlock);
-			// 		}
-			// 	}
-			// }
-            console.log(new Date(newEvent.when.start));
+
             var time_block = Math.floor((new Date(newEvent.when.start).getHours() - 4) / 6);
-            console.log(time_block);
+
 			Subscription.find({"building": building, "time_block": time_block})
 			.populate('users')
 			.exec(function(e, subs){
@@ -77,23 +60,24 @@ PARAMS: subscribers is a list of users
 RETURNS: nothing
 */
 var emailOut = function(subscribers, newEvent, loc){
-	 	// console.log("LOCATION", loc);
-	 	var eventStart = new Date(newEvent.when.start);
-	 	var eventEnd = new Date(newEvent.when.end);
+
+        // offset by 4 hours to get local time
+
+	 	var eventStart = new Date(newEvent.when.start - 4 * 1000 * 60 * 60);
+	 	var eventEnd = new Date(newEvent.when.end - 4 * 1000 * 60 * 60);
 
         var sendgrid = require("sendgrid")(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 
-        console.log("Local start: " + eventStart.toLocaleString());
-        console.log("emailing out");
-        console.log(subscribers);
         for (var i = 0; i < subscribers.length; i++) {
+
             var user = subscribers[i];
             var mailOptions = {
                 to: user,
                 from: "app30875858@heroku.com",
-                subject: 'Free Food ' + eventStart.getMonth() + "/" + eventStart.getDate() + ' in ' + loc.name,
-                text: 'Time: ' + eventStart.getHours() + ":" + eventStart.getMinutes() + ' - ' 
-                       + eventEnd.getHours() + ":" + eventEnd.getMinutes() + '\n'
+                subject: 'Free Food at ' + eventStart.getLocaleString() + ' in ' + loc.name,
+
+                text: 'Date: ' + eventStart.getLocaleDateString() + "\n" + 
+                    'Time: ' + eventStart.getLocaleTimeString() + " to " + eventEnd.getLocaleTimeString() + '\n'
                        + 'Description: ' + newEvent.description + '\n'
                        + 'Hosted by: '+ newEvent.host
                     +'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for '
