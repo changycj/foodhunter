@@ -5,6 +5,7 @@ var express = require("express");
 var router = express.Router();
 var mongoose = require("mongoose");
 var location = require("../models/Location");
+var User = require("../models/User").User;
 var request = require("request");
 
 // // set up mongo database
@@ -54,11 +55,26 @@ var insertLocation = function() {
                     } else {
                         count++;
                         if (count == places.length) {
-                            setupRoutes();
+                                        // dummy user for testing
+                            var newUser = new User({
+                                _id: "test",
+                                events: [],
+                                subscriptions: []
+                            });
+
+                            newUser.save(function(err, u) {
+                                if (err) {
+                                    console.log("Error creating dummy user. " + err);
+                                } else {
+                                    setupRoutes();
+                                }
+                            });
                         }
                     }
                 });
             }
+
+
         }
     });
 }

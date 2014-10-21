@@ -45,7 +45,7 @@ $(document).ready(function() {
 
     function testUserGet(data, dummy_user) {
         test("testing getting dummy user with kerberos '"+ dummy_user._id +"'", function() {
-            equal(data.success, 1, "Data successfully returned.");
+            equal(data.statusCode, 200, "Data successfully returned.");
             equal(data.user._id, dummy_user._id, "Username's are equal (" + dummy_user._id+ ").");
             equal(compareArrays(data.user.subscriptions, dummy_user.subscriptions), true, 
                 "User subscriptions are equal size " + dummy_user.subscriptions.length + " array.");
@@ -56,7 +56,7 @@ $(document).ready(function() {
 
     function testLogin(data) {
         test("testing logging in dummy user with kerberos 'test'", function() {
-            equal(data.success, 1, "Data successfully returned.");
+            equal(data.statusCode, 200, "Data successfully returned.");
             equal(data.user._id, "test", "Username is correct (test).");
             equal(data.user.subscriptions instanceof Array, true, 
                 "User subscriptions is a size " + data.user.subscriptions.length + " array.");
