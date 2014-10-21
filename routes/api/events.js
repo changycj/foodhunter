@@ -44,7 +44,7 @@ var findSubscribers = function(req, res, newEvent){
 			// 	}
 			// }
             console.log(new Date(newEvent.when.start));
-            var time_block = Math.floor((new Date(newEvent.when.start).getHours()));
+            var time_block = Math.floor((new Date(newEvent.when.start).getHours()) / 6);
             console.log("building: " + building + " time_block: " + time_block);
 			Subscription.find({"building": building, "time_block": time_block})
 			.populate('users')
