@@ -17,7 +17,7 @@ $(document).ready(function() {
 	        data: formData,
 	        success: function(data) {
 	        	test("testing Subscription post new", function(){
-	        		equal(data.statusCode: 200);
+	        		equal(data.statusCode= 200);
 	        		equal(data.details, "A subscription was added!");
 	        		equal(data.subscription.building, formData.location);
 	        		equal(data.subscription.time_block, formData.time_block);
