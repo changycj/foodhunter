@@ -4,8 +4,6 @@
 var express = require('express');
 var mongoose = require("mongoose");
 var router = express.Router();
-var nodemailer = require("nodemailer");
-
 var Event = require('../../models/Event').Event;
 var User = require("../../models/User").User;
 var Location = require("../../models/Location").Location;
@@ -77,35 +75,29 @@ var emailOut = function(subscribers, newEvent, loc){
 	 	// console.log("LOCATION", loc);
 	 	var eventStart = new Date(newEvent.when.start);
 	 	var eventEnd = new Date(newEvent.when.end);
-        // var smtpTransport = nodemailer.createTransport(smtpPool({
-        var smtpTransport = nodemailer.createTransport('SMTP',{
-            service: 'SendGrid',
-            // host:'smtp.sendgrid.net',
-            auth: {
-                user: 'foodHunter',
-                pass: '6170proj'
-            }
-            // maxConnections: 20,
-            // maxMessages: Infinity
-        });
-        // }));
-        var mailOptions = {
-            bcc: subscribers,
-            from: 'foodhunterproject@mit.edu',
-            subject: 'Free Food ' + eventStart.getMonth() + "/" + eventStart.getDate() + ' in ' + loc.name,
-            text: 'Time: ' + eventStart.getHours() + ":" + eventStart.getMinutes() + ' - ' 
-           		+ eventEnd.getHours() + ":" + eventEnd.getMinutes() + '\n'
-           		+ 'Description: ' + newEvent.description + '\n'
-           		+ 'Hosted by: '+ newEvent.host
-            	+'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for ' + newEvent.location.name + '.\n'
-        };
-        smtpTransport.sendMail(mailOptions, function(err){
-            if(err){
-            	console.log(err);
-            } else {
-            	console.log("Message sent");
-            }
-        });
+
+        var sendgrid = require("sendgrid")("foodHunter", "6170proj");
+
+        console.log(subscribers);
+        for (var i = 0; i < subscribers.length; i++) {
+            var user = subscribers[i];
+            var mailOptions = {
+                to: user,
+                from: "foodhunterproject@mit.edu",
+                subject: 'Free Food ' + eventStart.getMonth() + "/" + eventStart.getDate() + ' in ' + loc.name,
+                text: 'Time: ' + eventStart.getHours() + ":" + eventStart.getMinutes() + ' - ' 
+                       + eventEnd.getHours() + ":" + eventEnd.getMinutes() + '\n'
+                       + 'Description: ' + newEvent.description + '\n'
+                       + 'Hosted by: '+ newEvent.host
+                    +'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for '
+                    + newEvent.location.name + '.\n'
+            };
+
+            sendgrid.send(mailOptions, function(err, json) {
+                if (err) { return console.error(err);}
+                console.log(json);
+            });
+        }
 };
 
 /********** REST API for event **********/
@@ -193,8 +185,8 @@ router.post('/', function(req, res) {
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
-    						//findSubscribers(req, res, newEvent); //success msg sent inside the function
-    						res.json({success:1, event: newEvent});
+    						findSubscribers(req, res, newEvent); //success msg sent inside the function
+    						// res.json({success:1, event: newEvent});
     					}
     				});
     			}
