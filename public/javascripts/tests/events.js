@@ -67,7 +67,7 @@ $(document).ready(function() {
         method: "GET",
         success: function(data) {
 
-            if (data.success== 1) {
+            if (data.statusCode== 200) {
 
                 var dataInfo = data.events;
                 //expect the list to not contain some specific object
@@ -112,7 +112,7 @@ $(document).ready(function() {
         method: "GET",
         success: function(data) {
 
-            if (data.success== 1) {
+            if (data.statusCode== 200) {
 
                 var dataInfo = data.event;
                 //compare event details with what was returned
@@ -154,7 +154,7 @@ $(document).ready(function() {
             cache:false,
             success: function(data) {
 
-                if (data.success== 1) {
+                if (data.statusCode== 200) {
 
                     var dataInfo = data.event;
                     //compare event details with what was returned
