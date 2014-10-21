@@ -78,7 +78,7 @@ var emailOut = function(subscribers, newEvent, loc){
 	 	var eventStart = new Date(newEvent.when.start);
 	 	var eventEnd = new Date(newEvent.when.end);
 
-        var sendgrid = require("sendgrid")("foodHunter", "6170proj");
+        var sendgrid = require("sendgrid")(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 
         console.log("emailing out");
         console.log(subscribers);
