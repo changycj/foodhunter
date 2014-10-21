@@ -15,7 +15,6 @@ $(document).ready(function() {
 	        url: "/api/subscriptions/subscribe/user/test",
 	        type: "POST",
 	        data: formData,
-	        async: false,
 	        success: function(data) {
 	        	test("testing Subscription post new", function(){
 	        		equal(data.statusCode, 200);
@@ -36,7 +35,6 @@ $(document).ready(function() {
 			url: "/api/subscriptions/subscribe/user/test",
 			type: "DELETE",
 			data: formData,
-			async: false,
 			success: function(data){
 				test("testing delete Subscription", function(){
 				equal(data.statusCode, 200);
@@ -47,7 +45,6 @@ $(document).ready(function() {
 		$.ajax({
 			url: "/api/subscriptions/test",
 			type: "GET", 
-			async: false,
 			success: function(data){
 				test("testing GET Subscriptions", function(){
 					console.log("data returned", data);

@@ -9,7 +9,6 @@ $(document).ready(function() {
     $.ajax({
         url: "/api/locations",
         method: "GET",
-        async: false,
         success: function(data) {
             testAllLocationsGet(data);
 
@@ -21,7 +20,6 @@ $(document).ready(function() {
             $.ajax({
                 url: "/api/locations/" + dummy_loc._id,
                 method: "GET",
-                async: false,
                 success: function(data) {
                     testOneLocationGet(data, dummy_loc);
                 }

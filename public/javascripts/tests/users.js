@@ -9,7 +9,6 @@ $(document).ready(function() {
     $.ajax({
         url: "/api/users/login",
         method: "POST",
-        async: false,
         data: {kerberos: "test"},
         success: function(data) {
 
@@ -21,7 +20,6 @@ $(document).ready(function() {
             $.ajax({
                 url: "/api/users/" + data.user._id,
                 method: "GET",
-                async: false,
                 success: function(data) {
                     testUserGet(data, dummy_user);
                 }
