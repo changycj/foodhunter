@@ -5,7 +5,7 @@ Project 3: Mini team project
 
 All design docs, team and individual, are in the docs folder.
 
-Deployment URL: ?????
+Deployment URL: http://foodhunter.herokuapp.com/
 
 Authors:
 
