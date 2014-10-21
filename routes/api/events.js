@@ -74,10 +74,10 @@ var emailOut = function(subscribers, newEvent, loc){
             var mailOptions = {
                 to: user,
                 from: "app30875858@heroku.com",
-                subject: 'Free Food at ' + eventStart.getLocaleString() + ' in ' + loc.name,
+                subject: 'Free Food at ' + eventStart.toLocaleString() + ' in ' + loc.name,
 
-                text: 'Date: ' + eventStart.getLocaleDateString() + "\n" + 
-                    'Time: ' + eventStart.getLocaleTimeString() + " to " + eventEnd.getLocaleTimeString() + '\n'
+                text: 'Date: ' + eventStart.toLocaleDateString() + "\n" + 
+                    'Time: ' + eventStart.toLocaleTimeString() + " to " + eventEnd.toLocaleTimeString() + '\n'
                        + 'Description: ' + newEvent.description + '\n'
                        + 'Hosted by: '+ newEvent.host
                     +'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for '
