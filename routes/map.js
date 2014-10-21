@@ -27,6 +27,7 @@ db.once("open", function() {
     
 });
 
+// store locations from MIT map api
 var insertLocation = function() {
     
     request("http://m.mit.edu/apis/maps/places", function(err, resp, body) {
