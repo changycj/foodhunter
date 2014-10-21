@@ -44,8 +44,8 @@ var findSubscribers = function(req, res, newEvent){
 			// 	}
 			// }
             console.log(new Date(newEvent.when.start));
-            var time_block = Math.floor((new Date(newEvent.when.start).getHours()) / 6);
-            console.log("building: " + building + " time_block: " + time_block);
+            var time_block = Math.floor((new Date(newEvent.when.start).getHours() - 4) / 6);
+            console.log(time_block);
 			Subscription.find({"building": building, "time_block": time_block})
 			.populate('users')
 			.exec(function(e, subs){
@@ -83,6 +83,7 @@ var emailOut = function(subscribers, newEvent, loc){
 
         var sendgrid = require("sendgrid")(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 
+        console.log("Local start: " + eventStart.toLocaleString());
         console.log("emailing out");
         console.log(subscribers);
         for (var i = 0; i < subscribers.length; i++) {
