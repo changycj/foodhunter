@@ -26,8 +26,6 @@ URL: /subscriptions/building/:building/time_block/:time_block
    response: report success/failure
 */
 
-
-
 /********** GET USER LIST **********/
 //Note: is it used anywhere?
 router.get("/building/:building/time_block/:time_block", function(req, res) {
@@ -45,8 +43,8 @@ router.get("/building/:building/time_block/:time_block", function(req, res) {
 });
 
 /********** GET SUBSCRIPTIONS **********/
-router.get("/", function(req, res) {
-    var userKerberos = req.cookies.kerberos;
+router.get("/:user_id", function(req, res) {
+    var userKerberos = req.params.user_id;
     User.findOne({_id:userKerberos}).populate("subscriptions").exec(function(err, user){
         if (!(user==undefined)){
            res.json({success:1, subscriptions: user.subscriptions});

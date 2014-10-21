@@ -44,13 +44,12 @@ $(document).ready(function() {
 		});
 	
 		$.ajax({
-			url: "/api/subscriptions",
+			url: "/api/subscriptions/test",
 			type: "GET", 
 			success: function(data){
 				test("testing GET Subscriptions", function(){
 					console.log("data returned", data);
 					equal(data.success, 1);
-					equal(data.subscriptions.length, 0);
 				});
 			},
 			error: function(err){
