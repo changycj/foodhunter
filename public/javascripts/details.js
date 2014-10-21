@@ -4,14 +4,16 @@
 $(document).ready(function() {
 
     // event ID
-    var event_id = window.location.search.split("id=")[1];
+    var args = window.location.search.split("?")[1].split("&");
+    var event_id = args[0].split("=")[1];
+    var kerberos = args[1].split("=")[1];
 
     // get event info
     $.ajax({
         url: "/api/events/" + event_id,
         method: "GET",
         success: function(data) {
-            if (data.success == 1) {
+            if (data.statusCode == 200) {
                 var event = data.event;
 
                 // add UI widgets and populate with data
@@ -32,7 +34,7 @@ $(document).ready(function() {
                     method: "GET",
                     success: function(data) {
 
-                        if (data.success == 1) {
+                        if (data.statusCode == 200) {
                             var loc = data.location;
                             
                             $("span[name='location']").text(loc.building + " - " + loc.name);
@@ -58,12 +60,12 @@ $(document).ready(function() {
 
                                 // PUT to update event
                                 $.ajax({
-                                    url: "/api/events/" + event._id,
+                                    url: "/api/events/" + event._id + "/user/"+kerberos,
                                     type: "PUT",
                                     data: formData,
                                     cache: false,
                                     success: function(data) {
-                                        if (data.success == 1) {
+                                        if (data.statusCode == 200) {
 
                                             // there is probably a better way than refresh
                                             // currently refresh to reflect on main page
@@ -71,7 +73,7 @@ $(document).ready(function() {
                                             // close popup
                                             window.close();
                                         } else {
-                                            errorRedirect();
+                                            errorRedirect(data.message);
                                         }
                                     },
                                     error: errorRedirect
@@ -79,7 +81,7 @@ $(document).ready(function() {
                                 });                 
                             });
                         } else {
-                            errorRedirect();
+                            errorRedirect(data.message);
                         }
 
                         // close popup
@@ -91,15 +93,15 @@ $(document).ready(function() {
                     error: errorRedirect
                 });
             } else {
-                errorRedirect();
+                errorRedirect(data.message);
             }
 
         },
         error: errorRedirect
     });
 
-    function errorRedirect() {
-        alert("ERROR!");
+    function errorRedirect(msg) {
+        alert("ERROR! " + msg == undefined ? "" : msg);
         window.location = "/";
     }
 

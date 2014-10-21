@@ -15,7 +15,6 @@ router.get('/', function(req, res) {
 // GET login page
 router.get("/login", function(req, res) {
     res.clearCookie("kerberos");
-    res.cookie("login", "false");  
     
     res.render("login", {});
 });
@@ -29,7 +28,7 @@ router.get("/tests/:api_name", function(req, res) {
     var api = req.params.api_name;
 
     res.cookie("kerberos", "test");
-    res.cookie("login", "true");
+    
     if (api == "locations") {
         res.render("tests/locations", {});
 
@@ -50,7 +49,10 @@ router.get("/tests/:api_name", function(req, res) {
 // simply sends what's received back
 router.post("/test_post", function(req, res) {
     console.log(req.body);
-    res.json({success: 1, content: req.body});
+    res.json({
+        statusCode: 200, 
+        content: req.body
+    });
 });
 
 module.exports = router;

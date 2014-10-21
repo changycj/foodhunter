@@ -26,64 +26,87 @@ URL: /subscriptions/building/:building/time_block/:time_block
    response: report success/failure
 */
 
-/********** GET USER LIST **********/
-//Note: is it used anywhere?
-router.get("/building/:building/time_block/:time_block", function(req, res) {
-    var building = req.params.building;
-    var time_block = req.params.time_block;  
-    Subscription.findOne({building: building, time_block: time_block})
-        .populate("users", "_id").exec(function(err, sub) {
-        if (err) {
-            res.json({success:0, details: "Error retrieving subscription. " + err});
-        } else {
-            res.json({success:1, subscription:sub});
-        }
+// /********** GET USER LIST **********/
+// //Note: is it used anywhere?
+// router.get("/building/:building/time_block/:time_block", function(req, res) {
+//     var building = req.params.building;
+//     var time_block = req.params.time_block;  
+//     Subscription.findOne({building: building, time_block: time_block})
+//         .populate("users", "_id").exec(function(err, sub) {
+//         if (err) {
+//             res.json({success:0, details: "Error retrieving subscription. " + err});
+//         } else {
+//             res.json({success:1, subscription:sub});
+//         }
     
-    });
-});
+//     });
+// });
 
 /********** GET SUBSCRIPTIONS **********/
+
 router.get("/:user_id", function(req, res) {
     var userKerberos = req.params.user_id;
-    User.findOne({_id:userKerberos}).populate("subscriptions").exec(function(err, user){
-        if (!(user==undefined)){
-           res.json({success:1, subscriptions: user.subscriptions});
-        }
-        else{
-            //should't ever get here...
-            res.json({success:0, details: "No such user yet"});
+
+    User.findOne( { _id : userKerberos} ).populate("subscriptions").exec(function(err, user){
+
+        if (err) {
+            res.json({
+                statusCode: 500,
+                message: "mongoose find user error"
+            });
+        } else {
+            if (user != undefined) {
+                res.json({
+                    statusCode: 200,
+                    subscriptions: user.subscriptions
+                });
+            } else {
+                res.json({
+                    statusCode: 404,
+                    message: "mongoose find user error"
+                });
+            }
         }
     });
+
 });
 
 /********** POST SUBSCRIPTION **********/
 
 //Note: assumes the user exists in DB
-router.post("/subscribe", function(req, res) {
+router.post("/subscribe/user/:user_id", function(req, res) {
     //get data, bldg is an ObjectId, time_block is an int 0-3
     var time_block = req.body.time_block;
     var building = req.body.location;
      //list of subs
-    var userKerberos = req.cookies.kerberos;
+    var userKerberos = req.params.user_id;
 
     // first find out if subs already exist
     User.findOne({_id:userKerberos}, function(err, user){
+
         if (err){
-            console.log("Error finding the user who wants to subscribe");
-            res.json({success:0, details:"Error finding the user who wants to subscribe"});
+            res.json({
+                statusCode: 500,
+                message: "Error finding the user who wants to subscribe"
+            });
             return;
         }
         else if (user==undefined){ //should never get here
-            console.log("SHOULD NEVER GET HERE, post new subscription to a non existant user");
-            res.json({success:0, details:"Error finding the user who wants to subscribe, no such user"});
+
+            res.json({
+                statusCode: 404, 
+                message:"Error finding the user who wants to subscribe, no such user"});
         } 
         else {
             var sub = {building:building, time_block:time_block};
+
             Subscription.findOne({building:sub.building, time_block: sub.time_block}, function (e, s){
                 if (e){
                     //console.log("Error while fingding sub");
-                    res.json({success:0, details:"Error while fingding sub"});
-                    return;
+                    res.json({
+                        statusCode: 500, 
+                        message:"Error while fingding sub"
+                    });
                 }
                 else{
                     //no such sub yet, create one
@@ -96,22 +119,27 @@ router.post("/subscribe", function(req, res) {
                         newSub.save(function(err){
                             if (err){
                                 //console.log("Error while creating sub1");
-                                res.json({success:0, details:"Error while creating sub1"});
+                                res.json({
+                                    statusCode:500, 
+                                    message:"Error while creating sub1"});
                             }
                             //nothing happens, just save
-                            return;
                         });
                         //update corresponding user
                         user.subscriptions.push(newSub._id);
                         user.save(function(err){
                             if (err){
                                 //console.log("Error adding a newly creating sub to user list");
-                                res.json({success:0, details:"Error adding a newly creating sub to user list"});
+                                res.json({
+                                    statusCode: 500, 
+                                    message:"Error adding a newly creating sub to user list"});
                             }
                             //nothing happens, just save
-                            return;
                         });
-                        res.json({success:1, details:"A subscription was added!", subscription:newSub});
+                        res.json({
+                            statusCode: 200, 
+                            subscription: newSub
+                        });
                     }
                 //there is such sub, update it by pushing a new user
                     else{
@@ -123,7 +151,11 @@ router.post("/subscribe", function(req, res) {
                             s.save(function(err){
                                 if (err){
                                     //console.log("Error while creating sub2");
-                                    res.json({success:0, details:"Error while creating sub2"});
+                                    res.json({
+                                        statusCode : 500, 
+                                        message :"Error while creating sub2"
+                                    });
+
                                 }
                                 //do nothing, just save
                                 return;
@@ -138,12 +170,17 @@ router.post("/subscribe", function(req, res) {
                             user.save(function(err){
                                 if (err){
                                     //console.log("Error adding an existing sub to user list");
-                                    res.json({success:0, details:"Error adding an existing sub to user list"});
+                                    res.json({
+                                        statusCode : 500, 
+                                        message : "Error adding an existing sub to user list"});
                                 }
                                 return;
                             });
                         }
-                        res.json({success:1, details:"A subscription was added!", subscription:s});
+                        res.json({
+                            statusCode : 200,
+                            subscription: s
+                        });
                     }
                 }
             });
@@ -153,42 +190,53 @@ router.post("/subscribe", function(req, res) {
 
 /********** DELETE SUBSCRIPTION **********/
 
-router.delete("/subscribe", function(req,res){
+router.delete("/subscribe/user/:user_id", function(req,res){
     var building = req.body.location;
     var time_block = req.body.time_block;
 
-    var userKerberos = req.cookies.kerberos;
-    //delete a user from subscription list
+    var userKerberos = req.params.user_id;
+
     Subscription.findOne({building:building, time_block:time_block}, function(err, sub){
         if (err){
             //console.log("Error deleting user from subscription list:");
-            res.json({success:0, details:"Error deleting user from subscription list"});
+            res.json({ 
+                statusCode: 500, 
+                message:"Error deleting user from subscription list"});
         }
         else{
             if (sub == null || sub == undefined){
-                res.json({success:1, details:"Subscription does not exist anyways"});
+                res.json({
+                    statusCode: 404, 
+                    message: "Subscription does not exist anyways"});
+
             } else {
-            var index = sub.users.indexOf(userKerberos);
-            if (index!==-1){
-                sub.users.splice(index,1);
-            }
-            sub.save(function(err){
-                if (err){
-                    //console.log("Error deleting user from subscription list:");
-                    res.json({success:0, details:"Error deleting user from subscription list"});
+                var index = sub.users.indexOf(userKerberos);
+                if (index!==-1){
+                    sub.users.splice(index,1);
                 }
-            });
-            //delete subscription from a user list
-            User.update({_id:userKerberos}, {$pull:{subscriptions:sub._id}}, function(err, user){
-                if (err){
-                    //console.log("Error while deleting sub from usr's list");
-                    res.json({success:0, details:"Error deleting sub from user's list: kerberos "+ userKerberos});
-                }
-                else{
-                    res.json({success:1, element: user});
-                    //res.redirect('/events');
-                }
-            });
+                sub.save(function(err){
+                    if (err){
+                        //console.log("Error deleting user from subscription list:");
+                        res.json({
+                            statusCode: 500, 
+                            message:"Error deleting user from subscription list"});
+                    }
+                });
+                //delete subscription from a user list
+                User.update({_id:userKerberos}, {$pull:{subscriptions:sub._id}}, function(err, user){
+                    if (err){
+                        //console.log("Error while deleting sub from usr's list");
+                        res.json({
+                            statusCode: 500, 
+                            message: "Error deleting sub from user's list: kerberos "+ userKerberos});
+                    }
+                    else{
+                        res.json({
+                            statusCode: 200 
+                        }); 
+                        //res.redirect('/events');
+                    }
+                });
             }
         }
     });

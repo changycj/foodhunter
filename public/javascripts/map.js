@@ -25,7 +25,7 @@ $(document).ready(function() {
         url: "/api/events",
         method: "GET",
         success: function(data) {
-            if (data.success == 1) {
+            if (data.statusCode == 200) {
                 for (var i = 0; i < data.events.length; i++) {
                     var ev = data.events[i];
                     addMarker(ev);
@@ -50,7 +50,7 @@ $(document).ready(function() {
                     }).addTo(map);
                 }
             } else {
-                errorRedirect();
+                errorRedirect(data.message);
             }
         },
         error: errorRedirect
@@ -62,7 +62,7 @@ $(document).ready(function() {
         method: "GET",
         success: function(data) {
             // if user data retrieved
-            if (data.success == 1) {
+            if (data.statusCode == 200) {
                 var user = data.user;
                 console.log(user);
 
@@ -72,7 +72,7 @@ $(document).ready(function() {
                     method: "GET",
                     success: function(data) {
 
-                        if (data.success == 1) {
+                        if (data.statusCode == 200) {
 
                             var locs = data.locations;
 
@@ -116,14 +116,14 @@ $(document).ready(function() {
                                         time_block: time_block.val()
                                     };
                                     $.ajax({
-                                        url: "/api/subscriptions/subscribe",
+                                        url: "/api/subscriptions/subscribe/user/"+kerberos,
                                         type: "DELETE",
                                         data: formData,
                                         success: function(data) {
-                                            if (data.success == 1) {
+                                            if (data.statusCode == 200) {
                                                 sub.remove();
                                             } else {
-                                                errorRedirect();
+                                                errorRedirect(data.message);
                                             }
                                         },
                                         error: errorRedirect
@@ -142,22 +142,23 @@ $(document).ready(function() {
                                 var control = $("<p/>").appendTo(item);
                                 
                                 $("<button/>").text("View/Edit").appendTo(control).click(function(e) {
-                                    window.open("/event_details?id=" + ev._id, "popup", "width=500px; height = 800px;")
+                                    window.open("/event_details?id=" + ev._id + "&kerberos=" + kerberos,
+                                     "popup", "width=500px; height = 800px;")
                                 });
                                 
                                 $("<button/>").text("Delete").appendTo(control).click(function(e) {
                                     $.ajax({
-                                        url: "/api/events/" + ev._id,
+                                        url: "/api/events/" + ev._id + "/user/" + kerberos,
                                         type: "DELETE",
                                         success: function(data) {
-                                            if (data.success == 1) {
+                                            if (data.statusCode == 200) {
                                                 item.remove();
 
                                                 // must reload for map to correspond (FOR NOWWW)
                                                 // will change in 3.3
                                                 window.location.reload();
                                             } else {
-                                                errorRedirect();
+                                                errorRedirect(data.message);
                                             }
                                         },
                                         error: function(err) {
@@ -195,12 +196,12 @@ $(document).ready(function() {
 
                                     // send data to back-end
                                     $.ajax({
-                                        url: "/api/events",
+                                        url: "/api/events/user/" + kerberos,
                                         type: "POST",
                                         data: formData,
                                         cache: false,
                                         success: function(data) {
-                                            if (data.success== 1) {
+                                            if (data.statusCode== 200) {
                                                 $("#form_add_event")[0].reset();
                                                 addMyEvent(data.event);
 
@@ -209,7 +210,7 @@ $(document).ready(function() {
                                                 window.location.reload();
 
                                             } else {
-                                                errorRedirect();
+                                                errorRedirect(data.message);
                                             }
                                         },
                                         error: errorRedirect
@@ -229,11 +230,11 @@ $(document).ready(function() {
                                     };
 
                                     $.ajax({
-                                        url: "/api/subscriptions/subscribe",
+                                        url: "/api/subscriptions/subscribe/user/" + kerberos,
                                         type: "POST",
                                         data: formData,
                                         success: function(data) {
-                                            if (data.success == 1) {
+                                            if (data.statusCode == 200) {
                                                 
                                                 addMySubscription(location, time_block);
 
@@ -242,7 +243,7 @@ $(document).ready(function() {
                                                 // window.location.reload();
 
                                             } else {
-                                                alert("ERROR!");
+                                                errorRedirect(data.message);
                                             }
                                         },
                                         error: errorRedirect
@@ -257,7 +258,7 @@ $(document).ready(function() {
                     error: errorRedirect
                 }); 
             } else {
-                errorRedirect();
+                errorRedirect(data.message);
             }
 
         },
@@ -265,8 +266,8 @@ $(document).ready(function() {
     });
 
     // error handler
-    function errorRedirect() {
-        alert("ERROR!");
+    function errorRedirect(msg) {
+        alert("ERROR! " + msg == undefined ? "" : msg);
         window.location = "/";
     }
    

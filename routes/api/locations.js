@@ -17,13 +17,17 @@ var location = require("../../models/Location");
 router.get("/", function(req, res) {
 
     var fields = (req.query.fields != undefined) ? req.query.fields.replace(",", " ") : {};
-    console.log(fields);
-
+    
     location.Location.find({}, fields).sort({building: "asc"}).exec(function(err, locs) {
         if (err) {
-            res.json({ success: 0 });
+            res.json({ 
+                statusCode: 500, 
+                message: "mongoose error retrieving locations" });
         } else {
-            res.json({ success: 1, locations: locs });
+            res.json({ 
+                statusCode: 200, 
+                locations: locs 
+            });
         }
     });
 });
@@ -34,9 +38,23 @@ router.get("/:id", function(req, res) {
 
     location.Location.find( {"_id" : locId} ).limit(1).exec(function(err, loc) {     
         if (err) {
-            res.json({ success: 0 });
+            res.json({ 
+                statusCode: 500,
+                message: "mongoose error retrieving location" 
+            });
+
         } else {
-            res.json({ success: 1, location: loc[0] });   
+            if (loc == undefined) {
+                res.json({
+                    statusCode: 404,
+                    message: "location not found"
+                });
+            } else {
+                res.json({ 
+                    statusCode: 200, 
+                    location: loc[0] 
+                }); 
+            }  
         }
     });
 });

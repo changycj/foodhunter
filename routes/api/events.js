@@ -34,7 +34,10 @@ var findSubscribers = function(req, res, newEvent){
 			.exec(function(e, subs){
 				if (e) {
 					//console.log("Error finding subscriptions from new event");
-					res.json({success:0, details: "Error finding subscriptions from new event"});
+					res.json({
+                        statusCode: 500, 
+                        message: "Error finding subscriptions from new event"});
+
 				} else {
 					for (var i = 0; i < subs.length; i ++){
 						for (var subscribedUser = 0; subscribedUser < subs[i].users.length; subscribedUser ++){
@@ -46,7 +49,10 @@ var findSubscribers = function(req, res, newEvent){
 						}
 					}
 					emailOut(subscribers, newEvent, loc);
-					res.json({success:1, event: newEvent});
+					res.json({
+                        statusCode: 200, 
+                        event: newEvent
+                    });
 				}
 			});
 		}
@@ -121,20 +127,20 @@ Might not be needed in the deployed version
 router.get('/', function(req, res) {
     Event.find({}).populate("location").exec(function(err, events){
         if (err){
-            res.json({success:0});
+            res.json({statusCode:500, message: "mongoose error getting events"});
         }
         else{
-            res.json({success:1, events: events}); //return all docs
+            res.json({statusCode: 200, events: events}); //return all docs
         }
     });
 });
 
 /**********CREATE A NEW EVENT**********/
-router.post('/', function(req, res) {
+router.post('/user/:user_id', function(req, res) {
 	var status = "Food"; //default status
 	var today = new Date().valueOf(); // date when the event is created
 	//start getting info
-    var host = req.cookies.kerberos; //note: cookies never cleared
+    var host = req.params.user_id; //note: cookies never cleared
     var data = req.body;
     var start = data.when.start; //in milliseconds
     var end = data.when.end; //in milliseconds
@@ -150,8 +156,10 @@ router.post('/', function(req, res) {
     					};
 	//check if the event is valid. If nonsense entered, it puts today's date  
     if (!eventValidityCheck(newEventJSON, today)){
-    	res.json({success: 0, details : "Event happens in the past"});
-    	return;
+    	res.json({
+            statusCode: 400, 
+            message : "Event happens in the past"
+        });
     }
     //all good, go on
     else {
@@ -159,13 +167,19 @@ router.post('/', function(req, res) {
     newEvent.save(function(err){
     	if (err){
     		//console.log("Error creating a new event instance");
-    		res.json({success:0, details:"Error creating a new event instance"});
+    		res.json({
+                statusCode: 500, 
+                message: "Error creating a new event instance"
+            });
     	}
     	else{
+            console.log(host);
     		User.findOne({_id:host}, function(err, user){
     			if (err){
     				//console.log("Error adding an event to the User.events. "+err);
-    				res.json({success:0, details:"Error adding an event to user"});
+    				res.json({
+                        statusCode: 500, 
+                        message: "Error adding an event to user"});
     			}
     			//SUCH USER EXISTS
     			else {
@@ -173,10 +187,11 @@ router.post('/', function(req, res) {
     				user.save(function(err){
     					if (err){
     						// console.log("Error adding an event to the User.events 2");
-    						res.json({success:0, details:"Error adding an event to the User.events 2"});
+    						res.json({
+                                statusCode: 500, 
+                                message: "Error adding an event to the User.events 2"});
     					}
     					else{
-                            console.log("shoudl call emilaing now");
     						findSubscribers(req, res, newEvent); //success msg sent inside the function
     						// res.json({success:1, event: newEvent});
     					}
@@ -190,54 +205,78 @@ router.post('/', function(req, res) {
 
 /**********GET EVENT**********/
 router.get('/:eventId', function(req,res){
+
 	var eventId = req.params.eventId;
+
 	Event.findById(eventId, function(err, doc){
-		if (err){
-            res.json({success: 0, details:"Error finding an event"});
-			return;
+	
+    	if (err){
+            res.json({
+                statusCode: 500, 
+                message:"Error finding an event"
+            });
 		}
-		res.json({success: 1, event: doc});
+		res.json({
+            statusCode: 200, 
+            event: doc
+        });
 	});
 });
 
 
 /**********UPDATE EVENT**********/
-router.put('/:eventId', function(req,res){
+router.put('/:eventId/user/:user_id', function(req,res){
 	var eventId = req.params.eventId;
-	Event.findOne({_id:eventId}, function(err, doc){
+    var kerberos = req.params.user_id
+	Event.findOne({_id:eventId, host:kerberos}, function(err, doc){
 		if (err){
 			//console.log("Error while updating the event");
-			res.json({success: 0, details:"Error while updating the event: "+eventId});
-			return;
+			res.json({
+                statusCode: 500, 
+                message: "Error while updating the event: "+eventId
+            });
 		}
 		//update entries
         doc.when.start = req.body.when.start;
         doc.when.end = req.body.when.end;
         doc.description = req.body.description;
 		doc.save(function(err){
-		if (err){
-            res.json({success: 0, details:"Error while updating the event: "+eventId});
-			return;
-		}
-		res.json({success:1, event: doc});
+        	if (err){
+                res.json({
+                    statusCode: 500, 
+                    message:"Error while updating the event: "+eventId
+                });
+        	}
+		    res.json({
+                statusCode: 200, 
+                event: doc
+            });
 		});
 	});
 });
 
 /**********DELETE EVENT**********/
-router.delete('/:eventId', function(req,res){
+router.delete('/:eventId/user/:user_id', function(req,res){
 	var eventId = req.params.eventId;
-	Event.remove({_id:eventId}, function(err){
+    var kerberos = req.params.user_id
+	Event.remove({_id:eventId, host: kerberos}, function(err){
 		if (err){
-			res.json({success:0, details:"Error while deleting the event: "+eventId});
+			res.json({
+                statusCode: 500, 
+                message:"Error while deleting the event: "+eventId
+            });
 		}
 		else{
-			User.update({_id:req.cookies.kerberos}, {$pull:{events:eventId}}, function(err, doc){
+			User.update({_id:kerberos}, {$pull:{events:eventId}}, function(err, doc){
 				if (err){
-                    res.json({success:0, details:"Error while deleting the event: "+eventId});
+                    res.json({
+                        statusCode: 500, 
+                        message: "Error while deleting the event: "+eventId});
 				}
 				else{
-					res.json({success:1, user: doc});
+					res.json({
+                        statusCode: 200
+                    });
 				}
 			});	
 		}

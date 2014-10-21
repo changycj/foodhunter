@@ -8,8 +8,8 @@ var location = require("../models/Location");
 var request = require("request");
 
 // // set up mongo database
-var connection_string = "mongodb://foodhunter:123456@ds047030.mongolab.com:47030/heroku_app30875858";
-// var connection_string = "localhost:27017/foodhunter";
+// var connection_string = "mongodb://foodhunter:123456@ds047030.mongolab.com:47030/heroku_app30875858";
+var connection_string = "localhost:27017/foodhunter";
 console.log("CONNECTION STRING: " + connection_string);
 mongoose.connect(connection_string);
 var db = mongoose.connection;
@@ -67,7 +67,7 @@ var setupRoutes = function() {
     
     router.get("/", function(req, res) {
         
-        if (req.cookies.login == "true") {
+        if (req.cookies.kerberos != undefined) {
             res.render("map", {
                 kerberos: req.cookies.kerberos
             });

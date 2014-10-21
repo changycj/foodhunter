@@ -5,7 +5,7 @@ $(document).ready(function() {
     // login form
     $("#form_login").submit(function(e) {
         e.preventDefault();
-        // TODO: authenticate!!!
+
         var formData = { kerberos: $("input[name='kerberos']").val()};
 
         // POST to login        
@@ -14,11 +14,13 @@ $(document).ready(function() {
             method: "POST",
             data: formData,
             success: function(data) {
-                if (data.success == 1) {
+
+                if (data.statusCode == 200) {
                     window.location = "/map?kerberos=" + data.user._id;
                 } else {
-                    errorRedirect();
+                    errorRedirect(data.message);
                 }
+
             },
             error: errorRedirect
         });
@@ -29,16 +31,16 @@ $(document).ready(function() {
     $("#tests_list a").click(function(e) {
         e.preventDefault();
         var link = $(this).attr("href");
+
         $.ajax({
             url: "api/users/login",
             method: "POST",
-            data: {kerberos: "test"},
+            data: {kerberos: "changycj"},
             success: function(data) {
-
-                if (data.success == 1) {                
+                if ( data.statusCode == 200 ) {                
                     window.location = link;
                 } else {
-                    errorRedirect();
+                    errorRedirect(data.message);
                 }       
             },
             error: errorRedirect
@@ -46,8 +48,8 @@ $(document).ready(function() {
 
     });
 
-    function errorRedirect() {
-        alert("ERROR!");
+    function errorRedirect(msg) {
+        alert("ERROR! " + (msg == undefined ? "" : msg));
         window.location = "/";
     }
 

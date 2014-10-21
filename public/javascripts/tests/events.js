@@ -27,13 +27,13 @@ $(document).ready(function() {
                 };
     //post event and see if it returns the same object         
     $.ajax({
-    url: "/api/events",
+    url: "/api/events/user/changycj",
     method: "POST",
     data: formData,
     cache: false,
     success: function(data) {
 
-        if (data.success== 1) {
+        if (data.statusCode == 200) {
             var dataInfo = data.event;
 
             QUnit.test("POST to /events", function(assert){
@@ -148,7 +148,7 @@ $(document).ready(function() {
         var newData = {description:newDescription, when :{start:newStartTime, end:newEndTime}};
         
         $.ajax({
-            url: "/api/events/"+eventId,
+            url: "/api/events/"+eventId+"/user/changycj",
             method: "PUT",
             data:newData,
             cache:false,
@@ -186,7 +186,7 @@ $(document).ready(function() {
         var eventId = event._id;
         
         $.ajax({
-            url: "/api/events/"+eventId,
+            url: "/api/events/"+eventId+"/user/changycj",
             method: "DELETE",
             success: function(data) {
 
