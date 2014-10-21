@@ -27,7 +27,7 @@ $(document).ready(function() {
                 };
     //post event and see if it returns the same object         
     $.ajax({
-    url: "/api/events/user/changycj",
+    url: "/api/events/user/test",
     method: "POST",
     data: formData,
     cache: false,
@@ -148,7 +148,7 @@ $(document).ready(function() {
         var newData = {description:newDescription, when :{start:newStartTime, end:newEndTime}};
         
         $.ajax({
-            url: "/api/events/"+eventId+"/user/changycj",
+            url: "/api/events/"+eventId+"/user/test",
             method: "PUT",
             data:newData,
             cache:false,
@@ -186,11 +186,11 @@ $(document).ready(function() {
         var eventId = event._id;
         
         $.ajax({
-            url: "/api/events/"+eventId+"/user/changycj",
+            url: "/api/events/"+eventId+"/user/test",
             method: "DELETE",
             success: function(data) {
 
-                if (data.success== 1) {
+                if (data.statusCode ==200) {
                     //look if getAllEvents() confirms that there are no more events
                     getAllEvents(true, eventId);
                 } else {
