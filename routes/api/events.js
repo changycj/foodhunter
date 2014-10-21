@@ -19,6 +19,8 @@ RETURNS: list of users
 */
 var findSubscribers = function(req, res, newEvent){
 	var subscribers = [];
+
+    console.log("finding subscribers");
 	Location.findOne({"_id": newEvent.location}).exec(function(err, loc){
 		if (err){
 			console.log("Error finding location of event");
@@ -78,6 +80,7 @@ var emailOut = function(subscribers, newEvent, loc){
 
         var sendgrid = require("sendgrid")("foodHunter", "6170proj");
 
+        console.log("emailing out");
         console.log(subscribers);
         for (var i = 0; i < subscribers.length; i++) {
             var user = subscribers[i];
@@ -185,6 +188,7 @@ router.post('/', function(req, res) {
     						res.json({success:0, details:"Error adding an event to the User.events 2"});
     					}
     					else{
+                            console.log("shoudl call emilaing now");
     						findSubscribers(req, res, newEvent); //success msg sent inside the function
     						// res.json({success:1, event: newEvent});
     					}
