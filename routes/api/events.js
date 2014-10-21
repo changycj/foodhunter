@@ -83,7 +83,7 @@ var emailOut = function(subscribers, newEvent, loc){
             var user = subscribers[i];
             var mailOptions = {
                 to: user,
-                from: "foodhunterproject@mit.edu",
+                from: "app30875858@heroku.com",
                 subject: 'Free Food ' + eventStart.getMonth() + "/" + eventStart.getDate() + ' in ' + loc.name,
                 text: 'Time: ' + eventStart.getHours() + ":" + eventStart.getMinutes() + ' - ' 
                        + eventEnd.getHours() + ":" + eventEnd.getMinutes() + '\n'
