@@ -27,23 +27,24 @@ var findSubscribers = function(req, res, newEvent){
 		} else {
 			var times = [];
 			var building = loc;
-			var dStart = new Date(newEvent.when.start).getHours();
-			var dEnd = new Date(newEvent.when.end).getHours();
-			var startEnd = [dStart, dEnd];
-			if (dStart == dEnd){
-				var timeBlock = Math.floor(dStart/6);
-				if (times.indexOf(timeBlock) == -1){
-					times.push(timeBlock);
-				}
-			} else{
-				for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
-					var timeBlock = Math.floor((startEnd[0]+i)/6);
-					if (times.indexOf(timeBlock) == -1){
-						times.push(timeBlock);
-					}
-				}
-			}
-			Subscription.find({"building": building, "time_block": { $in: times}})
+			// var dStart = new Date(newEvent.when.start).getHours();
+			// var dEnd = new Date(newEvent.when.end).getHours();
+			// var startEnd = [dStart, dEnd];
+			// if (dStart == dEnd){
+			// 	var timeBlock = Math.floor(dStart/6);
+			// 	if (times.indexOf(timeBlock) == -1){
+			// 		times.push(timeBlock);
+			// 	}
+			// } else{
+			// 	for (var i = 0; i < startEnd[1]-startEnd[0]; i+=6){
+			// 		var timeBlock = Math.floor((startEnd[0]+i)/6);
+			// 		if (times.indexOf(timeBlock) == -1){
+			// 			times.push(timeBlock);
+			// 		}
+			// 	}
+			// }
+            var time_block = Math.floor((new Date(newEvenet.when.start).getHours()));
+			Subscription.find({"building": building, "time_block": time_block})
 			.populate('users')
 			.exec(function(e, subs){
 				if (e) {
