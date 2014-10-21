@@ -9,7 +9,8 @@ var request = require("request");
 
 // set up mongo database
 var connection_string = 
-    process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || "localhost:27017/food_hunter";
+    "mongodb://changycjudy:hello123@ds047030.mongolab.com:47030/heroku_app30875858";
+console.log(connection_string);
 mongoose.connect(connection_string);
 var db = mongoose.connection;
 
