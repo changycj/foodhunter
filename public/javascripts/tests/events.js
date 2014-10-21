@@ -31,6 +31,7 @@ $(document).ready(function() {
     method: "POST",
     data: formData,
     cache: false,
+    async: false,
     success: function(data) {
 
         if (data.statusCode == 200) {
@@ -65,6 +66,7 @@ $(document).ready(function() {
         $.ajax({
         url: "/api/events",
         method: "GET",
+        async: false,
         success: function(data) {
 
             if (data.statusCode== 200) {
@@ -80,7 +82,7 @@ $(document).ready(function() {
                 else{
                     //expect the list to be nonempty
                 QUnit.test("GET /events", function(assert){
-                    notEqual(dataInfo.length,0,"Non empty event list");
+                    notEqual(dataInfo.length > 0, true ,"Non empty event list");
                 });
             }
             } else {
@@ -110,6 +112,7 @@ $(document).ready(function() {
         $.ajax({
         url: "/api/events/"+eventId,
         method: "GET",
+        async: false,
         success: function(data) {
 
             if (data.statusCode== 200) {
@@ -152,6 +155,7 @@ $(document).ready(function() {
             method: "PUT",
             data:newData,
             cache:false,
+            async: false,
             success: function(data) {
 
                 if (data.statusCode== 200) {
@@ -188,6 +192,7 @@ $(document).ready(function() {
         $.ajax({
             url: "/api/events/"+eventId+"/user/test",
             method: "DELETE",
+            async: false,
             success: function(data) {
 
                 if (data.statusCode ==200) {

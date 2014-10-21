@@ -15,10 +15,10 @@ $(document).ready(function() {
 	        url: "/api/subscriptions/subscribe/user/test",
 	        type: "POST",
 	        data: formData,
+	        async: false,
 	        success: function(data) {
 	        	test("testing Subscription post new", function(){
-	        		equal(data.statusCode: 200);
-	        		equal(data.details, "A subscription was added!");
+	        		equal(data.statusCode, 200);
 	        		equal(data.subscription.building, formData.location);
 	        		equal(data.subscription.time_block, formData.time_block);
 	        		console.log("users", data.subscription.users[0]);
@@ -33,9 +33,10 @@ $(document).ready(function() {
 	        time_block: 2
 	    };
 		$.ajax({
-			url: "/api/subscriptions/subscribe",
+			url: "/api/subscriptions/subscribe/user/test",
 			type: "DELETE",
 			data: formData,
+			async: false,
 			success: function(data){
 				test("testing delete Subscription", function(){
 				equal(data.statusCode, 200);
@@ -46,6 +47,7 @@ $(document).ready(function() {
 		$.ajax({
 			url: "/api/subscriptions/test",
 			type: "GET", 
+			async: false,
 			success: function(data){
 				test("testing GET Subscriptions", function(){
 					console.log("data returned", data);

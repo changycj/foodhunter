@@ -9,6 +9,7 @@ $(document).ready(function() {
     $.ajax({
         url: "/api/locations",
         method: "GET",
+        async: false,
         success: function(data) {
             testAllLocationsGet(data);
 
@@ -20,6 +21,7 @@ $(document).ready(function() {
             $.ajax({
                 url: "/api/locations/" + dummy_loc._id,
                 method: "GET",
+                async: false,
                 success: function(data) {
                     testOneLocationGet(data, dummy_loc);
                 }
@@ -31,11 +33,7 @@ $(document).ready(function() {
     function testOneLocationGet(data, dummy_loc) {
         // test getting one
         test("testing getting one specific location - {building: " + dummy_loc.building + ", name: " + dummy_loc.name+ "}", function() {
-<<<<<<< HEAD
-            equal(data.statusCode, 200);
-=======
             equal(data.statusCode, 200, "Data successfully returned");
->>>>>>> 60b80c0c486375c3fb423e7b8863024b11c37586
             equal(data.location._id, dummy_loc._id, "_id's (" + dummy_loc._id + ") are equal.")
             equal(data.location.building, dummy_loc.building, "building's (" + dummy_loc.building + ") are equal.");
             equal(data.location.name, dummy_loc.name, "name's (" + dummy_loc.name + ") are equal.");
@@ -46,11 +44,7 @@ $(document).ready(function() {
     function testAllLocationsGet(data) {
         // test getting all 
         test("testing getting all locations", function() {
-<<<<<<< HEAD
-            equal(data.statusCode, 200);
-=======
             equal(data.statusCode, 200, "Data successfully returned");
->>>>>>> 60b80c0c486375c3fb423e7b8863024b11c37586
             equal(data.locations.length > 0, true, "Nonempty list of locations (" + data.locations.length + ") returned");
         });
     }
