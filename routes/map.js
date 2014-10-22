@@ -9,7 +9,7 @@ var User = require("../models/User").User;
 var request = require("request");
 
 // // set up mongo database
-var connection_string = "mongodb://foodhunter:123456@ds047030.mongolab.com:47030/heroku_app30875858";
+var connection_string = process.env.MONGOLAB_URI || "localhost:27017/foodhunter";
 // var connection_string = "localhost:27017/foodhunter";
 console.log("CONNECTION STRING: " + connection_string);
 mongoose.connect(connection_string);
