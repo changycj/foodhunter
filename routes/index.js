@@ -19,11 +19,18 @@ router.get("/login", function(req, res) {
     res.render("login", {});
 });
 
+// GET logout
+router.get("/logout", function(req, res) {
+    res.clearCookie("kerberos");
+    res.redirect("/login");
+});
+
 // GET event details page
 router.get("/event_details", function(req, res) {
     res.render("details", {event_id: req.query.event_id});
 });
 
+// GET test scripts
 router.get("/tests/:api_name", function(req, res) {
     var api = req.params.api_name;
 

@@ -1,15 +1,4 @@
-/* Some random location from the DB
-{
-	"_id" : ObjectId("544552d424a285661925bd91"),
-	"building" : "35",
-	"name" : "Sloan Laboratory",
-	"gps" : {
-		"lat" : 42.3603823,
-		"lon" : -71.0940274
-	},
-	"__v" : 0
-}
-*/
+// Lead: Dana Mukusheva
 $(document).ready(function() {
     //form some dummy event, host is predefined
     var today = new Date().valueOf();
@@ -80,7 +69,7 @@ $(document).ready(function() {
                 else{
                     //expect the list to be nonempty
                 QUnit.test("GET /events", function(assert){
-                    notEqual(dataInfo.length,0,"Non empty event list");
+                    equal(dataInfo.length > 0, true ,"Non empty event list");
                 });
             }
             } else {

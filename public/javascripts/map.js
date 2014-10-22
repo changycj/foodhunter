@@ -102,6 +102,7 @@ $(document).ready(function() {
                             // bind form submissions handles
                             enableForms();
 
+                            // HELPER FUNCTIONS
                             function addMySubscription(loc, time_block) {
 
                                 var sub = $("<p/>").text(loc.text() + " from " + time_block.text() + " ")

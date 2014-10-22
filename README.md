@@ -24,7 +24,7 @@ Authors:
   - events.js: Dana Mukusheva
   - locations.js: Judy Chang
   - subscriptions.js: Dana Mukusheva
-  - users.js: Judy Chang
+  - users.js: Rebekah Cha, Judy Chang
 
 - routes:
   - index.js: Judy Chang
