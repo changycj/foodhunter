@@ -21,7 +21,7 @@ Authors:
   - map.js: Judy Chang
 
 - routes/api:
-  - events.js: Dana Mukusheva
+  - events.js: Rebekah Cha, Dana Mukusheva
   - locations.js: Judy Chang
   - subscriptions.js: Dana Mukusheva
   - users.js: Rebekah Cha, Judy Chang

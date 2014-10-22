@@ -1,4 +1,4 @@
-// Lead: Dana Mukusheva
+// Lead: Dana Mukusheva, Rebekah Cha
 // Events API
 
 var express = require('express');
