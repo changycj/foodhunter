@@ -61,10 +61,11 @@ router.get("/:user_id", function(req, res) {
                     subscriptions: user.subscriptions
                 });
             } else {
-                res.json({
-                    statusCode: 404,
-                    message: "mongoose find user error"
-                });
+                // res.json({
+                //     statusCode: 404,
+                //     message: "mongoose find user error"
+                // });
+                res.redirect("/../login");
             }
         }
     });
@@ -92,11 +93,11 @@ router.post("/subscribe/user/:user_id", function(req, res) {
             return;
         }
         else if (user==undefined){ //should never get here
-
-            res.json({
-                statusCode: 404, 
-                message:"Error finding the user who wants to subscribe, no such user"});
-        } 
+            res.redirect("/../login");
+        //     res.json({
+        //         statusCode: 404, 
+        //         message:"Error finding the user who wants to subscribe, no such user"});
+        // } 
         else {
             var sub = {building:building, time_block:time_block};
 

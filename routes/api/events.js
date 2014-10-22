@@ -183,6 +183,9 @@ router.post('/user/:user_id', function(req, res) {
     			}
     			//SUCH USER EXISTS
     			else {
+                    if (user == undefined){
+                        res.redirect("/../login");
+                    } else {
     				user.events.push(newEvent._id);
     				user.save(function(err){
     					if (err){
@@ -196,6 +199,7 @@ router.post('/user/:user_id', function(req, res) {
     						// res.json({success:1, event: newEvent});
     					}
     				});
+                }
     			}
     		});
     	}
