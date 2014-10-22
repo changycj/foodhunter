@@ -103,10 +103,11 @@ router.get("/:userID/", function(req, res){
 		} else {
 			//returning JSON object
             if (u == undefined) {
-                res.json({
-                    statusCode: 404,
-                    message: "user not found"
-                });
+                // res.json({
+                //     statusCode: 404,
+                //     message: "user not found"
+                // });
+                res.redirect("/../login");
             } else {
                 res.json({
                     statusCode: 200,
