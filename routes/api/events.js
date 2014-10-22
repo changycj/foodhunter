@@ -184,7 +184,10 @@ router.post('/user/:user_id', function(req, res) {
     			//SUCH USER EXISTS
     			else {
                     if (user == undefined){
-                        res.redirect("/../login");
+                        res.json({
+                            statusCode: 500,
+                            message: "Error finding user in database when adding event"
+                        });
                     } else {
     				user.events.push(newEvent._id);
     				user.save(function(err){
