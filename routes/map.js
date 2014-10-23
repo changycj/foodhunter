@@ -24,7 +24,16 @@ db.once("open", function() {
     //         insertLocation();
     //     }
     // });
-    insertLocation();
+
+    location.Location.count({}, function(err, count) {
+        if (!err) {
+            if (count == 0) {
+                insertLocation();
+            } else {
+                setupRoutes();
+            }
+        }
+    });
 });
 
 // store locations from MIT map api
@@ -56,7 +65,8 @@ var insertLocation = function() {
                     } else {
                         count++;
                         if (count == places.length) {
-                                        // dummy user for testing
+                            
+                            // dummy user for testing
                             var newUser = new User({
                                 _id: "test",
                                 events: [],
