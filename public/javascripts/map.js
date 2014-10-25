@@ -308,17 +308,17 @@ $(document).ready(function() {
         window.location = "/";
     }
 
-    function dateParser(date){
-        var stringTime = new Date(date).toLocaleTimeString();
-        var stringDate = new Date(date).toLocaleDateString();
-        var splitTimeList = stringTime.split(" ");//time + pm/am
-        var time = splitTimeList[0];
-        var detail = splitTimeList[1];
-        var length  = time.length;
-        return  time.substring(0, length-3)+" "+detail+" on "+stringDate;
-    }
+    // function dateParser(date){
+    //     var stringTime = new Date(date).toLocaleTimeString();
+    //     var stringDate = new Date(date).toLocaleDateString();
+    //     var splitTimeList = stringTime.split(" ");//time + pm/am
+    //     var time = splitTimeList[0];
+    //     var detail = splitTimeList[1];
+    //     var length  = time.length;
+    //     return  time.substring(0, length-3)+" "+detail+" on "+stringDate;
+    // }
     function formEventDisplay(ev){
-        var time = "<b>When:</b> " + dateParser(ev.when.start)+'<br />';
+        var time = "<b>When:</b> " + getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) +'<br />';
         var loc = "<b>Where: </b>"+ $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text()+'<br />';
         var desc = "<b>Details:</b> " +ev.description+'<br />';
         return time+loc+desc;
