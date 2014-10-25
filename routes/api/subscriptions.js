@@ -204,6 +204,7 @@ router.delete("/subscribe/user/:user_id", function(req,res){
         }
         else{
             if (sub == null || sub == undefined){
+                console.log("subscription delete error");
                 res.json({
                     statusCode: 404, 
                     message: "Subscription does not exist anyways"});

@@ -1,0 +1,12 @@
+
+
+#all_events {
+    float: right;
+    width: 300px;
+    background-color: green;
+}
+
+#events_list {
+	padding-top: 3px;
+	background-color: white;
+}
