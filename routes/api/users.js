@@ -60,21 +60,16 @@ router.post("/login", function(req, res) {
                                     user: u
                                 });
                             }
-
                         });
-
                     } else {
                         res.json({
                             statusCode: 500,
                             message: "MIT server error or invalid kerberos"
                         });
                     }
-
                 });
-
     		} else {
     			res.cookie("kerberos", req.body.kerberos);
-
     			res.json({
                     statusCode: 200,
                     user: u
@@ -88,6 +83,7 @@ router.post("/login", function(req, res) {
 
 /*GET method for user */
 router.get("/:userID/", function(req, res){
+    console.log("user get method");
 	//find users by :userID
 	var userID = req.params.userID;
 
