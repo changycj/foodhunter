@@ -8,6 +8,7 @@
     
     <link rel="stylesheet" href="/stylesheets/map.css">
     <script type="text/javascript" src="/javascripts/map.js"></script>
+    <script type="text/javascript" src="/javascripts/eventfeed.js"></script>
 
 </head>
 <body>
@@ -51,8 +52,12 @@
       </div><!-- /.container-fluid -->
     </nav>
     <div class = "row">
-        <div id="map" class = "col-sm-8"></div>
+        <div id="map_container" class = "col-sm-8">
+            <div id="map_slider"></div>
+            <div id="map"></div>
+        </div>
         <div class = "col-sm-4">
+
             <div class = "row">
                 <div id="my_events_container">
                     <h3>My Events</h3>
@@ -67,6 +72,8 @@
                     </ul>
                 </div>
             </div>
+            
+    </div>
         </div>
     </div>
     <div class = "row">
@@ -104,41 +111,10 @@
                 </form>
             </span>
         </div>
-    <div id="map_container">
-        <div id="map_slider"></div>
-        <div id="map"></div>
-    </div>
-    <div id="add_event_container">
-        <h2>Add event</h2>
-        <form id="form_add_event">
-            <p>Date: <input type="text" name="date">
-            Start time: <input type="text" name="time_start">
-            End time: <input type="text" name="time_end"></p>
-            Location: <select class="location" name="location"></select>
-            <p>Description:</p>
-            <p><textarea name="description" rows=5 cols=50></textarea></p>
-            <input type="submit" value="Add Event">
-        </form>
-    </div>
+    
+    
 
-    <% include eventfeed.ejs %>
-
-    <div id="subscribe_container">
-        <h2>Subscribe</h2>
-        <!-- <form id="form_subscribe" method = "post" action="/subscriptions/subscribe"> -->
-        <span class="subscription">
-            <form id="form_subscribe">
-            Location: <select class="location" name="location"></select>
-            Time Block: <select name="time">
-                <option value=0>12AM - 6AM</option>
-                <option value=1>6AM - 12PM</option>
-                <option value=2>12PM - 6PM</option>
-                <option value=3>6PM - 12AM</option></select>
-            <input type="submit" value="Subscribe">
-            </form>
-        </span>
-
-    </div>
+    
     
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
