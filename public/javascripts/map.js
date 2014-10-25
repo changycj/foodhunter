@@ -3,8 +3,8 @@
 // Main UI page with map
 
 // TODO:
-// - user authentication
-// - drawing markers (add all then filter) -> also add time/date slider on marker filter
+// - user authentication -- done
+// - drawing markers (add all then filter) -> also add time/date slider on marker filter -- done
 // - currently any update to events must refresh page to reflect on map (investigate in 3.3)
 
 $(document).ready(function() {
@@ -19,6 +19,18 @@ $(document).ready(function() {
         }).setView([42.3585, -71.0935], 14);    
     map.setMaxBounds(map.getBounds().pad(1.1));
 
+    // add date slider onto map
+    $("#map_slider").slider({
+        min: -5, max: 21, value: 0,
+        slide: function(e, s) {
+            var chosen_date = new Date().addDays(s.value).clearTime();
+            map.featureLayer.setFilter(function(f) {
+                var event_date = new Date(f.properties.date).clearTime();
+                return event_date.equals(chosen_date);
+            });
+        }
+    });
+
     // load events to map
     $.ajax({
 
@@ -26,29 +38,42 @@ $(document).ready(function() {
         method: "GET",
         success: function(data) {
             if (data.statusCode == 200) {
+                var geojson_events = [];
+
                 for (var i = 0; i < data.events.length; i++) {
                     var ev = data.events[i];
-                    addMarker(ev);
-                }
 
-                // add marker helper function
-                function addMarker(ev) {
+                    var title = (ev.location.building == undefined ? "" : ev.location.building + " - ")
+                        + ev.location.name;
+                    var description = 
+                        getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) + "<br>"
+                        + "<i>" + ev.description + "</i><br>"
+                        + "Host: " + ev.host;
 
-                    var marker = L.mapbox.featureLayer({
+                    var geojson = {
                         type: "Feature",
                         geometry: {
                             type: "Point",
                             coordinates: [ev.location.gps.lon, ev.location.gps.lat]
                         },
                         properties: {
-                            title: (ev.location.building == undefined ? "" : ev.location.building + " - ") + ev.location.name,
-                            description: (new Date(ev.when.start)).toLocaleString() + "<br>" + ev.description,
+                            title: title,
+                            description: description,
+                            date: ev.when.start,
                             "marker-size" : "small",
                             "marker-color" : "#BE9A6B",
                             "marker-symbol" : "ice-cream"
                         }
-                    }).addTo(map);
+                    };
+
+                    geojson_events.push(geojson);
                 }
+
+                // slider initializes to zero, which is today
+                map.featureLayer.setGeoJSON(geojson_events).setFilter(function(f) {
+                    return Date.today().equals(new Date(f.properties.date).clearTime());
+                });
+
             } else {
                 errorRedirect(data.message);
             }
@@ -173,7 +198,7 @@ $(document).ready(function() {
 
                                 // set up other UI widgets
                                 $("#form_add_event input[name^='time']").timepicker({"scrollDefault" : "now"});
-                                $("#form_add_event input[name^='date']").datepicker();
+                                $("#form_add_event input[name^='date']").datepicker({"minDate" : new Date()});
 
                                 // ADD EVENT FORM
                                 $("#form_add_event").submit(function(e) {        
@@ -265,6 +290,17 @@ $(document).ready(function() {
         },
         error: errorRedirect
     });
+
+    function getTimeRangeString(start, end) {
+        var date = start.toString("MMM d");
+
+        var start_time = start.toString("h") + (start.getMinutes() == 0 ? "" : start.toString(":mm"))
+            + start.toString("t").toLowerCase();
+
+        var end_time = end.toString("h") + (end.getMinutes() == 0 ? "" : end.toString(":mm"))
+            + end.toString("t").toLowerCase();
+        return date + ", " + start_time + "-" + end_time;
+    }
 
     // error handler
     function errorRedirect(msg) {
