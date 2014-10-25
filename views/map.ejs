@@ -11,47 +11,101 @@
 
 </head>
 <body>
-    
-    <h1>Food Hunter</h1>
-    <h2>Logged in as <%=kerberos%> <a href="/logout">(Logout)</a></h2>
-    
-    <div id="my_events_container">
-        <h2>My Events</h2>
-        <ul>
-        </ul>
+    <div class="page-header">
+      <h1 > Welcome, <%=kerberos%></h1>
     </div>
-    <div id="map"></div>
-    <div id="add_event_container">
-        <h2>Add event</h2>
-        <form id="form_add_event">
-            <p>Date: <input type="text" name="date">
-            Start time: <input type="text" name="time_start">
-            End time: <input type="text" name="time_end"></p>
-            Location: <select class="location" name="location"></select>
-            <p>Description:</p>
-            <p><textarea name="description" rows=5 cols=50></textarea></p>
-            <input type="submit" value="Add Event">
-        </form>
-    </div>
-    
-    
-    <div id="subscribe_container">
-        <h2>Subscribe</h2>
-        <!-- <form id="form_subscribe" method = "post" action="/subscriptions/subscribe"> -->
-        <span class="subscription">
-            <form id="form_subscribe">
-            Location: <select class="location" name="location"></select>
-            Time Block: <select name="time">
-                <option value=0>12AM - 6AM</option>
-                <option value=1>6AM - 12PM</option>
-                <option value=2>12PM - 6PM</option>
-                <option value=3>6PM - 12AM</option></select>
-            <input type="submit" value="Subscribe">
-            </form>
-        </span>
-    </div>
-    
 
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Main</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tests 
+                        <span class="caret">
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="/tests/events">Events API</a></li>
+                        <li><a href="/tests/locations">Locations API</a></li>
+                        <li><a href="/tests/subscriptions">Subscriptions API</a></li>
+                        <li><a href="/tests/users">Users API</a></li>
+
+                    </ul>
+
+            </li>
+            <li><a href="/logout">Logout</a></li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class = "row">
+        <div id="map" class = "col-sm-8"></div>
+        <div class = "col-sm-4">
+            <div class = "row">
+                <div id="my_events_container">
+                    <h3>My Events</h3>
+                    <ul class="list-group">
+                    </ul>
+                </div>
+            </div>
+            <div class = "row">
+                <div id="my_subs_container">
+                    <h3>My Subscriptions</h3>
+                    <ul class="list-group">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class = "row">
+        <div id="add_event_container" class = "col-sm-6">
+            <h2>Add event</h2>
+            <form id="form_add_event">
+                <p>Date: <input type="text" name="date">
+                Start time: <input type="text" name="time_start">
+                End time: <input type="text" name="time_end"></p>
+                Location: <select class="location" name="location"></select>
+                <p>Description:</p>
+                <p><textarea name="description" rows=5 cols=50></textarea></p>
+                <input type="submit" value="Add Event" class = "btn btn-sm btn-default">
+            </form>
+        </div>
+    
+    
+        <div id="subscribe_container" class = "col-sm-6">
+            <h2>Subscribe</h2>
+            <!-- <form id="form_subscribe" method = "post" action="/subscriptions/subscribe"> -->
+            <span class="subscription">
+                <form id="form_subscribe">
+                    <label for="time">Location: </label>
+                    <select class="location" name="location">
+                    </select>
+                    
+                    <label for="time">Time block</label>
+                        <select name="time" class="form-control">
+                            <option value=0>12AM - 6AM</option>
+                            <option value=1>6AM - 12PM</option>
+                            <option value=2>12PM - 6PM</option>
+                            <option value=3>6PM - 12AM</option>
+                        </select>
+                    <input type="submit" value="Subscribe" class = "btn btn-sm btn-default">
+                </form>
+            </span>
+        </div>
+    </div>
+    
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 </body>
 
 </html>

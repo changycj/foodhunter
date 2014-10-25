@@ -8,6 +8,7 @@
 // - currently any update to events must refresh page to reflect on map (investigate in 3.3)
 
 $(document).ready(function() {
+    //$('.selectpicker').selectpicker();
 
     // user kerberos
     var kerberos = window.location.search.split("kerberos=")[1];
@@ -82,6 +83,7 @@ $(document).ready(function() {
                                 $("<option/>").val(loc._id).text((loc.building == undefined ? "" : loc.building + ", ") + loc.name)
                                     .appendTo(select);                                
                             });
+                            select.addClass("form-control");
 
                             // populate my subscription data
                             for (var i = 0; i < user.subscriptions.length; i++) {
@@ -105,13 +107,13 @@ $(document).ready(function() {
                             // HELPER FUNCTIONS
                             function addMySubscription(loc, time_block) {
 
-                                var sub = $("<p/>").text(loc.text() + " from " + time_block.text() + " ")
-                                    .insertBefore("#form_subscribe");
+                                var sub = $('<li class = "list-group-item"/>').appendTo("#my_subs_container");
+                                sub.html(formSubDisplay(loc.text(), time_block.text()));
 
                                 // $("#form_subscribe").before(
                                 //     $("<p/>").text(loc.text() + " from " + time_block.text() + " ")
                                 //         .append(btn));
-                                var btn = $("<button/>").text("Delete").click(function(e) {
+                                var btn = $('<button class = "btn btn-default btn-sm"/>').text("Delete").click(function(e) {
                                     var formData = {
                                         location: loc.val(),
                                         time_block: time_block.val()
@@ -134,20 +136,18 @@ $(document).ready(function() {
                             }
                         
                             function addMyEvent(ev) {
-                                var item = $("<li/>").appendTo("#my_events_container ul");
-                                $("<p/>").appendTo(item).text((new Date(ev.when.start)).toLocaleString());
-                                $("<p>").appendTo(item).text(
-                                    $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text());
-                                $("<p/>").appendTo(item).text(ev.description);
+                                var item = $('<li class = "list-group-item"/>').appendTo("#my_events_container ul");
+                                item.html(formEventDisplay(ev));
+                                
                                 
                                 var control = $("<p/>").appendTo(item);
                                 
-                                $("<button/>").text("View/Edit").appendTo(control).click(function(e) {
+                                $('<button class = "btn btn-default btn-sm"/>').text("View/Edit").appendTo(control).click(function(e) {
                                     window.open("/event_details?id=" + ev._id + "&kerberos=" + kerberos,
                                      "popup", "width=500px; height = 800px;")
                                 });
                                 
-                                $("<button/>").text("Delete").appendTo(control).click(function(e) {
+                                $('<button class = "btn btn-default btn-sm"/>').text("Delete").appendTo(control).click(function(e) {
                                     $.ajax({
                                         url: "/api/events/" + ev._id + "/user/" + kerberos,
                                         type: "DELETE",
@@ -270,6 +270,27 @@ $(document).ready(function() {
     function errorRedirect(msg) {
         alert("ERROR! " + msg == undefined ? "" : msg);
         window.location = "/";
+    }
+
+    function dateParser(date){
+        var stringTime = new Date(date).toLocaleTimeString();
+        var stringDate = new Date(date).toLocaleDateString();
+        var splitTimeList = stringTime.split(" ");//time + pm/am
+        var time = splitTimeList[0];
+        var detail = splitTimeList[1];
+        var length  = time.length;
+        return  time.substring(0, length-3)+" "+detail+" on "+stringDate;
+    }
+    function formEventDisplay(ev){
+        var time = "<b>When:</b> " + dateParser(ev.when.start)+'<br />';
+        var loc = "<b>Where: </b>"+ $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text()+'<br />';
+        var desc = "<b>Details:</b> " +ev.description+'<br />';
+        return time+loc+desc;
+    }
+    function formSubDisplay(loc, time_block){
+        var locDisplay = "<b>Building:</b>"+loc+'<br />';
+        var time_blockDisplay = "<b>At times: </b>"+time_block+'<br />';
+        return locDisplay+time_blockDisplay;
     }
    
 
