@@ -20,7 +20,7 @@ $(document).ready(function() {
                     var curDate = new Date();
                     var itemDate = new Date(ev.when.end);
                     if (itemDate >= curDate){
-                        var item = $("<div/>").appendTo("#events_list");
+                        var item = $("<div id='event_item'/>").appendTo("#events_list");
                         $("<p/>").appendTo(item).text(ev.location.name 
                             + " " + (new Date(ev.when.start)).toLocaleString() 
                             + " to "
