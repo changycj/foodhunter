@@ -20,8 +20,6 @@ $(document).ready(function() {
                     var curDate = new Date();
                     var itemDate = new Date(ev.when.end);
                     if (itemDate >= curDate){
-
-                        //var item = $("<div id='event_item'/>").appendTo("#events_list");
                         var item = $('<li class = "list-group-item"/>').appendTo("#all_events ul");
                         
                         item.html(formEventDisplay(ev));
@@ -40,18 +38,20 @@ $(document).ready(function() {
         alert("ERROR! " + msg == undefined ? "" : msg);
         window.location = "/";
     }
-    function dateParser(date){
-        var stringTime = new Date(date).toLocaleTimeString();
-        var stringDate = new Date(date).toLocaleDateString();
-        var splitTimeList = stringTime.split(" ");//time + pm/am
-        var time = splitTimeList[0];
-        var detail = splitTimeList[1];
-        var length  = time.length;
-        return  time.substring(0, length-3)+" "+detail+" on "+stringDate;
+    function getTimeRangeString(start, end) {
+        var date = start.toString("MMM d");
+
+        var start_time = start.toString("h") + (start.getMinutes() == 0 ? "" : start.toString(":mm"))
+            + start.toString("t").toLowerCase();
+
+        var end_time = end.toString("h") + (end.getMinutes() == 0 ? "" : end.toString(":mm"))
+            + end.toString("t").toLowerCase();
+        return date + ", " + start_time + "-" + end_time;
     }
+
     function formEventDisplay(ev){
-        var time = "<b>When:</b> " + dateParser(ev.when.start)+'<br />';
-        var loc = "<b>Where: </b>"+ $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text()+'<br />';
+        var time = "<b>When:</b> " + getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) +'<br />';
+        var loc = "<b>Where: </b>"+ ev.location.name+'<br />';
         var desc = "<b>Details:</b> " +ev.description+'<br />';
         return time+loc+desc;
     }

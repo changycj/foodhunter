@@ -23,7 +23,7 @@ $(document).ready(function() {
     
     // add date slider onto map
     $("#map_slider").labeledslider({
-        min: -5, max: 21, value: 0, tickArray: makeArray(-5, 22),
+        min: -5, max: 21, value: 0, tickArray: makeArray(-5, 22), tickLabels: makeDateArray(-5,22),
         slide: function(e, s) {
             var chosen_date = new Date().addDays(s.value).clearTime();
             map.featureLayer.setFilter(function(f) {
@@ -32,6 +32,7 @@ $(document).ready(function() {
             });
         }
     });
+    
 
     // load events to map
     $.ajax({
@@ -332,7 +333,22 @@ $(document).ready(function() {
     function makeArray(start, end){
         var ar = [];
         for (var i = start; i< end; i++){
-            ar.push(i);
+            if (i%2==0){
+                ar.push(i);
+            }
+        }
+        return ar;
+    }
+    function makeDateArray(start, end){
+
+        var ar = {};
+        for (var i = start; i< end; i++){
+            if (i==0){
+                ar[i] = "Today";
+            }
+            else{
+                ar[i] = (new Date()).addDays(i).toString("MMM d");
+            }
         }
         return ar;
     }
