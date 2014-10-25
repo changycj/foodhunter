@@ -45,6 +45,7 @@ router.get("/:id", function(req, res) {
 
         } else {
             if (loc == undefined) {
+                console.log('location not found error');
                 res.json({
                     statusCode: 404,
                     message: "location not found"
