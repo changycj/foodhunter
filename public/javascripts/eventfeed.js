@@ -23,7 +23,7 @@ $(document).ready(function() {
 
                         //var item = $("<div id='event_item'/>").appendTo("#events_list");
                         var item = $('<li class = "list-group-item"/>').appendTo("#all_events ul");
-                        console.log("HEREEE");
+                        
                         item.html(formEventDisplay(ev));
 
                     }

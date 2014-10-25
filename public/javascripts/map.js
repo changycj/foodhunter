@@ -8,7 +8,7 @@
 // - currently any update to events must refresh page to reflect on map (investigate in 3.3)
 
 $(document).ready(function() {
-    //$('.selectpicker').selectpicker();
+
 
     // user kerberos
     var kerberos = window.location.search.split("kerberos=")[1];
@@ -20,9 +20,10 @@ $(document).ready(function() {
         }).setView([42.3585, -71.0935], 14);    
     map.setMaxBounds(map.getBounds().pad(1.1));
 
+    
     // add date slider onto map
-    $("#map_slider").slider({
-        min: -5, max: 21, value: 0,
+    $("#map_slider").labeledslider({
+        min: -5, max: 21, value: 0, tickArray: makeArray(-5, 22),
         slide: function(e, s) {
             var chosen_date = new Date().addDays(s.value).clearTime();
             map.featureLayer.setFilter(function(f) {
@@ -324,9 +325,16 @@ $(document).ready(function() {
         return time+loc+desc;
     }
     function formSubDisplay(loc, time_block){
-        var locDisplay = "<b>Building:</b>"+loc+'<br />';
+        var locDisplay = "<b>Building: </b>"+loc+'<br />';
         var time_blockDisplay = "<b>At times: </b>"+time_block+'<br />';
         return locDisplay+time_blockDisplay;
+    }
+    function makeArray(start, end){
+        var ar = [];
+        for (var i = start; i< end; i++){
+            ar.push(i);
+        }
+        return ar;
     }
    
 

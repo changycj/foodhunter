@@ -4,6 +4,10 @@
     <title>Welcome to Food Hunter</title>
 
     <script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.js'></script>
+    <!--Taken from the website http://bseth99.github.io/projects/jquery-ui/7-jquery-ui-labeled-slider.html-->
+    <script type="text/javascript" src = "/javascripts/sliderticks.js"></script>
+    <link href = '/stylesheets/sliderticks.css'rel = "stylesheet"/>
+
     <link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.2/mapbox.css' rel='stylesheet' />
     
     <link rel="stylesheet" href="/stylesheets/map.css">
@@ -57,7 +61,13 @@
             <div id="map"></div>
         </div>
         <div class = "col-sm-4">
-
+            <div class = "row">
+                <div id="all_events">
+                    <h3>Upcoming events</h3>
+                    <ul class="list-group">
+                    </ul>
+                </div>
+            </div>
             <div class = "row">
                 <div id="my_events_container">
                     <h3>My Events</h3>

@@ -28,3 +28,6 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e0f3fa', end
 #time{
 	width: 10px;
 }
+#map_slider{
+	width:700px;
+}
