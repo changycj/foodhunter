@@ -48,11 +48,12 @@ var findSubscribers = function(req, res, newEvent){
 							}
 						}
 					}
-					emailOut(subscribers, newEvent, loc);
+					emailOut(subscribers, newEvent);
 					res.json({
                         statusCode: 200, 
                         event: newEvent
                     });
+
 				}
 			});
 		}
@@ -65,7 +66,7 @@ DESCRIPTION: emails out to the list of subscribed users.
 PARAMS: subscribers is a list of users
 RETURNS: nothing
 */
-var emailOut = function(subscribers, newEvent, loc){
+var emailOut = function(subscribers, newEvent){
 
         // offset by 4 hours to get local time
 
@@ -75,19 +76,24 @@ var emailOut = function(subscribers, newEvent, loc){
         var sendgrid = require("sendgrid")(process.env.SENDGRID_USERNAME, process.env.SENDGRID_PASSWORD);
 
         for (var i = 0; i < subscribers.length; i++) {
+            var html_text= "There is free food at " 
+            + newEvent.location.name + "." 
+            + "<br><br><table><tr><td><strong>Date:</strong> </td> <td>" 
+            + eventStart.toLocaleDateString() + "</td></tr> <tr><td><strong>Time:</strong> </td><td>"
+            +  eventStart.toLocaleTimeString() + " to " + eventEnd.toLocaleTimeString() 
+            + "</td></tr> <tr><td> <strong>Description:</strong></td><td>" 
+            + newEvent.description 
+            + "</td></tr><tr><td> <strong>Hosted by:</strong></td><td>"
+            + newEvent.host + "</td></tr></table><br><br>"
+            +"You are receiving this because you (or someone else) has subscribed to the free food mailing list at " 
+            + loc.name + ".";
 
             var user = subscribers[i];
             var mailOptions = {
                 to: user,
                 from: "app30875858@heroku.com",
-                subject: 'Free Food at ' + eventStart.toLocaleDateString() + " " + eventStart.toLocaleTimeString() + ' in ' + loc.name,
-
-                text: 'Date: ' + eventStart.toLocaleDateString() + "\n" + 
-                    'Time: ' + eventStart.toLocaleTimeString() + " to " + eventEnd.toLocaleTimeString() + '\n'
-                       + 'Description: ' + newEvent.description + '\n'
-                       + 'Hosted by: '+ newEvent.host
-                    +'\n\n You are receiving this because you (or someone else) has subscribed to the free food mailing list for '
-                    + newEvent.location.name + '.\n'
+                subject: 'Free Food at ' + eventStart.toLocaleDateString() + " " + eventStart.toLocaleTimeString() + ' in ' + newEvent.location.name,
+                html: html_text
             };
 
             sendgrid.send(mailOptions, function(err, json) {

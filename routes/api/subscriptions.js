@@ -4,7 +4,6 @@ var express = require("express");
 var router = express.Router();
 var Subscription = require("../../models/Subscription").Subscription;
 var User = require("../../models/User").User;
-var nodemailer = require('nodemailer');
 // var smtpPool = require('nodemailer-smtp-pool');
 
 /********** REST API for subscription **********/
@@ -143,7 +142,11 @@ router.post("/subscribe/user/:user_id", function(req, res) {
                 //there is such sub, update it by pushing a new user
                     else{
                         if (memberCheck(s.users, userKerberos)){
-                            //do nothing, ignore adding same thing
+                            res.json({
+                                statusCode: 409,
+                                message : "User already subscribes to this."
+                            });
+                            return;
                         }
                         else{
                             s.users.push(userKerberos);
@@ -162,7 +165,10 @@ router.post("/subscribe/user/:user_id", function(req, res) {
                         }
 
                         if (memberCheckObjectId(user.subscriptions, s._id)){
-                            //do nothing
+                            res.json({
+                                statusCode: 409,
+                                message: "User already subscribes to this."
+                            });
                         }
                         else{
                             user.subscriptions.push(s._id);
@@ -176,10 +182,6 @@ router.post("/subscribe/user/:user_id", function(req, res) {
                                 return;
                             });
                         }
-                        res.json({
-                            statusCode : 200,
-                            subscription: s
-                        });
                     }
                 }
             });
