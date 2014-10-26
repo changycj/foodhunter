@@ -7,23 +7,19 @@
 6 info start rcha_changycj_mukushev_proj3@0.0.0
 7 verbose unsafe-perm in lifecycle true
 8 info rcha_changycj_mukushev_proj3@0.0.0 Failed to exec start script
-9 error rcha_changycj_mukushev_proj3@0.0.0 start: `node ./bin/www`
+9 error rcha_changycj_mukushev_proj3@0.0.0 start: `node app.js`
 9 error Exit status 8
 10 error Failed at the rcha_changycj_mukushev_proj3@0.0.0 start script.
 10 error This is most likely a problem with the rcha_changycj_mukushev_proj3 package,
 10 error not with npm itself.
 10 error Tell the author that this fails on your system:
-10 error     node ./bin/www
+10 error     node app.js
 10 error You can get their info via:
 10 error     npm owner ls rcha_changycj_mukushev_proj3
 10 error There is likely additional logging output above.
-11 error System Darwin 13.4.0
+11 error System Darwin 13.3.0
 12 error command "node" "/usr/local/bin/npm" "start"
-<<<<<<< HEAD
-13 error cwd /Users/danamukusheva/Desktop/proj3/rcha_changycj_mukushev_proj3
-=======
 13 error cwd /Users/rcha/Documents/6.170/rcha_changycj_mukushev_proj3
->>>>>>> 94aa578c39065e73b791c75cc79c9c0ad09386bb
 14 error node -v v0.10.32
 15 error npm -v 1.4.28
 16 error code ELIFECYCLE
