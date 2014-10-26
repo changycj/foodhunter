@@ -1,4 +1,8 @@
 
+.bcgr{
+	background: #C8EDBB;
+}
+
 #map {
     width: 700px;
     height: 500px;
@@ -6,28 +10,28 @@
     margin-right: 30px;
 
 }
+
 #all_events, #my_events_container, #my_subs_container{
 	overflow: auto;
-	max-height:  200px;
+	max-height:  150px;
 	margin-bottom: 0px;
 	padding-bottom: 0px;
-}
-
-
-.bcgr{
-	background: #C8EDBB;
-
-
-
 }
 
 .adders{
 	border-radius: 10px;
 	border: 1px solid black;
 	height: 450px;
-	width: 500px;
-
 }
+
+.forms_container{
+	margin-left:15px;
+	margin-right:50px;
+}
+.location{
+	max-width: 300px;
+}
+
 #form_add_event {
     max-width: 50px;
 
@@ -35,6 +39,7 @@
 .btn {
 	margin: 5px;
 }
+
 .form-control{
 	width: 60%;
 }
