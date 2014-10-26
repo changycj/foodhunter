@@ -1,4 +1,4 @@
-// Lead: Dana Mukusheva, Rebekah Cha
+// Lead: Dana Mukusheva
 // Events API
 
 var express = require('express');
@@ -131,7 +131,7 @@ Currently in the test mode.
 Might not be needed in the deployed version
 */
 router.get('/', function(req, res) {
-    Event.find({}).sort({"when.start": "desc"}).populate("location").exec(function(err, events){
+    Event.find({}).sort({"when.start": "asc"}).populate("location").exec(function(err, events){
         if (err){
             res.json({statusCode:500, message: "mongoose error getting events"});
         }
