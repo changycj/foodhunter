@@ -94,10 +94,11 @@ var setupRoutes = function() {
     
     router.get("/", function(req, res) {
         
-        if (req.query.kerberos != undefined) {
+        if (req.query.kerberos != undefined && req.query.kerberos == req.cookies.kerberos) {
             res.render("map", {
                 kerberos: req.query.kerberos
             });
+
         } else {
             res.redirect("/");
         }
