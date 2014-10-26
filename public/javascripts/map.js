@@ -19,6 +19,7 @@ $(document).ready(function() {
             minZoom: 14, maxZoom: 18
         }).setView([42.3585, -71.0935], 14);    
     map.setMaxBounds(map.getBounds().pad(1.1));
+    map.featureLayer.setGeoJSON([]);
 
     
     // add date slider onto map
@@ -32,7 +33,36 @@ $(document).ready(function() {
             });
         }
     });
-    
+
+
+    function addEventMarker(ev) {
+        var events = map.featureLayer.getGeoJSON();
+
+        var title = (ev.location.building == undefined ? "" : ev.location.building + " - ")
+            + ev.location.name;
+        var description = 
+            getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) + "<br>"
+            + "<i>" + ev.description + "</i><br>"
+            + "Host: " + ev.host;
+
+        var geojson = {
+            type: "Feature",
+            geometry: {
+                type: "Point",
+                coordinates: [ev.location.gps.lon, ev.location.gps.lat]
+            },
+            properties: {
+                title: title,
+                description: description,
+                date: ev.when.start,
+                "marker-size" : "small",
+                "marker-color" : "#BE9A6B",
+                "marker-symbol" : "ice-cream"
+            }
+        };
+        events.push(geojson);
+        map.featureLayer.setGeoJSON(events);
+    }
 
     // load events to map
     $.ajax({
@@ -41,39 +71,14 @@ $(document).ready(function() {
         method: "GET",
         success: function(data) {
             if (data.statusCode == 200) {
-                var geojson_events = [];
 
                 for (var i = 0; i < data.events.length; i++) {
                     var ev = data.events[i];
-
-                    var title = (ev.location.building == undefined ? "" : ev.location.building + " - ")
-                        + ev.location.name;
-                    var description = 
-                        getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) + "<br>"
-                        + "<i>" + ev.description + "</i><br>"
-                        + "Host: " + ev.host;
-
-                    var geojson = {
-                        type: "Feature",
-                        geometry: {
-                            type: "Point",
-                            coordinates: [ev.location.gps.lon, ev.location.gps.lat]
-                        },
-                        properties: {
-                            title: title,
-                            description: description,
-                            date: ev.when.start,
-                            "marker-size" : "small",
-                            "marker-color" : "#BE9A6B",
-                            "marker-symbol" : "ice-cream"
-                        }
-                    };
-
-                    geojson_events.push(geojson);
+                    addEventMarker(ev);
                 }
 
                 // slider initializes to zero, which is today
-                map.featureLayer.setGeoJSON(geojson_events).setFilter(function(f) {
+                map.featureLayer.setFilter(function(f) {
                     return Date.today().equals(new Date(f.properties.date).clearTime());
                 });
 
@@ -137,9 +142,6 @@ $(document).ready(function() {
                                 var sub = $('<li class = "list-group-item"/>').appendTo("#my_subs_container");
                                 sub.html(formSubDisplay(loc.text(), time_block.text()));
 
-                                // $("#form_subscribe").before(
-                                //     $("<p/>").text(loc.text() + " from " + time_block.text() + " ")
-                                //         .append(btn));
                                 var btn = $('<button class = "btn btn-default btn-sm"/>').text("Delete").click(function(e) {
                                     var formData = {
                                         location: loc.val(),
@@ -165,8 +167,7 @@ $(document).ready(function() {
                             function addMyEvent(ev) {
                                 var item = $('<li class = "list-group-item"/>').appendTo("#my_events_container ul");
                                 item.html(formEventDisplay(ev));
-                                
-                                
+                                                                
                                 var control = $("<p/>").appendTo(item);
                                 
                                 $('<button class = "btn btn-default btn-sm"/>').text("View/Edit").appendTo(control).click(function(e) {
@@ -182,8 +183,7 @@ $(document).ready(function() {
                                             if (data.statusCode == 200) {
                                                 item.remove();
 
-                                                // must reload for map to correspond (FOR NOWWW)
-                                                // will change in 3.3
+                                                // need to reload to refresh map
                                                 window.location.reload();
                                             } else {
                                                 errorRedirect(data.message);
@@ -227,14 +227,10 @@ $(document).ready(function() {
                                         url: "/api/events/user/" + kerberos,
                                         type: "POST",
                                         data: formData,
-                                        cache: false,
                                         success: function(data) {
                                             if (data.statusCode== 200) {
-                                                $("#form_add_event")[0].reset();
-                                                addMyEvent(data.event);
 
-                                                // must reload to show map marker (FOR NOWWWW)
-                                                // will change in 3.3
+                                                // need to reload to refresh map
                                                 window.location.reload();
 
                                             } else {
@@ -264,12 +260,11 @@ $(document).ready(function() {
                                         success: function(data) {
                                             if (data.statusCode == 200) {
                                                 
+                                                alert("Subscribed!");
                                                 addMySubscription(location, time_block);
 
-                                                // // reload to refresh content
-                                                // // will change in 3.3
-                                                // window.location.reload();
-
+                                            } else if (data.statusCode == 409) {
+                                                alert("User already subscribes to this!");
                                             } else {
                                                 errorRedirect(data.message);
                                             }
@@ -278,6 +273,8 @@ $(document).ready(function() {
                                     });
                                 });
                             }
+
+
 
                         } else {
                             errorRedirect();
@@ -293,6 +290,7 @@ $(document).ready(function() {
         error: errorRedirect
     });
 
+    // HELPER FUNCTIONS
     function getTimeRangeString(start, end) {
         var date = start.toString("MMM d");
 
@@ -303,22 +301,11 @@ $(document).ready(function() {
             + end.toString("t").toLowerCase();
         return date + ", " + start_time + "-" + end_time;
     }
-
     // error handler
     function errorRedirect(msg) {
         alert("ERROR! " + msg == undefined ? "" : msg);
         window.location = "/";
     }
-
-    // function dateParser(date){
-    //     var stringTime = new Date(date).toLocaleTimeString();
-    //     var stringDate = new Date(date).toLocaleDateString();
-    //     var splitTimeList = stringTime.split(" ");//time + pm/am
-    //     var time = splitTimeList[0];
-    //     var detail = splitTimeList[1];
-    //     var length  = time.length;
-    //     return  time.substring(0, length-3)+" "+detail+" on "+stringDate;
-    // }
     function formEventDisplay(ev){
         var time = "<b>When:</b> " + getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) +'<br />';
         var loc = "<b>Where: </b>"+ $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text()+'<br />';

@@ -49,10 +49,22 @@ var findSubscribers = function(req, res, newEvent){
 						}
 					}
 					emailOut(subscribers, newEvent, loc);
-					res.json({
-                        statusCode: 200, 
-                        event: newEvent
+
+                    newEvent.populate("location", function(err, ev) {
+                        if (err) {
+                            res.json({
+                                statusCode: 500,
+                                message: "can't populate location of new event"
+                            });
+                        } else {
+                            console.log(ev);
+                            res.json({
+                                statusCode: 200,
+                                event: newEvent
+                            });
+                        }
                     });
+
 				}
 			});
 		}

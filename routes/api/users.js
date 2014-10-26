@@ -5,6 +5,7 @@ var router = express.Router();
 var mongoose = require("mongoose");
 var request = require("request");
 var User = require("../../models/User").User;
+var Location = require("../../models/Location").Location;
 
 /********** REST API for user **********/
 
@@ -103,7 +104,6 @@ router.get("/:userID/", function(req, res){
                     statusCode: 404,
                     message: "user not found"
                 });
-                // res.redirect("/../login");
             } else {
                 res.json({
                     statusCode: 200,
