@@ -131,7 +131,7 @@ Currently in the test mode.
 Might not be needed in the deployed version
 */
 router.get('/', function(req, res) {
-    Event.find({}).populate("location").exec(function(err, events){
+    Event.find({}).sort({"when.start": "desc"}).populate("location").exec(function(err, events){
         if (err){
             res.json({statusCode:500, message: "mongoose error getting events"});
         }
