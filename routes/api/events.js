@@ -86,7 +86,7 @@ var emailOut = function(subscribers, newEvent){
             + "</td></tr><tr><td> <strong>Hosted by:</strong></td><td>"
             + newEvent.host + "</td></tr></table><br><br>"
             +"You are receiving this because you (or someone else) has subscribed to the free food mailing list at " 
-            + loc.name + ".";
+            + newEvent.location.name + ".";
 
             var user = subscribers[i];
             var mailOptions = {
@@ -94,7 +94,6 @@ var emailOut = function(subscribers, newEvent){
                 from: "app30875858@heroku.com",
                 subject: 'Free Food at ' + eventStart.toLocaleDateString() + " " + eventStart.toLocaleTimeString() + ' in ' + newEvent.location.name,
                 html: html_text
-            };
 
             sendgrid.send(mailOptions, function(err, json) {
                 if (err) { return console.error(err);}
