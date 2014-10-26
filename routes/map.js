@@ -94,7 +94,7 @@ var setupRoutes = function() {
     
     router.get("/", function(req, res) {
         
-        if (req.query.kerberos != undefined && req.query.kerberos == req.cookies.kerberos) {
+        if (req.cookies.login == "true" && req.query.kerberos != undefined && req.query.kerberos == req.cookies.kerberos) {
             res.render("map", {
                 kerberos: req.query.kerberos
             });
