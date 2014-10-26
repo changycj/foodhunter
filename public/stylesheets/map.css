@@ -9,18 +9,28 @@
 #all_events, #my_events_container, #my_subs_container{
 	overflow: auto;
 	max-height:  200px;
-	margin-bottom: 5px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
 }
+
 
 .bcgr{
-	background: #B0EDAA;
+	background: #C8EDBB;
 
 
 
 }
 
-#form_add_event input[type="text"] {
-    width: 80px;
+.adders{
+	border-radius: 10px;
+	border: 1px solid black;
+	height: 450px;
+	width: 500px;
+
+}
+#form_add_event {
+    max-width: 50px;
+
 }
 .btn {
 	margin: 5px;
