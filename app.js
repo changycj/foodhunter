@@ -70,7 +70,7 @@ app.use(function(err, req, res, next) {
 
 app.set("port", (process.env.PORT || 5000));
 app.listen(app.get("port"), function() {
-    console.log("listening");
+    console.log("listening on port " + app.get("port"));
 });
 
 
