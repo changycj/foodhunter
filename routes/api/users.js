@@ -56,6 +56,7 @@ router.post("/login", function(req, res) {
                                 });
                             } else {
                                 res.cookie("kerberos", req.body.kerberos);
+                                res.cookie("login", "true");
                                 res.json({
                                     statusCode: 200,
                                     user: u
@@ -71,6 +72,7 @@ router.post("/login", function(req, res) {
                 });
     		} else {
     			res.cookie("kerberos", req.body.kerberos);
+                res.cookie("login", "true");
     			res.json({
                     statusCode: 200,
                     user: u
