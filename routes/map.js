@@ -94,12 +94,12 @@ var setupRoutes = function() {
     
     router.get("/", function(req, res) {
         
-        if (req.cookies.kerberos != undefined) {
+        if (req.query.kerberos != undefined) {
             res.render("map", {
-                kerberos: req.cookies.kerberos
+                kerberos: req.query.kerberos
             });
         } else {
-            res.redirect("/login");
+            res.redirect("/");
         }
     });
 }

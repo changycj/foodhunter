@@ -6,6 +6,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
+    console.log(req.cookie);
     if (req.cookie == undefined || req.cookie.login == "false") {
         res.cookie("login", "false");
         res.redirect("/login");
