@@ -15,13 +15,14 @@ Authors:
   - subscriptions.js: Rebekah Cha
   - users.js: Judy Chang
 
-- public/javascripts: (client javascript and also corresponding ejs files in views)
+- public/javascripts:
   - details.js: Judy Chang
   - login.js: Judy Chang
   - map.js: Judy Chang
+  - eventfeed.js: Rebekah Cha
 
 - routes/api:
-  - events.js: Rebekah Cha, Dana Mukusheva
+  - events.js: Dana Mukusheva
   - locations.js: Judy Chang
   - subscriptions.js: Dana Mukusheva
   - users.js: Rebekah Cha, Judy Chang
@@ -29,4 +30,12 @@ Authors:
 - routes:
   - index.js: Judy Chang
   - map.js: Judy Chang
+
+- views:
+  - details.ejs: Judy Chang
+  - forms.ejs: Judy Chang
+  - layout.ejs: Judy Chang
+  - login.ejs: Judy Chang
+  - map.ejs: Dana Mukusheva
+
 
