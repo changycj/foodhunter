@@ -11,9 +11,22 @@ $(document).ready(function() {
 
     // user kerberos
     var kerberos = window.location.search.split("kerberos=")[1];
+    console.log(typeof document.cookie);
+
+    var cookies = document.cookie.split(";");
+    var login = "false";
+    var user = "";
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].split("=");
+        if (cookie[0].trim() == "login") {
+            login = cookie[1].trim();
+        } else if (cookie[0].trim() == "kerberos") {
+            user = cookie[1].trim();
+        }
+    }
 
     // user on cookie is same as the profile requested
-    if (document.cookie.split("kerberos=")[1] == kerberos) {
+    if (login == "true" && user == kerberos) {
         
         // add map to UI
         L.mapbox.accessToken = "pk.eyJ1IjoiZm9vZGh1bnRlcnMiLCJhIjoiR0laWjlaUSJ9.CtACBQ0c6_gH9I25-Jpj-Q";
@@ -293,10 +306,9 @@ $(document).ready(function() {
         }
 
     } else {
-        alert("Not authenticated!");
         window.location.reload("/");
     }
-    
+
     // HELPER FUNCTIONS
     function getTimeRangeString(start, end) {
         var date = start.toString("MMM d");

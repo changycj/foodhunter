@@ -6,21 +6,30 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res) {
-    res.clearCookie("kerberos");
-
-    res.redirect("/login");
+    if (req.cookie == undefined || req.cookie.login == "false") {
+        res.cookie("login", "false");
+        res.redirect("/login");
+    }
+    else {
+        res.redirect("/map?kerberos="+req.cookie.kerberos);
+    }
 });
 
 // GET login page
 router.get("/login", function(req, res) {
-    res.clearCookie("kerberos");
-    
-    res.render("login", {});
+
+    if (req.cookie == undefined || req.cookie.login == "false") {
+        res.cookie("login", "false");
+        res.render("login", {});
+    } else {
+        res.redirect("/map?kerberos" + req.cookie.kerberos);
+    }
 });
 
 // GET logout
 router.get("/logout", function(req, res) {
     res.clearCookie("kerberos");
+    res.cookie("login", "false");
     res.redirect("/login");
 });
 
