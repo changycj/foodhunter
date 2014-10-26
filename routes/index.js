@@ -7,6 +7,7 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res) {
     console.log(req.cookie);
+
     if (req.cookie == undefined || req.cookie.login == "false") {
         res.cookie("login", "false");
         res.redirect("/login");
@@ -23,7 +24,7 @@ router.get("/login", function(req, res) {
         res.cookie("login", "false");
         res.render("login", {});
     } else {
-        res.redirect("/map?kerberos" + req.cookie.kerberos);
+        res.redirect("/map?kerberos=" + req.cookie.kerberos);
     }
 });
 
@@ -31,7 +32,7 @@ router.get("/login", function(req, res) {
 router.get("/logout", function(req, res) {
     res.clearCookie("kerberos");
     res.cookie("login", "false");
-    res.redirect("/login");
+    res.redirect("/");
 });
 
 // GET event details page
