@@ -94,7 +94,7 @@ var emailOut = function(subscribers, newEvent, loc){
                 from: "app30875858@heroku.com",
                 subject: 'Free Food at ' + eventStart.toLocaleDateString() + " " + eventStart.toLocaleTimeString() + ' in ' + loc.name,
                 html: html_text
-            }
+            };
 
             sendgrid.send(mailOptions, function(err, json) {
                 if (err) { return console.error(err);}
