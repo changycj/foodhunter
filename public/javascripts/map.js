@@ -60,10 +60,8 @@ $(document).ready(function() {
                         var ev = data.events[i];
 
                         // add to upcoming events
-
                         if (new Date(ev.when.end) >= Date.today()) {
-                            var item = $('<li class = "list-group-item" id="'+ ev._id +'"/>').appendTo("#all_events ul");                        
-                            item.html(formEventDisplay(ev));
+                            addUpcomingEvent(ev);
                         }
                         addEventMarker(ev);
                     }
@@ -128,149 +126,7 @@ $(document).ready(function() {
                                 // bind form submissions handles
                                 enableForms();
 
-                                // HELPER FUNCTIONS
-                                function addMySubscription(loc, time_block) {
 
-                                    var sub = $('<li class = "list-group-item"/>').appendTo("#my_subs_container");
-                                    sub.html(formSubDisplay(loc.text(), time_block.text()));
-
-                                    var btn = $('<button class = "btn btn-default btn-sm"/>').text("Delete").click(function(e) {
-                                        var formData = {
-                                            location: loc.val(),
-                                            time_block: time_block.val()
-                                        };
-                                        $.ajax({
-                                            url: "/api/subscriptions/subscribe/user/"+kerberos,
-                                            type: "DELETE",
-                                            data: formData,
-                                            success: function(data) {
-                                                if (data.statusCode == 200) {
-                                                    sub.remove();
-                                                    alert("Subscription removed!");
-                                                } else {
-                                                    errorRedirect(data.message);
-                                                }
-                                            },
-                                            error: errorRedirect
-                                        });
-                                    }).appendTo(sub);
-                                                              
-                                }
-                            
-                                function addMyEvent(ev) {
-                                    var item = $('<li class = "list-group-item"/>').appendTo("#my_events_container ul");
-                                    item.html(formEventDisplay(ev));
-                                                                    
-                                    var control = $("<p/>").appendTo(item);
-                                    
-                                    $('<button class = "btn btn-default btn-sm"/>').text("View/Edit").appendTo(control).click(function(e) {
-                                        window.open("/event_details?id=" + ev._id + "&kerberos=" + kerberos,
-                                         "popup", "width=500px; height = 800px;")
-                                    });
-                                    
-                                    $('<button class = "btn btn-default btn-sm"/>').text("Delete").appendTo(control).click(function(e) {
-                                        $.ajax({
-                                            url: "/api/events/" + ev._id + "/user/" + kerberos,
-                                            type: "DELETE",
-                                            success: function(data) {
-                                                if (data.statusCode == 200) {
-                                                    item.remove();
-                                                    
-                                                    // also remove from upcoming events list
-                                                    $("#all_events ul li[id='"+ev._id+"']").remove();
-
-                                                    removeEventMarker(ev);
-                                                    alert("Event deleted!");
-                                                } else {
-                                                    errorRedirect(data.message);
-                                                }
-                                            },
-                                            error: function(err) {
-                                                errorRedirect();
-                                            }
-                                        });
-                                    });
-                                }
-
-                                function enableForms() {
-
-                                    // set up other UI widgets
-                                    $("#form_add_event input[name^='time']").timepicker({"scrollDefault" : "now"});
-                                    $("#form_add_event input[name^='date']").datepicker({"minDate" : new Date()});
-
-                                    // ADD EVENT FORM
-                                    $("#form_add_event").submit(function(e) {        
-
-                                        e.preventDefault();
-
-                                        // should check for empty
-
-                                        var date  = $("input[name='date']").datepicker("getDate");
-                                        var time_start = $("input[name='time_start']").timepicker("getTime", date);
-                                        var time_end = $("input[name='time_end']").timepicker("getTime", date);
-
-                                        var formData = {
-                                            when: {
-                                                start: time_start.valueOf(),
-                                                end: time_end.valueOf()
-                                            },
-                                            description: $("textarea[name='description']").val(),
-                                            location: $("select[name='location'] option:selected").val() // should be objectID instead
-                                        };
-
-                                        // send data to back-end
-                                        $.ajax({
-                                            url: "/api/events/user/" + kerberos,
-                                            type: "POST",
-                                            data: formData,
-                                            success: function(data) {
-                                                if (data.statusCode== 200) {
-
-                                                    // need to reload to refresh map
-                                                    // window.location.reload();
-                                                    addEventMarker(data.event);
-                                                    alert("Event added!");
-
-                                                } else {
-                                                    errorRedirect(data.message);
-                                                }
-                                            },
-                                            error: errorRedirect
-                                        });
-                                    });
-
-                                    // SUBSCRIPTION FORM
-                                    $("#form_subscribe").submit(function(e) {
-                                        e.preventDefault();
-
-                                        var location = $(this).find("select[name='location'] option:selected");
-                                        var time_block = $(this).find("select[name='time'] option:selected");
-
-                                        var formData = {
-                                            location: location.val(),
-                                            time_block: time_block.val()
-                                        };
-
-                                        $.ajax({
-                                            url: "/api/subscriptions/subscribe/user/" + kerberos,
-                                            type: "POST",
-                                            data: formData,
-                                            success: function(data) {
-                                                if (data.statusCode == 200) {
-                                                    
-                                                    alert("Subscription added!");
-                                                    addMySubscription(location, time_block);
-
-                                                } else if (data.statusCode == 409) {
-                                                    alert("User already subscribes to this!");
-                                                } else {
-                                                    errorRedirect(data.message);
-                                                }
-                                            },
-                                            error: errorRedirect
-                                        });
-                                    });
-                                }
 
                             } else {
                                 errorRedirect();
@@ -285,6 +141,175 @@ $(document).ready(function() {
             },
             error: errorRedirect
         });
+
+        // HELPER FUNCTIONS
+        function addMySubscription(loc, time_block) {
+
+            var sub = $('<li class = "list-group-item"/>').appendTo("#my_subs_container");
+            sub.html(formSubDisplay(loc.text(), time_block.text()));
+
+            var btn = $('<button class = "btn btn-default btn-sm"/>').text("Delete").click(function(e) {
+                var formData = {
+                    location: loc.val(),
+                    time_block: time_block.val()
+                };
+                $.ajax({
+                    url: "/api/subscriptions/subscribe/user/"+kerberos,
+                    type: "DELETE",
+                    data: formData,
+                    success: function(data) {
+                        if (data.statusCode == 200) {
+                            sub.remove();
+                            alert("Subscription removed!");
+                        } else {
+                            errorRedirect(data.message);
+                        }
+                    },
+                    error: errorRedirect
+                });
+            }).appendTo(sub);
+                                      
+        }
+
+        function addMyEvent(ev) {
+            // var item = $('<li class = "list-group-item"/>').appendTo("#my_events_container ul");
+            // item.html(formEventDisplay(ev));
+            var item = $('<li class = "list-group-item" id="'+ ev._id +'" time='+ev.when.start+'/>');                        
+            item.html(formEventDisplay(ev));
+
+            // find location to add (keep chronological order)
+            var list = $("#my_events_container ul li");
+            
+            if (list.length > 0) {
+                var insert=false;
+                for (var i = 0; i < list.length; i++) {
+                    var li = $("#my_events_container ul li")[i];
+                    var time = parseInt($(li).attr("time"));
+                    if (ev.when.start < time) {
+                        item.insertBefore(li);
+                        insert = true;
+                        break;
+                    }
+                }
+                if (!insert) {
+                    item.appendTo($("#my_events_container ul"));
+                }
+            } else {
+                item.appendTo($("#my_events_container ul"));
+            }
+                                            
+            var control = $("<p/>").appendTo(item);
+            
+            $('<button class = "btn btn-default btn-sm"/>').text("View/Edit").appendTo(control).click(function(e) {
+                window.open("/event_details?id=" + ev._id + "&kerberos=" + kerberos,
+                 "popup", "width=500px; height = 800px;")
+            });
+            
+            $('<button class = "btn btn-default btn-sm"/>').text("Delete").appendTo(control).click(function(e) {
+                $.ajax({
+                    url: "/api/events/" + ev._id + "/user/" + kerberos,
+                    type: "DELETE",
+                    success: function(data) {
+                        if (data.statusCode == 200) {
+                            item.remove();
+                            
+                            // also remove from upcoming events list
+                            $("#all_events ul li[id='"+ev._id+"']").remove();
+
+                            removeEventMarker(ev);
+                            alert("Event deleted!");
+                        } else {
+                            errorRedirect(data.message);
+                        }
+                    },
+                    error: function(err) {
+                        errorRedirect();
+                    }
+                });
+            });
+        }
+
+        function enableForms() {
+
+            // set up other UI widgets
+            $("#form_add_event input[name^='time']").timepicker({"scrollDefault" : "now"});
+            $("#form_add_event input[name^='date']").datepicker({"minDate" : new Date()});
+
+            // ADD EVENT FORM
+            $("#form_add_event").submit(function(e) {        
+
+                e.preventDefault();
+
+                // should check for empty
+
+                var date  = $("input[name='date']").datepicker("getDate");
+                var time_start = $("input[name='time_start']").timepicker("getTime", date);
+                var time_end = $("input[name='time_end']").timepicker("getTime", date);
+
+                var formData = {
+                    when: {
+                        start: time_start.valueOf(),
+                        end: time_end.valueOf()
+                    },
+                    description: $("textarea[name='description']").val(),
+                    location: $("select[name='location'] option:selected").val() // should be objectID instead
+                };
+
+                // send data to back-end
+                $.ajax({
+                    url: "/api/events/user/" + kerberos,
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        if (data.statusCode== 200) {
+
+                            addMyEvent(data.event);
+                            addUpcomingEvent(data.event);
+                            addEventMarker(data.event);
+
+                            $("#form_add_event")[0].reset();
+                            alert("Event added!");
+
+                        } else {
+                            errorRedirect(data.message);
+                        }
+                    },
+                    error: errorRedirect
+                });
+            });
+
+            // SUBSCRIPTION FORM
+            $("#form_subscribe").submit(function(e) {
+                e.preventDefault();
+
+                var location = $(this).find("select[name='location'] option:selected");
+                var time_block = $(this).find("select[name='time'] option:selected");
+
+                var formData = {
+                    location: location.val(),
+                    time_block: time_block.val()
+                };
+
+                $.ajax({
+                    url: "/api/subscriptions/subscribe/user/" + kerberos,
+                    type: "POST",
+                    data: formData,
+                    success: function(data) {
+                        if (data.statusCode == 200) {
+                            
+                            alert("Subscription added!");
+                            addMySubscription(location, time_block);
+
+                        } else if (data.statusCode == 409) {
+                            alert("User already subscribes to this!");
+                        } else {
+                            errorRedirect(data.message);
+                        }
+                    },
+                    error: errorRedirect
+                });
+            });
+        }
 
 
         function addEventMarker(ev) {
@@ -351,6 +376,31 @@ $(document).ready(function() {
             map.featureLayer.setGeoJSON(geojson);
 
             // map.refresh();
+        }
+
+        function addUpcomingEvent(ev) {
+            var item = $('<li class = "list-group-item" id="'+ ev._id +'" time='+ev.when.start+'/>');                        
+            item.html(formEventDisplay(ev));
+
+            // find location to add (keep chronological order)
+            var list = $("#all_events ul li");
+            if (list.length > 0) {
+                var insert=false;
+                for (var i = 0; i < list.length; i++) {
+                    var li = $("#all_events ul li")[i];
+                    var time = parseInt($(li).attr("time"));
+                    if (ev.when.start < time) {
+                        item.insertBefore(li);
+                        insert = true;
+                        break;
+                    }
+                }
+                if (!insert) {
+                    item.appendTo($("#all_events ul"));
+                }
+            } else {
+                item.appendTo($("#all_events ul"));
+            }
         }
 
     } else {
