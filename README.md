@@ -19,13 +19,12 @@ Authors:
   - details.js: Judy Chang
   - login.js: Judy Chang
   - map.js: Judy Chang
-  - eventfeed.js: Rebekah Cha
 
 - routes/api:
   - events.js: Dana Mukusheva
   - locations.js: Judy Chang
   - subscriptions.js: Dana Mukusheva
-  - users.js: Rebekah Cha, Judy Chang
+  - users.js: Rebekah Cha
 
 - routes:
   - index.js: Judy Chang

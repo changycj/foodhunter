@@ -5,13 +5,12 @@
 // TODO:
 // - user authentication -- done
 // - drawing markers (add all then filter) -> also add time/date slider on marker filter -- done
-// - currently any update to events must refresh page to reflect on map (investigate in 3.3)
+// - currently any update to events must refresh page to reflect on map (investigate in 3.3) - done
 
 $(document).ready(function() {
 
     // user kerberos
     var kerberos = window.location.search.split("kerberos=")[1];
-    console.log(typeof document.cookie);
 
     var cookies = document.cookie.split(";");
     var login = "false";
@@ -59,8 +58,16 @@ $(document).ready(function() {
 
                     for (var i = 0; i < data.events.length; i++) {
                         var ev = data.events[i];
+
+                        // add to upcoming events
+
+                        if (new Date(ev.when.end) >= Date.today()) {
+                            var item = $('<li class = "list-group-item" id="'+ ev._id +'"/>').appendTo("#all_events ul");                        
+                            item.html(formEventDisplay(ev));
+                        }
                         addEventMarker(ev);
                     }
+                
 
                     // slider initializes to zero, which is today
                     map.featureLayer.setFilter(function(f) {
@@ -139,6 +146,7 @@ $(document).ready(function() {
                                             success: function(data) {
                                                 if (data.statusCode == 200) {
                                                     sub.remove();
+                                                    alert("Subscription removed!");
                                                 } else {
                                                     errorRedirect(data.message);
                                                 }
@@ -167,9 +175,12 @@ $(document).ready(function() {
                                             success: function(data) {
                                                 if (data.statusCode == 200) {
                                                     item.remove();
+                                                    
+                                                    // also remove from upcoming events list
+                                                    $("#all_events ul li[id='"+ev._id+"']").remove();
 
-                                                    // need to reload to refresh map
-                                                    window.location.reload();
+                                                    removeEventMarker(ev);
+                                                    alert("Event deleted!");
                                                 } else {
                                                     errorRedirect(data.message);
                                                 }
@@ -216,7 +227,9 @@ $(document).ready(function() {
                                                 if (data.statusCode== 200) {
 
                                                     // need to reload to refresh map
-                                                    window.location.reload();
+                                                    // window.location.reload();
+                                                    addEventMarker(data.event);
+                                                    alert("Event added!");
 
                                                 } else {
                                                     errorRedirect(data.message);
@@ -245,7 +258,7 @@ $(document).ready(function() {
                                             success: function(data) {
                                                 if (data.statusCode == 200) {
                                                     
-                                                    alert("Subscribed!");
+                                                    alert("Subscription added!");
                                                     addMySubscription(location, time_block);
 
                                                 } else if (data.statusCode == 409) {
@@ -258,8 +271,6 @@ $(document).ready(function() {
                                         });
                                     });
                                 }
-
-
 
                             } else {
                                 errorRedirect();
@@ -277,32 +288,69 @@ $(document).ready(function() {
 
 
         function addEventMarker(ev) {
-            var events = map.featureLayer.getGeoJSON();
+            
+            if (typeof ev.location == "string") {
+                $.ajax({
+                    url: "/api/locations/" + ev.location,
+                    method: "GET",
+                    success: function(data) {
+                        if (data.statusCode == 200) {
+                            ev.location = data.location;
+                            addMarker();
+                        } else {
+                            errorRedirect(data.message);
+                        }
+                    },
+                    error: errorRedirect
+                });
+            } else {
+                addMarker();
+            }
 
-            var title = (ev.location.building == undefined ? "" : ev.location.building + " - ")
-                + ev.location.name;
-            var description = 
-                getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) + "<br>"
-                + "<i>" + ev.description + "</i><br>"
-                + "Host: " + ev.host;
+            function addMarker() {
+                var events = map.featureLayer.getGeoJSON();
 
-            var geojson = {
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [ev.location.gps.lon, ev.location.gps.lat]
-                },
-                properties: {
-                    title: title,
-                    description: description,
-                    date: ev.when.start,
-                    "marker-size" : "small",
-                    "marker-color" : "#BE9A6B",
-                    "marker-symbol" : "ice-cream"
+                var title = (ev.location.building == undefined ? "" : ev.location.building + " - ")
+                    + ev.location.name;
+                var description = 
+                    getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) + "<br>"
+                    + "<i>" + ev.description + "</i><br>"
+                    + "Host: " + ev.host;
+
+                var geojson = {
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [ev.location.gps.lon, ev.location.gps.lat]
+                    },
+                    properties: {
+                        title: title,
+                        description: description,
+                        date: ev.when.start,
+                        event_id: ev._id,
+                        "marker-size" : "small",
+                        "marker-color" : "#BE9A6B",
+                        "marker-symbol" : "ice-cream"
+                    }
+                };
+                events.push(geojson);
+                map.featureLayer.setGeoJSON(events);
+            }
+        }
+
+        function removeEventMarker(ev) {
+            var event_id = ev._id;
+
+            var geojson = map.featureLayer.getGeoJSON();
+
+            for (var i = 0; i < geojson.length; i++) {
+                if (geojson[i].properties.event_id == event_id) {
+                    geojson.splice(i, 1);
                 }
-            };
-            events.push(geojson);
-            map.featureLayer.setGeoJSON(events);
+            }
+            map.featureLayer.setGeoJSON(geojson);
+
+            // map.refresh();
         }
 
     } else {
@@ -327,8 +375,13 @@ $(document).ready(function() {
     }
     function formEventDisplay(ev){
         var time = "<b>When:</b> " + getTimeRangeString(new Date(ev.when.start), new Date(ev.when.end)) +'<br />';
-        var loc = "<b>Where: </b>"+ $("#form_subscribe select[name='location'] option[value='"+ ev.location + "']").text()+'<br />';
+
+        var loc_name = (typeof ev.location == "string") ? ($("#form_subscribe select[name='location'] option[value='" 
+            + ev.location + "']").text()) : ev.location.name;
+
+        var loc = "<b>Where: </b>"+ loc_name +'<br />';
         var desc = "<b>Details:</b> " +ev.description+'<br />';
+
         return time+loc+desc;
     }
     function formSubDisplay(loc, time_block){

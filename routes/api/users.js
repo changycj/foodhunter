@@ -1,4 +1,4 @@
-// Lead: Rebekah Cha, Judy Chang
+// Lead: Rebekah Cha
 // Users API
 var express = require("express");
 var router = express.Router();
