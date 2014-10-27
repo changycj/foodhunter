@@ -60,7 +60,7 @@ $(document).ready(function() {
                         var ev = data.events[i];
 
                         // add to upcoming events
-                        if (new Date(ev.when.end) >= Date.today()) {
+                        if (new Date(ev.when.end) >= new Date()) {
                             addUpcomingEvent(ev);
                         }
                         addEventMarker(ev);
