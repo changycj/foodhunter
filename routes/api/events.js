@@ -143,7 +143,7 @@ router.get('/', function(req, res) {
 
 /**********CREATE A NEW EVENT**********/
 router.post('/user/:user_id', function(req, res) {
-	var status = "Food"; //default status
+	// var status = "Food"; //default status
 	var today = new Date().valueOf(); // date when the event is created
 	//start getting info
     var host = req.params.user_id; //note: cookies never cleared
@@ -155,7 +155,7 @@ router.post('/user/:user_id', function(req, res) {
 	//form data
 	var newEventJSON = {
     					"when": {"start":start, "end":end},
-    					"status":status,
+    					// "status":status,
     					"host":host, 
     					"description":description,
     					"location": location //now it's ObjectId
