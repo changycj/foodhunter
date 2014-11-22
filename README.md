@@ -1,4 +1,4 @@
-proj3
+6.170 Project Team - Fall 2014
 =====
 
 Project 3: Mini team project
